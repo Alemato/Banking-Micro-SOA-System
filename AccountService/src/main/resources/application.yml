@@ -1,4 +1,21 @@
 spring.application.name: AccountService
+
+info.application:
+  name: AccountService
+  description: Account Service for Banking Micro-SOA System
+  version: 0.0.1-SNAPSHOT
+
+server:
+  port: 8080
+  servlet-path: /system
+
+cxf:
+  path: /services/helloservice
+  servlet.init:
+    service-list-path: /info
+  jaxrs:
+    component-scan: true
+    classes-scan-packages: it.univaq.sose.accountservice.service
 ---
 spring:
   datasource:
@@ -27,7 +44,6 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
         jdbc:
           time_zone: UTC
           batch_size: 30
@@ -41,4 +57,4 @@ spring:
         connection:
           provider_disables_autocommit: true
     show-sql: false
-
+---
