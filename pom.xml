@@ -16,6 +16,7 @@
     <module>discovery-service</module>
     <module>account-service</module>
     <module>bank-account-service</module>
+    <module>bancomat-service</module>
     <!-- Aggiungi altri moduli qui -->
   </modules>
 

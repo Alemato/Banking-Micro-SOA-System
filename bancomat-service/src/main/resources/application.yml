@@ -1,0 +1,67 @@
+spring:
+  application:
+    name: BancomatService
+---
+server:
+  port: 9095
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/bancomat?reWriteBatchedInserts=true
+    username: postgres
+    password: 123456
+    name: BankAccount_DS
+    hikari:
+      auto-commit: false
+      minimum-idle: 0
+      maximum-pool-size: 10
+      max-lifetime: 600000
+      transaction-isolation: TRANSACTION_READ_COMMITTED
+      data-source-properties:
+        prepStmtCacheSqlLimit: 1024
+        useServerPrepStmts: false
+        prepStmtCacheSize: 500
+        cachePrepStmts: true
+  sql:
+    init:
+      mode: always
+  batch:
+    jdbc:
+      initialize-schema: always
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          time_zone: UTC
+          batch_size: 30
+        order_inserts: true
+        order_updates: true
+        query:
+          fail_on_pagination_over_collection_fetch: true
+          plan_cache_max_size: 4096
+          in_clause_parameter_padding: true
+        format_sql: false
+        connection:
+          provider_disables_autocommit: true
+    show-sql: false
+
+cxf:
+  path: /services
+
+management:
+  endpoint:
+    metrics:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+#logging:
+#  level:
+#    root: debug
