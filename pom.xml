@@ -14,7 +14,7 @@
 
   <modules>
     <module>account-service</module>
-    <!--<module>discovery-service</module>-->
+    <module>discovery-service</module>
     <!-- Aggiungi altri moduli qui -->
   </modules>
 
