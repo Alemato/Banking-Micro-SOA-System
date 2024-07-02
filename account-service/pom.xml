@@ -19,6 +19,7 @@
         <cxf.version>4.0.4</cxf.version>
         <cxf.swagger.ui.version>5.17.14</cxf.swagger.ui.version>
         <cxf.io.dropwizard.metrics>4.2.25</cxf.io.dropwizard.metrics>
+        <spring-cloud.version>2023.0.2</spring-cloud.version>
     </properties>
 
     <dependencies>
@@ -125,6 +126,12 @@
             <version>4.0.1</version>
         </dependency>
 
+        <!-- Dipendenze per Eureka -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+
         <!-- Dipendenze per BCrypt Password Encoder -->
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -169,6 +176,18 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <plugins>
