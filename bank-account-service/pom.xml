@@ -11,42 +11,24 @@
     <groupId>it.univaq.sose</groupId>
     <artifactId>bank-account-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>BankAccountService</name>
-    <description>BankAccountService</description>
+    <name>bank-account-services</name>
+    <description>Bank account service</description>
 
     <properties>
         <java.version>17</java.version>
+        <cxf.version>4.0.4</cxf.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-spring-boot-starter-jaxws</artifactId>
-            <version>4.0.4</version>
-            <exclusions><!-- CXF uses java.util.logging by default -->
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>${cxf.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-            <version>3.3.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web-services</artifactId>
-            <version>3.3.0</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.sun.xml.bind</groupId>
-                    <artifactId>jaxb-impl</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
