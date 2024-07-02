@@ -1,9 +1,6 @@
 package it.univaq.sose.accountservice.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
@@ -15,6 +12,7 @@ import java.util.Objects;
 @Setter
 @Entity
 @Table(name = "account")
+@SequenceGenerator(name = "account_seq", sequenceName = "account_sequence", allocationSize = 10) //Pre-Alloca solo 10 id
 public class Account extends BaseEntity {
     @Serial
     private static final long serialVersionUID = 2741904033865180248L;
