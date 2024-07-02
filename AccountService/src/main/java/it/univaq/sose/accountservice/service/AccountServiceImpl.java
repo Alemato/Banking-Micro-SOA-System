@@ -4,9 +4,11 @@ import it.univaq.sose.accountservice.business.AccountManager;
 import it.univaq.sose.accountservice.domain.dto.*;
 import it.univaq.sose.accountservice.security.AuthenticationException;
 import jakarta.ws.rs.core.Response;
+import org.apache.cxf.feature.Features;
 import org.springframework.stereotype.Service;
 
 @Service
+@Features(features = "org.apache.cxf.ext.logging.LoggingFeature")
 public class AccountServiceImpl implements AccountService {
     private final AccountManager accountManager;
 

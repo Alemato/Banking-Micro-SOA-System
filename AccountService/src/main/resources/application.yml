@@ -1,21 +1,30 @@
-spring.application.name: AccountService
+spring.application:
+  name: AccountService
+
+management:
+  endpoints.web.exposure.include: health,info
+  info.env.enabled: true
 
 info.application:
   name: AccountService
   description: Account Service for Banking Micro-SOA System
   version: 0.0.1-SNAPSHOT
-
+---
 server:
   port: 8080
-  servlet-path: /system
 
 cxf:
-  path: /services/helloservice
+  path: /services
   servlet.init:
     service-list-path: /info
   jaxrs:
     component-scan: true
-    classes-scan-packages: it.univaq.sose.accountservice.service
+    classes-scan-packages: org.apache.cxf.metrics, it.univaq.sose.accountservice.configuration, it.univaq.sose.accountservice.service
+  logging:
+    enabled: true
+    pretty-print: true
+    in-mem-threshold: 1024
+    limit: 10000
 ---
 spring:
   datasource:
@@ -46,7 +55,7 @@ spring:
       hibernate:
         jdbc:
           time_zone: UTC
-          batch_size: 30
+          batch_size: 10
         order_inserts: true
         order_updates: true
         query:

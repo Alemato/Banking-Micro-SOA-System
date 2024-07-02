@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
+import org.apache.cxf.ext.logging.LoggingFeature;
 import org.apache.cxf.jaxrs.openapi.OpenApiFeature;
 import org.apache.cxf.jaxrs.swagger.ui.SwaggerUiConfig;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +16,13 @@ public class ApacheCXFConfig {
 
     @Value("${cxf.path}")
     private String cxfPath;
+
+    @Bean
+    public LoggingFeature loggingFeature() {
+        LoggingFeature loggingFeature = new LoggingFeature();
+        loggingFeature.setPrettyLogging(true);  // Per log più leggibili
+        return loggingFeature;
+    }
 
     @Bean
     public JacksonJsonProvider jsonProvider() {
