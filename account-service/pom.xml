@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>it.univaq.sose</groupId>
-    <artifactId>AccountService</artifactId>
+    <artifactId>account-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>AccountService</name>
-    <description>AccountService</description>
+    <name>account-service</name>
+    <description>account-service</description>
 
     <properties>
         <java.version>17</java.version>
