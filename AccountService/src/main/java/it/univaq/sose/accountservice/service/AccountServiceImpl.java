@@ -25,7 +25,35 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountDto saveAccountAndBankAccount(OpenBankAccountRequest request) {
+    public AccountResponse openAccountBanker(OpenBankAccountRequest request) {
+        return accountManager.createAccountBanker(request);
+    }
+
+    @Override
+    public AccountResponse openAccountAdmin(OpenBankAccountRequest request) {
+        return accountManager.createAccountAdmin(request);
+    }
+
+    @Override
+    public AccountResponse openAccountCustomer(OpenBankAccountRequest request) {
         return accountManager.createAccountCustomer(request);
+    }
+
+    @Override
+    public Response addBankAccount(AddIdBankAccountRequest request) {
+        try {
+            return Response.ok(accountManager.updateAccountWithIdBankAccount(request)).build();
+        } catch (NotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND).entity(new ErrorResponse(e.getMessage())).build();
+        }
+    }
+
+    @Override
+    public Response getAccount(long id) {
+        try {
+            return Response.ok(accountManager.getAccountByIdAccount(id)).build();
+        } catch (NotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND).entity(new ErrorResponse(e.getMessage())).build();
+        }
     }
 }

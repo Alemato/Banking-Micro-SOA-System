@@ -6,8 +6,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import it.univaq.sose.accountservice.domain.dto.*;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -32,14 +34,14 @@ public interface AccountService {
     ) UserCredentials credentials);
 
 
-    @Operation(operationId = "saveAccountAndBankAccount", description = "saveAccountAndBankAccount", responses = {
-            @ApiResponse(description = "Save Customer Bank Account", content = {
-                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = AccountDto.class)),
-                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = AccountDto.class))})
+    @Operation(operationId = "openAccountBanker", description = "openAccountBanker", responses = {
+            @ApiResponse(description = "Save Banker Bank Account", content = {
+                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = AccountResponse.class)),
+                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = AccountResponse.class))})
     })
     @POST
-    @Path("/account/bank-account")
-    AccountDto saveAccountAndBankAccount(@RequestBody(description = "Account to be saved",
+    @Path("/banker-account")
+    AccountResponse openAccountBanker(@RequestBody(description = "Account to be saved",
             required = true,
             content = {@Content(mediaType = MediaType.APPLICATION_JSON,
                     schema = @Schema(implementation = OpenBankAccountRequest.class)),
@@ -47,4 +49,69 @@ public interface AccountService {
                             schema = @Schema(implementation = OpenBankAccountRequest.class)),
             }
     ) OpenBankAccountRequest request);
+
+    @Operation(operationId = "openAccountAdmin", description = "openAccountAdmin", responses = {
+            @ApiResponse(description = "Save Admin Bank Account", content = {
+                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = AccountResponse.class)),
+                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = AccountResponse.class))})
+    })
+    @POST
+    @Path("/admin-account")
+    AccountResponse openAccountAdmin(@RequestBody(description = "Account to be saved",
+            required = true,
+            content = {@Content(mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = OpenBankAccountRequest.class)),
+                    @Content(mediaType = MediaType.APPLICATION_XML,
+                            schema = @Schema(implementation = OpenBankAccountRequest.class)),
+            }
+    ) OpenBankAccountRequest request);
+
+    @Operation(operationId = "openAccountCustomer", description = "openAccountCustomer", responses = {
+            @ApiResponse(description = "Save Customer Bank Account", content = {
+                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = AccountResponse.class)),
+                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = AccountResponse.class))})
+    })
+    @POST
+    @Path("/customer-account")
+    AccountResponse openAccountCustomer(@RequestBody(description = "Account to be saved",
+            required = true,
+            content = {@Content(mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = OpenBankAccountRequest.class)),
+                    @Content(mediaType = MediaType.APPLICATION_XML,
+                            schema = @Schema(implementation = OpenBankAccountRequest.class)),
+            }
+    ) OpenBankAccountRequest request);
+
+
+    @Operation(operationId = "addBankAccount", description = "addBankAccount", responses = {
+            @ApiResponse(description = "Save Bank Account on Account", content = {
+                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = AccountResponse.class)),
+                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = AccountResponse.class))}),
+            @ApiResponse(responseCode = "404", description = "Account whit this Id not found", content = {
+                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = ErrorResponse.class)),
+                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = ErrorResponse.class))})
+    })
+    @POST
+    @Path("/add-bank-account")
+    Response addBankAccount(@RequestBody(description = "Bank Account to add",
+            required = true,
+            content = {@Content(mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = AddIdBankAccountRequest.class)),
+                    @Content(mediaType = MediaType.APPLICATION_XML,
+                            schema = @Schema(implementation = AddIdBankAccountRequest.class)),
+            }
+    ) AddIdBankAccountRequest request);
+
+
+    @Operation(operationId = "getAccount", description = "getAccount", responses = {
+            @ApiResponse(description = "Get Account by ID", content = {
+                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = AccountResponse.class)),
+                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = AccountResponse.class))}),
+            @ApiResponse(responseCode = "404", description = "Account whit this Id not found", content = {
+                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = ErrorResponse.class)),
+                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = ErrorResponse.class))})
+    })
+    @GET
+    @Path("/{id}")
+    Response getAccount(@PathParam(value = "id") long id);
 }
