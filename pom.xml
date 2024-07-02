@@ -13,8 +13,9 @@
   <url>https://github.com/Alemato/Banking-Micro-SOA-System</url>
 
   <modules>
-    <module>account-service</module>
     <module>discovery-service</module>
+    <module>account-service</module>
+    <module>bank-account-service</module>
     <!-- Aggiungi altri moduli qui -->
   </modules>
 
