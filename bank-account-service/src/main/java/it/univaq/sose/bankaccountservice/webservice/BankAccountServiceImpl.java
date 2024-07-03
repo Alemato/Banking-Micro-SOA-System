@@ -4,12 +4,14 @@ import it.univaq.sose.bankaccountservice.business.BankAccountManager;
 import it.univaq.sose.bankaccountservice.domain.dto.*;
 import jakarta.jws.WebService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.cxf.feature.Features;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Slf4j
 @Service
+@Features(features = "org.apache.cxf.ext.logging.LoggingFeature")
 @WebService(serviceName = "BankAccountService", portName = "BankAccountPort",
         targetNamespace = "http://service.ws.bankaccount/",
         endpointInterface = "it.univaq.sose.bankaccountservice.webservice.BankAccountService")
