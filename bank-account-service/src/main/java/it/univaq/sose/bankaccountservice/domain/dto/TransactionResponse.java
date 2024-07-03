@@ -1,10 +1,12 @@
 package it.univaq.sose.bankaccountservice.domain.dto;
 
 import it.univaq.sose.bankaccountservice.domain.TransactionType;
+import it.univaq.sose.bankaccountservice.domain.dto.adapter.LocalDateTimeAdapter;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -35,6 +37,7 @@ public class TransactionResponse {
     @XmlElement(required = true)
     private TransactionType transactionType;
 
+    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
     @XmlElement(required = true)
     private LocalDateTime date;
 
