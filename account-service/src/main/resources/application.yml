@@ -50,8 +50,8 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://host.docker.internal:5432/account?reWriteBatchedInserts=true
-    username: dev
-    password: 1234
+    username: postgres
+    password: 123456
     name: Account_DS
     hikari:
       auto-commit: false
