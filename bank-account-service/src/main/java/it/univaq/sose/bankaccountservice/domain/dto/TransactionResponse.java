@@ -17,7 +17,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "TransferResponse", propOrder = {"id", "transactionCode", "amount", "description", "transactionType", "date", "bankAccountSender", "bankAccountReceiver"})
+@XmlType(name = "TransactionResponse", propOrder = {"id", "transactionCode", "amount", "description", "transactionType", "date", "bankAccountSender", "bankAccountReceiver"})
 public class TransactionResponse {
 
     @XmlElement(required = true)
