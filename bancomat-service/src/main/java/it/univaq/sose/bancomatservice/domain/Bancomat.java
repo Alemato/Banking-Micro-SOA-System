@@ -27,14 +27,19 @@ public class Bancomat extends BaseEntity {
     private String cvv;
 
     @Convert(converter = YearMonthAttributeConverter.class)
-    @Column(name = "data_scadenza", nullable = false)
-    private YearMonth dataScadenza;
+    @Column(name = "expiry_date", nullable = false)
+    private YearMonth expiryDate;
 
     @Column(name = "account_id", nullable = false)
     private Long accountId;
 
     @OneToMany(mappedBy = "bancomat", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Transaction> transactions = new LinkedHashSet<>();
+
+    public void addTransaction(Transaction transaction) {
+        this.transactions.add(transaction);
+        transaction.setBancomat(this);
+    }
 
     @Override
     public final boolean equals(Object o) {

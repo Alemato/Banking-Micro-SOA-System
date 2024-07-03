@@ -2,15 +2,22 @@ package it.univaq.sose.bancomatservice.business.impl;
 
 import it.univaq.sose.bancomatservice.business.BancomatManager;
 import it.univaq.sose.bancomatservice.domain.Bancomat;
+import it.univaq.sose.bancomatservice.domain.Transaction;
 import it.univaq.sose.bancomatservice.domain.dto.BancomatResponse;
+import it.univaq.sose.bancomatservice.domain.dto.TransactionRequest;
+import it.univaq.sose.bancomatservice.domain.dto.TransactionResponse;
 import it.univaq.sose.bancomatservice.repository.BancomatRepository;
 import it.univaq.sose.bancomatservice.repository.TransactionRepository;
+import it.univaq.sose.bancomatservice.webservice.BancomatAlradyExistingException;
+import it.univaq.sose.bancomatservice.webservice.ExpiredBancomatException;
 import it.univaq.sose.bancomatservice.webservice.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.YearMonth;
+import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 @Service
 public class BancomatManagerImpl implements BancomatManager {
@@ -28,28 +35,62 @@ public class BancomatManagerImpl implements BancomatManager {
     @Override
     public BancomatResponse getBancomatDetails(Long accountId) throws NotFoundException {
         Bancomat bancomat = bancomatRepository.findByAccountId(accountId).orElseThrow(() -> new NotFoundException("Bancomat with account ID: " + accountId + " not found."));
-        return new BancomatResponse(bancomat.getId(), bancomat.getNumber(), bancomat.getCvv(), bancomat.getDataScadenza().toString(), bancomat.getAccountId());
+        return new BancomatResponse(bancomat.getId(), bancomat.getNumber(), bancomat.getCvv(), bancomat.getExpiryDate().toString(), bancomat.getAccountId());
     }
 
     @Override
     @Transactional
-    public BancomatResponse createBancomat(Long accountId) {
+    public BancomatResponse createBancomat(Long accountId) throws BancomatAlradyExistingException {
+        if (bancomatRepository.existsByAccountIdAndExpiryDateAfter(accountId, YearMonth.now())) {
+            throw new BancomatAlradyExistingException("A non-expired Bancomat already exists");
+        }
+
         long numberPart1 = random.nextLong() % 100000000L;
+        numberPart1 = numberPart1 < 0 ? -numberPart1 : numberPart1;
         long numberPart2 = random.nextLong() % 100000000L;
+        numberPart2 = numberPart2 < 0 ? -numberPart2 : numberPart2;
+
         String numberWithoutSeparators = String.format("%08d%08d", numberPart1, numberPart2);
         String number = numberWithoutSeparators.replaceAll("(.{4})(?!$)", "$1-");
 
         String cvv = String.format("%03d", random.nextInt(1000));
-        YearMonth dataScadenza = YearMonth.now().plusYears(3);
+        YearMonth expiryDate = YearMonth.now().plusYears(3);
 
         Bancomat bancomat = new Bancomat();
         bancomat.setNumber(number);
         bancomat.setCvv(cvv);
-        bancomat.setDataScadenza(dataScadenza);
+        bancomat.setExpiryDate(expiryDate);
         bancomat.setAccountId(accountId);
 
         bancomat = bancomatRepository.save(bancomat);
 
-        return new BancomatResponse(bancomat.getId(), bancomat.getNumber(), bancomat.getCvv(), bancomat.getDataScadenza().toString(), bancomat.getAccountId());
+        return new BancomatResponse(bancomat.getId(), bancomat.getNumber(), bancomat.getCvv(), bancomat.getExpiryDate().toString(), bancomat.getAccountId());
+    }
+
+    @Override
+    @Transactional
+    public TransactionResponse executeTransaction(TransactionRequest transactionRequest) throws NotFoundException, ExpiredBancomatException {
+        Bancomat bancomat = bancomatRepository.findByAccountId(transactionRequest.getAccountId())
+                .orElseThrow(() -> new NotFoundException("Bancomat with account ID: " + transactionRequest.getAccountId() + " not found."));
+
+        if (YearMonth.now().isAfter(bancomat.getExpiryDate())) {
+            throw new ExpiredBancomatException("Bancomat expired");
+        }
+
+        Transaction transaction = new Transaction();
+        transaction.setBancomat(bancomat);
+        transaction.setAmount(transactionRequest.getAmount());
+        transaction.setDescription(transactionRequest.getDescription());
+        transaction.setTransactionCode(UUID.randomUUID().toString());
+
+        transaction = transactionRepository.save(transaction);
+
+        return new TransactionResponse(transaction.getId(), transaction.getTransactionCode(), transaction.getAmount(), transaction.getDescription(), transaction.getCreateDate());
+    }
+
+    @Override
+    public List<TransactionResponse> getBancomatTransactions(Long accountId) {
+        List<Transaction> transactions = transactionRepository.findDistinctByBancomat_AccountIdOrderByCreateDateDesc(accountId);
+        return transactions.stream().map(t -> new TransactionResponse(t.getId(), t.getTransactionCode(), t.getAmount(), t.getDescription(), t.getCreateDate())).toList();
     }
 }
