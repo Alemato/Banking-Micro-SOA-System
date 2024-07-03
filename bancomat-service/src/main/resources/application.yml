@@ -1,14 +1,52 @@
-spring:
-  application:
+spring.application:
     name: BancomatService
+
+management:
+  endpoints.web.exposure.include: health,info
+  info.env.enabled: true
+
+info.application:
+  name: BancomatService
+  description: Bancomat Service for Banking Micro-SOA System
+  version: 0.0.1-SNAPSHOT
 ---
 server:
-  port: 9095
+  port: 9082
 
+cxf:
+  path: /services
+  servlet.init:
+    service-list-path: /info
+  logging:
+    enabled: true
+    pretty-print: true
+    in-mem-threshold: 1024
+    limit: 10000
+---
+eureka:
+  client:
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://${EUREKA_HOST:host.docker.internal}:${EUREKA_SERVER_PORT:8761}/eureka/
+  instance:
+    # Request a lease with a validity of 11 seconds. If until then the
+    # lease has not been renewed, it expires and the Eureka server can evict it.
+    # Default: 90s
+    lease-expiration-duration-in-seconds: 11
+    # The cadence of lease renewal, i.e. how often a heartbeat is sent to Eureka server.
+    # In this case every 5 seconds. Use this only for development / debugging. In production use the ...
+    # Default: 30s
+    lease-renewal-interval-in-seconds: 5
+    prefer-ip-address: true
+    statusPageUrlPath: /services/info
+    healthCheckUrlPath: /actuator/health
+    metadataMap:
+      servletPath: ${cxf.path}
+---
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/bancomat?reWriteBatchedInserts=true
+    url: jdbc:postgresql://host.docker.internal:5432/bancomat?reWriteBatchedInserts=true
     username: postgres
     password: 123456
     name: BankAccount_DS
@@ -35,7 +73,6 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
         jdbc:
           time_zone: UTC
           batch_size: 30
@@ -49,19 +86,3 @@ spring:
         connection:
           provider_disables_autocommit: true
     show-sql: false
-
-cxf:
-  path: /services
-
-management:
-  endpoint:
-    metrics:
-      enabled: true
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-
-#logging:
-#  level:
-#    root: debug
