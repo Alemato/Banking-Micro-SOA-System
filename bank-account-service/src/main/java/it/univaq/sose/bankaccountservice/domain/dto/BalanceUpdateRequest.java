@@ -16,21 +16,21 @@ import java.util.Objects;
 @Getter
 @ToString
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "TransactionRequest", propOrder = {"amount", "userId"})
+@XmlType(name = "TransactionRequest", propOrder = {"amount", "accountId"})
 public class BalanceUpdateRequest {
 
     @XmlElement(required = true)
     private BigDecimal amount;
 
     @XmlElement(required = true)
-    private Long userId;
+    private Long accountId;
 
     public BalanceUpdateRequest() {
     }
 
-    public BalanceUpdateRequest(BigDecimal amount, Long userId) {
+    public BalanceUpdateRequest(BigDecimal amount, Long accountId) {
         this.amount = amount;
-        this.userId = userId;
+        this.accountId = accountId;
     }
 
     @Override
@@ -38,13 +38,13 @@ public class BalanceUpdateRequest {
         if (this == o) return true;
         if (!(o instanceof BalanceUpdateRequest that)) return false;
 
-        return Objects.equals(amount, that.amount) && Objects.equals(userId, that.userId);
+        return Objects.equals(amount, that.amount) && Objects.equals(accountId, that.accountId);
     }
 
     @Override
     public int hashCode() {
         int result = Objects.hashCode(amount);
-        result = 31 * result + Objects.hashCode(userId);
+        result = 31 * result + Objects.hashCode(accountId);
         return result;
     }
 }

@@ -42,5 +42,5 @@ public interface BankAccountService {
 
     @WebResult(name = "GetBankAccountTransactions", targetNamespace = "")
     @WebMethod(action = "urn:GetBankAccountTransactions")
-    List<TransactionResponse> getBankAccountTransactions(@XmlElement(required = true) @WebParam(name = "userId", targetNamespace = "") Long accountId);
+    List<TransactionResponse> getBankAccountTransactions(@XmlElement(required = true) @WebParam(name = "accountId", targetNamespace = "") Long accountId);
 }

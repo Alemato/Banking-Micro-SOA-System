@@ -22,7 +22,7 @@ public class BankAccount extends BaseEntity {
     @Serial
     private static final long serialVersionUID = 6042790902141358942L;
 
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "account_id", nullable = false)
     private Long accountId;
 
     @Column(name = "iban", nullable = false)
