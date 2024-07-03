@@ -24,8 +24,8 @@ COPY --from=build /app/target/*.jar app.jar
 # Expose ports
 EXPOSE 9082
 
-LABEL name="Banking Micro-SOA System - Account Banking" \
-      description="Account Service for Banking Micro-SOA System" \
+LABEL name="Banking Micro-SOA System - Bancomat" \
+      description="Bancomat Service for Banking Micro-SOA System" \
       version="0.0.1" \
       authors="University of L'Aquila"
 
