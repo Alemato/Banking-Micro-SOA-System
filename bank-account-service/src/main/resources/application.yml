@@ -1,5 +1,5 @@
 spring.application:
-    name: BankAccountService
+  name: bank-account-service
 
 management:
   endpoints.web.exposure.include: health,info
