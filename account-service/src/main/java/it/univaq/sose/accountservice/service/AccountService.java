@@ -6,10 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import it.univaq.sose.accountservice.domain.dto.*;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -26,6 +23,8 @@ public interface AccountService {
     })
     @POST
     @Path("/login")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     Response login(@RequestBody(description = "Login",
             required = true,
             content = {@Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = UserCredentials.class)),
@@ -41,6 +40,8 @@ public interface AccountService {
     })
     @POST
     @Path("/banker-account")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     AccountResponse openAccountBanker(@RequestBody(description = "Account to be saved",
             required = true,
             content = {@Content(mediaType = MediaType.APPLICATION_JSON,
@@ -57,6 +58,8 @@ public interface AccountService {
     })
     @POST
     @Path("/admin-account")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     AccountResponse openAccountAdmin(@RequestBody(description = "Account to be saved",
             required = true,
             content = {@Content(mediaType = MediaType.APPLICATION_JSON,
@@ -73,6 +76,8 @@ public interface AccountService {
     })
     @POST
     @Path("/customer-account")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     AccountResponse openAccountCustomer(@RequestBody(description = "Account to be saved",
             required = true,
             content = {@Content(mediaType = MediaType.APPLICATION_JSON,
@@ -93,6 +98,8 @@ public interface AccountService {
     })
     @POST
     @Path("/add-bank-account")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     Response addBankAccount(@RequestBody(description = "Bank Account to add",
             required = true,
             content = {@Content(mediaType = MediaType.APPLICATION_JSON,
@@ -113,5 +120,7 @@ public interface AccountService {
     })
     @GET
     @Path("/{id}")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     Response getAccount(@PathParam(value = "id") long id);
 }

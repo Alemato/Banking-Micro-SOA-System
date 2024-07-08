@@ -1,12 +1,12 @@
 spring.application:
-  name: AccountService
+  name: account-service
 
 management:
   endpoints.web.exposure.include: health,info
   info.env.enabled: true
 
 info.application:
-  name: AccountService
+  name: account-service
   description: Account Service for Banking Micro-SOA System
   version: 0.0.1-SNAPSHOT
 ---
