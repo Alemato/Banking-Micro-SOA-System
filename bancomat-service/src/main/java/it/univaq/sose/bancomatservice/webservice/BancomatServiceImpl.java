@@ -15,7 +15,7 @@ import java.util.List;
 @Service
 @Features(features = "org.apache.cxf.ext.logging.LoggingFeature")
 @WebService(serviceName = "BancomatService", portName = "BancomatPort",
-        targetNamespace = "",
+        targetNamespace = "http://webservice.bancomatservice.sose.univaq.it/",
         endpointInterface = "it.univaq.sose.bancomatservice.webservice.BancomatService")
 public class BancomatServiceImpl implements BancomatService {
 

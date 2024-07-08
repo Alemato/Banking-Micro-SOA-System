@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 @Features(features = "org.apache.cxf.ext.logging.LoggingFeature")
 @WebService(serviceName = "BankAccountService", portName = "BankAccountPort",
-        targetNamespace = "http://service.ws.bankaccount/",
+        targetNamespace = "http://webservice.bankaccountservice.sose.univaq.it/",
         endpointInterface = "it.univaq.sose.bankaccountservice.webservice.BankAccountService")
 public class BankAccountServiceImpl implements BankAccountService {
 
@@ -29,22 +29,13 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public BankAccountResponse createBankAccount(BankAccountRequest bankAccountRequest) {
-
-        BankAccountResponse bankAccountResponse;
-        try {
-            bankAccountResponse = bankAccountManager.createBankAccount(bankAccountRequest);
-        } catch (BankAccountAlradyExistException e) {
-            throw new RuntimeException(e);
-        }
-        log.error("bankAccountResponse: {}", bankAccountResponse);
-        return bankAccountResponse;
+    public BankAccountResponse createBankAccount(BankAccountRequest bankAccountRequest) throws BankAccountAlradyExistException {
+        return bankAccountManager.createBankAccount(bankAccountRequest);
     }
 
     @Override
     public CheckBankAccountTransferResponse checkBankAccountTransfer(CheckBankAccountTransferRequest checkBankAccountTransferRequest) throws InsufficientFundsException, NotFoundException {
         return bankAccountManager.checkBankAccountTransfer(checkBankAccountTransferRequest);
-
     }
 
     @Override
