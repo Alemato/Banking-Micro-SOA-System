@@ -3,6 +3,7 @@ package it.univaq.sose.bankingoperationsserviceprosumer.service;
 import it.univaq.sose.accountservice.api.DefaultApi;
 import it.univaq.sose.accountservice.model.TokenResponse;
 import it.univaq.sose.accountservice.model.UserCredentials;
+import it.univaq.sose.bankaccountservice.webservice.BankAccountAlradyExistException_Exception;
 import it.univaq.sose.bankaccountservice.webservice.BankAccountRequest;
 import it.univaq.sose.bankaccountservice.webservice.BankAccountResponse;
 import it.univaq.sose.bankaccountservice.webservice.BankAccountService;
@@ -28,7 +29,7 @@ public class Test {
 
 
     @GetMapping("/test/{id}")
-    public BankAccountResponse runSoap(@PathVariable Long id) {
+    public BankAccountResponse runSoap(@PathVariable Long id) throws BankAccountAlradyExistException_Exception {
         BankAccountService bankAccountService = bankAccountServiceClient.getBankAccountService();
         BankAccountRequest req = new BankAccountRequest();
         req.setAccountId(id);

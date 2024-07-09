@@ -1,12 +1,13 @@
 package it.univaq.sose.bankingoperationsserviceprosumer.configuration;
 
-import bankaccount.ws.service.BankAccountService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.EurekaClient;
+import it.univaq.sose.bankaccountservice.webservice.BankAccountService;
+import it.univaq.sose.bankaccountservice.webservice.BankAccountService_Service;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -30,14 +31,14 @@ public class ApacheCXFConfig {
     }
 
     @Bean
-    public BankAccountService bankAccountService() throws MalformedURLException {
+    public BankAccountService_Service bankAccountService() throws MalformedURLException {
         InstanceInfo instance = eurekaClient.getNextServerFromEureka("BANK-ACCOUNT-SERVICE", false);
         String serviceUrl = instance.getHomePageUrl() + "services/BankAccountService?wsdl";
-        return new BankAccountService(new URL(serviceUrl));
+        return new BankAccountService_Service(new URL(serviceUrl));
     }
 
     @Bean
-    public it.univaq.sose.bankaccountservice.webservice.BankAccountService bankAccountPort(BankAccountService bankAccountService) {
+    public BankAccountService bankAccountPort(BankAccountService_Service bankAccountService) {
         return bankAccountService.getBankAccountPort();
     }
 }

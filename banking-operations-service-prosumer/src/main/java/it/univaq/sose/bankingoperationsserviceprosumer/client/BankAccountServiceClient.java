@@ -1,8 +1,9 @@
 package it.univaq.sose.bankingoperationsserviceprosumer.client;
 
-import bankaccount.ws.service.BankAccountService;
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.EurekaClient;
+import it.univaq.sose.bankaccountservice.webservice.BankAccountService;
+import it.univaq.sose.bankaccountservice.webservice.BankAccountService_Service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,7 @@ import java.util.Objects;
 @Service
 public class BankAccountServiceClient {
     private final EurekaClient eurekaClient;
-    private BankAccountService bankAccountService;
+    private BankAccountService_Service bankAccountService;
     private URL lastUrlBankAccountService;
 
     public BankAccountServiceClient(EurekaClient eurekaClient) {
@@ -23,13 +24,13 @@ public class BankAccountServiceClient {
         this.lastUrlBankAccountService = null;
     }
 
-    public it.univaq.sose.bankaccountservice.webservice.BankAccountService getBankAccountService() {
+    public BankAccountService getBankAccountService() {
         try {
             InstanceInfo instance = eurekaClient.getNextServerFromEureka("BANK-ACCOUNT-SERVICE", false);
             String eurekaUrl = instance.getHomePageUrl() + "services/BankAccountService?wsdl";
             URL url = new URL(eurekaUrl);
             if (!Objects.equals(lastUrlBankAccountService, url)) {
-                bankAccountService = new BankAccountService(url);
+                bankAccountService = new BankAccountService_Service(url);
                 log.info("New Retrieved BankAccountService URL: {}", url);
                 lastUrlBankAccountService = url;
             }
