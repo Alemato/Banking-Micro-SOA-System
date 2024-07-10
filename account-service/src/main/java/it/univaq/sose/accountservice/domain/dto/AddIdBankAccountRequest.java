@@ -11,15 +11,12 @@ import lombok.Data;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AddIdBankAccountRequest {
     @XmlElement(required = true)
-    private Long idAccount;
-    @XmlElement(required = true)
     private Long idBankAccount;
 
     public AddIdBankAccountRequest() {
     }
 
-    public AddIdBankAccountRequest(Long idAccount, Long idBankAccount) {
-        this.idAccount = idAccount;
+    public AddIdBankAccountRequest(Long idBankAccount) {
         this.idBankAccount = idBankAccount;
     }
 }

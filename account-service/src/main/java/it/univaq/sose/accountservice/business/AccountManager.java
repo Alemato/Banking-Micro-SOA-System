@@ -13,7 +13,7 @@ public interface AccountManager {
 
     AccountResponse createAccountCustomer(OpenBankAccountRequest openBankAccountRequest);
 
-    AccountResponse updateAccountWithIdBankAccount(AddIdBankAccountRequest request) throws NotFoundException;
+    AccountResponse updateAccountWithIdBankAccount(long id, AddIdBankAccountRequest request) throws NotFoundException;
 
     AccountResponse createAccountBanker(OpenBankAccountRequest request);
 

@@ -18,14 +18,20 @@ public class OpenBankAccountRequest {
     private String username;
     @XmlElement(required = true)
     private String password;
+    @XmlElement(required = true)
+    private String email;
+    @XmlElement(required = true)
+    private String phone;
 
     public OpenBankAccountRequest() {
     }
 
-    public OpenBankAccountRequest(String name, String surname, String username, String password) {
+    public OpenBankAccountRequest(String name, String surname, String username, String password, String email, String phone) {
         this.name = name;
         this.surname = surname;
         this.username = username;
         this.password = password;
+        this.email = email;
+        this.phone = phone;
     }
 }

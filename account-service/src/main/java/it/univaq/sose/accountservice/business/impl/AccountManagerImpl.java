@@ -43,18 +43,20 @@ public class AccountManagerImpl implements AccountManager {
         account.setSurname(request.getSurname());
         account.setUsername(request.getUsername());
         account.setPassword(passwordService.hashPassword(request.getPassword()));
+        account.setEmail(request.getEmail());
         account.setRole(Role.CUSTOMER);
+        account.setPhone(request.getPhone());
         account = accountRepository.save(account);
-        return new AccountResponse(account.getId(), account.getName(), account.getSurname(), account.getUsername(), account.getRole(), account.getIdBankAccount(), account.getUpdateDate(), account.getCreateDate());
+        return new AccountResponse(account.getId(), account.getName(), account.getSurname(), account.getUsername(), account.getEmail(), account.getPhone(), account.getRole(), account.getIdBankAccount(), account.getUpdateDate(), account.getCreateDate());
     }
 
     @Override
     @Transactional
-    public AccountResponse updateAccountWithIdBankAccount(AddIdBankAccountRequest request) throws NotFoundException {
-        Account account = accountRepository.findById(request.getIdAccount()).orElseThrow(() -> new NotFoundException("Account not found"));
+    public AccountResponse updateAccountWithIdBankAccount(long id, AddIdBankAccountRequest request) throws NotFoundException {
+        Account account = accountRepository.findById(id).orElseThrow(() -> new NotFoundException("Account not found"));
         account.setIdBankAccount(request.getIdBankAccount());
         account = accountRepository.save(account);
-        return new AccountResponse(account.getId(), account.getName(), account.getSurname(), account.getUsername(), account.getRole(), account.getIdBankAccount(), account.getUpdateDate(), account.getCreateDate());
+        return new AccountResponse(account.getId(), account.getName(), account.getSurname(), account.getUsername(), account.getEmail(), account.getPhone(), account.getRole(), account.getIdBankAccount(), account.getUpdateDate(), account.getCreateDate());
     }
 
     @Override
@@ -66,8 +68,10 @@ public class AccountManagerImpl implements AccountManager {
         account.setUsername(request.getUsername());
         account.setPassword(passwordService.hashPassword(request.getPassword()));
         account.setRole(Role.BANKER);
+        account.setEmail(request.getEmail());
+        account.setPhone(request.getPhone());
         account = accountRepository.save(account);
-        return new AccountResponse(account.getId(), account.getName(), account.getSurname(), account.getUsername(), account.getRole(), account.getIdBankAccount(), account.getUpdateDate(), account.getCreateDate());
+        return new AccountResponse(account.getId(), account.getName(), account.getSurname(), account.getUsername(), account.getEmail(), account.getPhone(), account.getRole(), account.getIdBankAccount(), account.getUpdateDate(), account.getCreateDate());
     }
 
     @Override
@@ -78,15 +82,17 @@ public class AccountManagerImpl implements AccountManager {
         account.setSurname(request.getSurname());
         account.setUsername(request.getUsername());
         account.setPassword(passwordService.hashPassword(request.getPassword()));
+        account.setEmail(request.getEmail());
+        account.setPhone(request.getPhone());
         account.setRole(Role.ADMIN);
         account = accountRepository.save(account);
-        return new AccountResponse(account.getId(), account.getName(), account.getSurname(), account.getUsername(), account.getRole(), account.getIdBankAccount(), account.getUpdateDate(), account.getCreateDate());
+        return new AccountResponse(account.getId(), account.getName(), account.getSurname(), account.getUsername(), account.getEmail(), account.getPhone(), account.getRole(), account.getIdBankAccount(), account.getUpdateDate(), account.getCreateDate());
     }
 
     @Override
     @Transactional(readOnly = true)
     public AccountResponse getAccountByIdAccount(Long idAccount) throws NotFoundException {
         Account account = accountRepository.findById(idAccount).orElseThrow(() -> new NotFoundException("Account not found"));
-        return new AccountResponse(account.getId(), account.getName(), account.getSurname(), account.getUsername(), account.getRole(), account.getIdBankAccount(), account.getUpdateDate(), account.getCreateDate());
+        return new AccountResponse(account.getId(), account.getName(), account.getSurname(), account.getUsername(), account.getEmail(), account.getPhone(), account.getRole(), account.getIdBankAccount(), account.getUpdateDate(), account.getCreateDate());
     }
 }

@@ -29,6 +29,12 @@ public class Account extends BaseEntity {
     @Column(name = "password", nullable = false, length = 500)
     private String password;
 
+    @Column(name = "email", nullable = false)
+    private String email;
+
+    @Column(name = "phone", nullable = false)
+    private String phone;
+
     @Enumerated
     @Column(name = "role", nullable = false)
     private Role role;
