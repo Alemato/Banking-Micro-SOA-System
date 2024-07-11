@@ -4,21 +4,18 @@ import it.univaq.sose.accountservice.api.DefaultApi;
 import it.univaq.sose.accountservice.model.AccountResponse;
 import it.univaq.sose.accountservice.model.AddIdBankAccountRequest;
 import it.univaq.sose.accountservice.model.OpenBankAccountRequest;
-import it.univaq.sose.bankaccountservice.webservice.BankAccountAlradyExistException_Exception;
-import it.univaq.sose.bankaccountservice.webservice.BankAccountRequest;
-import it.univaq.sose.bankaccountservice.webservice.BankAccountResponse;
-import it.univaq.sose.bankaccountservice.webservice.BankAccountService;
+import it.univaq.sose.bankaccountservice.webservice.*;
 import it.univaq.sose.bankingoperationsserviceprosumer.client.AccountServiceClient;
 import it.univaq.sose.bankingoperationsserviceprosumer.client.BankAccountServiceClient;
-import it.univaq.sose.bankingoperationsserviceprosumer.domain.ErrorResponse;
-import it.univaq.sose.bankingoperationsserviceprosumer.domain.OpenAccountRequest;
-import it.univaq.sose.bankingoperationsserviceprosumer.domain.OpenAccountResponse;
+import it.univaq.sose.bankingoperationsserviceprosumer.domain.*;
 import it.univaq.sose.bankingoperationsserviceprosumer.util.BankingOperationsUtils;
 import jakarta.ws.rs.container.AsyncResponse;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Slf4j
@@ -71,6 +68,67 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
             }
         }).start();
     }
+
+    @Override
+    public void getReportBankAccountFromIdAccount(long idAccount, AsyncResponse asyncResponse) {
+        new Thread(() -> {
+
+            try {
+                Thread.sleep(1000);
+                AccountResponse account = getAccountDetailsByAccountId(idAccount);
+                log.info("Account-Service Response for Bank Account Details: {}", account);
+
+                BankAccountService bankAccountClient = bankAccountService.getBankAccountService();
+                BankAccountResponse bankAccountResponse = bankAccountClient.getBankAccountDetails(account.getId());
+                log.info("Bank-Account-Service Response for Bank Account Details: {}", bankAccountResponse);
+
+                bankAccountClient = bankAccountService.getBankAccountService();
+                List<TransactionResponse> transactionResponseList = bankAccountClient.getBankAccountTransactions(account.getId());
+                log.info("Bank-Account-Service Response for Bank Account Transactions: {}", transactionResponseList);
+
+                ReportBankAccountResponse report = getReportBankAccountResponse(account, bankAccountResponse, transactionResponseList);
+
+                Response response = Response.ok().entity(report).build();
+                asyncResponse.resume(response);
+            } catch (InterruptedException | AccountServiceException | NotFoundException_Exception e) {
+                Response response = Response.serverError().entity(new ErrorResponse(e.getMessage())).build();
+                asyncResponse.resume(response);
+                /* Clean up whatever needs to be handled before interrupting  */
+                Thread.currentThread().interrupt();
+            }
+        }).start();
+    }
+
+    private static ReportBankAccountResponse getReportBankAccountResponse(AccountResponse account, BankAccountResponse bankAccountResponse, List<TransactionResponse> transactionResponseList) {
+        AccountDetails accountDetails = new AccountDetails();
+        accountDetails.setId(account.getId());
+        accountDetails.setName(account.getName());
+        accountDetails.setSurname(account.getSurname());
+        accountDetails.setUsername(account.getUsername());
+        accountDetails.setEmail(account.getEmail());
+        accountDetails.setPhone(account.getPhone());
+
+        BankAccountDetails bankAccountDetails = new BankAccountDetails();
+        bankAccountDetails.setIban(bankAccountResponse.getIban());
+        bankAccountDetails.setBalance(bankAccountResponse.getBalance());
+
+        ReportBankAccountResponse report = new ReportBankAccountResponse();
+        report.setAccount(accountDetails);
+        report.setBankAccount(bankAccountDetails);
+        report.setTransactions(transactionResponseList);
+        return report;
+    }
+
+    private AccountResponse getAccountDetailsByAccountId(long idAccount) throws AccountServiceException {
+        try {
+            DefaultApi client = accountServiceClient.getAccountService();
+            return client.getAccount1(idAccount);
+        } catch (Exception e) {
+            throw new AccountServiceException("Error for Account Service (Get Account)");
+        }
+
+    }
+
 
     private OpenAccountResponse getOpenAccountResponse(OpenAccountRequest openAccountRequest, long idAccount) throws BankAccountAlradyExistException_Exception, AccountServiceException {
         BankAccountRequest bankAccountRequest = new BankAccountRequest();
