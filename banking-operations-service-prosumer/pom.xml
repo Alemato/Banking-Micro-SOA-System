@@ -56,6 +56,13 @@
             <version>${cxf.version}</version>
         </dependency>
 
+        <!-- Dipendenza per i log -->
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-features-logging</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+
         <!-- Dipendenza per Jackson JSON Provider -->
         <dependency>
             <groupId>com.fasterxml.jackson.jakarta.rs</groupId>

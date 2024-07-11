@@ -57,7 +57,7 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
 
                 OpenAccountResponse openAccountResponse = getOpenAccountResponse(openAccountRequest, idAccount);
 
-                Response response = Response.ok().entity(openAccountResponse).build();
+                Response response = Response.status(Response.Status.CREATED).entity(openAccountResponse).build();
                 asyncResponse.resume(response);
             } catch (InterruptedException | UrlLocationMalformedException | BankAccountAlradyExistException_Exception |
                      AccountServiceException e) {

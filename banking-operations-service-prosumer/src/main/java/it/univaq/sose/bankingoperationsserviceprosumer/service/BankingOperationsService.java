@@ -1,13 +1,13 @@
 package it.univaq.sose.bankingoperationsserviceprosumer.service;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import it.univaq.sose.bankingoperationsserviceprosumer.domain.ErrorResponse;
 import it.univaq.sose.bankingoperationsserviceprosumer.domain.OpenAccountRequest;
+import it.univaq.sose.bankingoperationsserviceprosumer.domain.OpenAccountResponse;
 import it.univaq.sose.bankingoperationsserviceprosumer.domain.ReportBankAccountResponse;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.container.AsyncResponse;
@@ -23,7 +23,10 @@ public interface BankingOperationsService {
                     @ApiResponse(
                             responseCode = "201",
                             description = "Open Account Successful",
-                            headers = @Header(name = "Location", description = "URL of the created resource")),
+                            content = {
+                                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = OpenAccountResponse.class)),
+                                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = OpenAccountResponse.class))
+                            }),
                     @ApiResponse(
                             responseCode = "400",
                             description = "Bad Request",
