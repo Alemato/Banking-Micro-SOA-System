@@ -19,6 +19,7 @@
     <module>bancomat-service</module>
     <module>banking-operations-service-prosumer</module>
     <module>transaction-service-prosumer</module>
+    <module>loan-service-prosumer</module>
     <!-- Aggiungi altri moduli qui -->
   </modules>
 
