@@ -16,7 +16,7 @@ import java.util.Objects;
 @ToString
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TransferRequest", propOrder = {"senderAccountId", "receiverAccountId", "amount", "description"})
-public class TransactionRequest {
+public class TransferRequest {
 
     @XmlElement(required = true)
     private Long senderAccountId;
@@ -30,10 +30,10 @@ public class TransactionRequest {
     @XmlElement(required = true)
     private String description;
 
-    public TransactionRequest() {
+    public TransferRequest() {
     }
 
-    public TransactionRequest(Long senderAccountId, Long receiverAccountId, BigDecimal amount, String description) {
+    public TransferRequest(Long senderAccountId, Long receiverAccountId, BigDecimal amount, String description) {
         this.senderAccountId = senderAccountId;
         this.receiverAccountId = receiverAccountId;
         this.amount = amount;
@@ -45,7 +45,7 @@ public class TransactionRequest {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        TransactionRequest that = (TransactionRequest) o;
+        TransferRequest that = (TransferRequest) o;
         return Objects.equals(senderAccountId, that.senderAccountId) && Objects.equals(receiverAccountId, that.receiverAccountId) && Objects.equals(amount, that.amount) && Objects.equals(description, that.description);
     }
 

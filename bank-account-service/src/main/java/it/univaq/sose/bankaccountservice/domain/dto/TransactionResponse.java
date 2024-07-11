@@ -41,10 +41,10 @@ public class TransactionResponse {
     @XmlElement(required = true)
     private LocalDateTime date;
 
-    @XmlElement(required = true)
+    @XmlElement()
     private BankAccountResponse bankAccountSender;
 
-    @XmlElement(required = true)
+    @XmlElement()
     private BankAccountResponse bankAccountReceiver;
 
     public TransactionResponse() {

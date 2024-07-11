@@ -35,7 +35,7 @@ public interface BankAccountService {
             targetNamespace = "http://webservice.bankaccountservice.sose.univaq.it/")
     @WebMethod(action = "urn:ExecuteTransfer")
     TransactionResponse executeTransfer(@XmlElement(required = true) @WebParam(name = "transactionRequest",
-            targetNamespace = "http://webservice.bankaccountservice.sose.univaq.it/") TransactionRequest transactionRequest) throws InsufficientFundsException, NotFoundException;
+            targetNamespace = "http://webservice.bankaccountservice.sose.univaq.it/") TransferRequest transferRequest) throws InsufficientFundsException, NotFoundException;
 
     @WebResult(name = "AddMoneyResponse",
             targetNamespace = "http://webservice.bankaccountservice.sose.univaq.it/")

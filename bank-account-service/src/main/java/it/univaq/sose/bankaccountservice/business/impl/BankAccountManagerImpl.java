@@ -99,17 +99,17 @@ public class BankAccountManagerImpl implements BankAccountManager {
 
     @Override
     @Transactional
-    public TransactionResponse executeTransaction(TransactionRequest transactionRequest) throws NotFoundException, InsufficientFundsException {
-        BankAccount senderBankAccount = bankAccountRepository.findByAccountId(transactionRequest.getSenderAccountId())
-                .orElseThrow(() -> new NotFoundException("Bank Account with Account ID: " + transactionRequest.getSenderAccountId() + " not found."));
+    public TransactionResponse executeTransaction(TransferRequest transferRequest) throws NotFoundException, InsufficientFundsException {
+        BankAccount senderBankAccount = bankAccountRepository.findByAccountId(transferRequest.getSenderAccountId())
+                .orElseThrow(() -> new NotFoundException("Bank Account with Account ID: " + transferRequest.getSenderAccountId() + " not found."));
 
-        BigDecimal amount = transactionRequest.getAmount();
+        BigDecimal amount = transferRequest.getAmount();
         if (senderBankAccount.getBalance().compareTo(amount) < 0) {
             throw new InsufficientFundsException("Insufficient funds");
         }
 
-        BankAccount receiverBankAccount = bankAccountRepository.findByAccountId(transactionRequest.getReceiverAccountId())
-                .orElseThrow(() -> new NotFoundException("Bank Account with Account ID: " + transactionRequest.getReceiverAccountId() + " not found."));
+        BankAccount receiverBankAccount = bankAccountRepository.findByAccountId(transferRequest.getReceiverAccountId())
+                .orElseThrow(() -> new NotFoundException("Bank Account with Account ID: " + transferRequest.getReceiverAccountId() + " not found."));
 
         senderBankAccount.setBalance(senderBankAccount.getBalance().subtract(amount));
         receiverBankAccount.setBalance(receiverBankAccount.getBalance().add(amount));
@@ -117,7 +117,7 @@ public class BankAccountManagerImpl implements BankAccountManager {
         bankAccountRepository.save(senderBankAccount);
         bankAccountRepository.save(receiverBankAccount);
 
-        Transaction transaction = saveTransaction(senderBankAccount, receiverBankAccount, transactionRequest.getAmount(), TransactionType.TRANSFER, transactionRequest.getDescription());
+        Transaction transaction = saveTransaction(senderBankAccount, receiverBankAccount, transferRequest.getAmount(), TransactionType.TRANSFER, transferRequest.getDescription());
         BankAccountResponse senderBankAccountResponse = new BankAccountResponse(senderBankAccount.getId(), senderBankAccount.getAccountId(), senderBankAccount.getIban(), senderBankAccount.getBalance());
         BankAccountResponse receiverBankAccountResponse = new BankAccountResponse(receiverBankAccount.getId(), receiverBankAccount.getAccountId(), receiverBankAccount.getIban(), receiverBankAccount.getBalance());
         return new TransactionResponse(transaction.getId(), transaction.getTransactionCode(), transaction.getAmount().negate(), transaction.getDescription(), transaction.getTransactionType(), transaction.getCreateDate(), senderBankAccountResponse, receiverBankAccountResponse);

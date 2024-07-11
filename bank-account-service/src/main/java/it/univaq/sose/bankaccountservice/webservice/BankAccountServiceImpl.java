@@ -39,8 +39,8 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public TransactionResponse executeTransfer(TransactionRequest transactionRequest) throws InsufficientFundsException, NotFoundException {
-        return bankAccountManager.executeTransaction(transactionRequest);
+    public TransactionResponse executeTransfer(TransferRequest transferRequest) throws InsufficientFundsException, NotFoundException {
+        return bankAccountManager.executeTransaction(transferRequest);
     }
 
     @Override

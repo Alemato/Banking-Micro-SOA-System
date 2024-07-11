@@ -4,11 +4,15 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
 
+@Setter
+@Getter
 @ToString
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BankAccountRequest", propOrder = {"accountId", "balance"})
@@ -25,22 +29,6 @@ public class BankAccountRequest {
 
     public BankAccountRequest(@NonNull Long accountId, @NonNull BigDecimal balance) {
         this.accountId = accountId;
-        this.balance = balance;
-    }
-
-    public Long getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(Long accountId) {
-        this.accountId = accountId;
-    }
-
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
-    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 

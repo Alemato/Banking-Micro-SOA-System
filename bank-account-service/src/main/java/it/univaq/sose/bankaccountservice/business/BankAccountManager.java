@@ -18,7 +18,7 @@ public interface BankAccountManager {
 
     TransactionResponse bancomatPay(BalanceUpdateRequest balanceUpdateRequest) throws InsufficientFundsException, NotFoundException;
 
-    TransactionResponse executeTransaction(TransactionRequest transactionRequest) throws NotFoundException, InsufficientFundsException;
+    TransactionResponse executeTransaction(TransferRequest transferRequest) throws NotFoundException, InsufficientFundsException;
 
     List<TransactionResponse> getBankAccountTransactions(Long accountId);
 
