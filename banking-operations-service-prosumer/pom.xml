@@ -170,10 +170,8 @@
                             <sourceRoot>${project.build.directory}/generated-sources/cxf</sourceRoot>
                             <wsdlOptions>
                                 <wsdlOption>
-                                    <wsdl>http://localhost:9081/services/BankAccountService?wsdl</wsdl>
-                                    <extraargs>
-                                        <extraarg>-autoNameResolution</extraarg>
-                                    </extraargs>
+                                    <!--<wsdl>http://localhost:9081/services/BankAccountService?wsdl</wsdl>-->
+                                    <wsdl>${basedir}/src/main/resources/BankAccountService.wsdl</wsdl>
                                 </wsdlOption>
                             </wsdlOptions>
                         </configuration>
@@ -183,47 +181,47 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--			<plugin>-->
-            <!--				<groupId>org.apache.cxf</groupId>-->
-            <!--				<artifactId>cxf-wadl2java-plugin</artifactId>-->
-            <!--				<version>${cxf.version}</version>-->
-            <!--				<executions>-->
-            <!--					<execution>-->
-            <!--						<id>generate-sources</id>-->
-            <!--						<phase>generate-sources</phase>-->
-            <!--						<configuration>-->
-            <!--							<sourceRoot>${project.build.directory}/generated-sources/cxf</sourceRoot>-->
-            <!--							<wadlOptions>-->
-            <!--								<wadlOption>-->
-            <!--&lt;!&ndash;									<wadl>${basedir}/src/main/resources/account_service.wadl</wadl>&ndash;&gt;-->
-            <!--									<wadl>${basedir}/src/main/resources/test.wadl</wadl>-->
-            <!--								</wadlOption>-->
-            <!--							</wadlOptions>-->
-            <!--						</configuration>-->
-            <!--						<goals>-->
-            <!--							<goal>wadl2java</goal>-->
-            <!--						</goals>-->
-            <!--					</execution>-->
-            <!--				</executions>-->
-            <!--			</plugin>-->
+            <!--            <plugin>
+                            <groupId>org.apache.cxf</groupId>
+                            <artifactId>cxf-wadl2java-plugin</artifactId>
+                            <version>${cxf.version}</version>
+                            <executions>
+                                <execution>
+                                    <id>generate-sources</id>
+                                    <phase>generate-sources</phase>
+                                    <configuration>
+                                        <sourceRoot>${project.build.directory}/generated-sources/cxf</sourceRoot>
+                                        <wadlOptions>
+                                            <wadlOption>
+                                                &lt;!&ndash;<wadl>${basedir}/src/main/resources/account_service.wadl</wadl>&ndash;&gt;
+                                                <wadl>${basedir}/src/main/resources/test.wadl</wadl>
+                                            </wadlOption>
+                                        </wadlOptions>
+                                    </configuration>
+                                    <goals>
+                                        <goal>wadl2java</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>-->
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>7.7.0</version> <!-- Assicurati di usare l'ultima versione disponibile -->
+                <version>7.7.0</version>
                 <executions>
                     <execution>
                         <id>generate-sources</id>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <inputSpec>http://localhost:9080/services/openapi.yaml
-                            </inputSpec> <!-- Path al file OpenAPI -->
+                            <!--<inputSpec>http://localhost:9080/services/openapi.yaml</inputSpec>-->
+                            <inputSpec>${basedir}/src/main/resources/AccountService_openapi.yaml</inputSpec>
                             <generatorName>jaxrs-cxf</generatorName>
-                            <!-- Generatore per Apache CXF -->
                             <output>${project.build.directory}/generated-sources/openapi</output>
                             <packageName>it.univaq.sose.accountservice</packageName>
                             <apiPackage>it.univaq.sose.accountservice.api</apiPackage>
                             <modelPackage>it.univaq.sose.accountservice.model</modelPackage>
-                            <!--							<configHelp>true</configHelp>-->
+                            <invokerPackage>it.univaq.sose.accountservice.invoker</invokerPackage>
+                            <!--<configHelp>true</configHelp>-->
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
                             <configOptions>
@@ -233,6 +231,26 @@
                         <goals>
                             <goal>generate</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/cxf</source>
+                                <source>${project.build.directory}/generated-sources/openapi/src/gen/java</source>
+                            </sources>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

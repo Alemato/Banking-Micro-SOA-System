@@ -1,4 +1,4 @@
-package it.univaq.sose.accountservice.domain.dto;
+package it.univaq.sose.bankingoperationsserviceprosumer.domain;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -7,16 +7,16 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.Data;
 
 @Data
-@XmlRootElement(name = "DetailsAccountRequest")
+@XmlRootElement(name = "ErrorResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DetailsAccountRequest {
+public class ErrorResponse {
     @XmlElement(required = true)
-    private Long idAccount;
+    private String error;
 
-    public DetailsAccountRequest() {
+    public ErrorResponse() {
     }
 
-    public DetailsAccountRequest(Long idAccount) {
-        this.idAccount = idAccount;
+    public ErrorResponse(String error) {
+        this.error = error;
     }
 }

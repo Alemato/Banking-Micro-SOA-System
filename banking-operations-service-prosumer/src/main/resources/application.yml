@@ -12,11 +12,17 @@ info.application:
 ---
 server:
   port: 9083
+  tomcat:
+    max-connections: 10000
+    accept-count: 100
 
 cxf:
   path: /services
   servlet.init:
     service-list-path: /info
+  jaxrs:
+    component-scan: true
+    classes-scan-packages: it.univaq.sose.bankingoperationsserviceprosumer.configuration, it.univaq.sose.bankingoperationsserviceprosumer.service
   logging:
     enabled: true
     pretty-print: true

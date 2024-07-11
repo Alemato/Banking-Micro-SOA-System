@@ -4,6 +4,7 @@ import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.EurekaClient;
 import it.univaq.sose.accountservice.api.DefaultApi;
+import jakarta.ws.rs.core.MediaType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.cxf.jaxrs.client.Client;
 import org.apache.cxf.jaxrs.client.ClientConfiguration;
@@ -53,7 +54,9 @@ public class AccountServiceClient {
     public WebClient getWebClientAccountService() {
         DefaultApi api = JAXRSClientFactory.create(getUrlServiceFromEureka(), DefaultApi.class, List.of(jacksonProvider));
         Client client = WebClient.client(api);
-        return WebClient.fromClient(client);
+        WebClient webClient = WebClient.fromClient(client);
+        webClient.type(MediaType.APPLICATION_JSON);
+        return webClient;
     }
 
     public ClientConfiguration getClientConfigurationAccountService() {
