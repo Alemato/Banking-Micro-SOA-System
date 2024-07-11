@@ -47,6 +47,10 @@ public class BankAccountManagerImpl implements BankAccountManager {
         bankAccount.setIban(generateNewIban());
         bankAccount.setBalance(bankAccountRequest.getBalance());
         bankAccount = bankAccountRepository.save(bankAccount);
+
+        if (bankAccountRequest.getBalance().compareTo(BigDecimal.ZERO) > 0) {
+            saveTransaction(null, bankAccount, bankAccountRequest.getBalance(), TransactionType.DEPOSIT, "Bank account opening.");
+        }
         return new BankAccountResponse(bankAccount.getId(), bankAccount.getAccountId(), bankAccount.getIban(), bankAccount.getBalance());
     }
 
