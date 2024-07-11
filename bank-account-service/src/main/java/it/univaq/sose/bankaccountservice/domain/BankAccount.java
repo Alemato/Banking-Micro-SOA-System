@@ -17,6 +17,8 @@ import java.util.Set;
 @ToString
 @Entity
 @Table(name = "bank_account")
+@SequenceGenerator(name = "bank_account_seq", sequenceName = "bank_account_sequence", allocationSize = 10)
+//Pre-Alloca solo 10 id
 public class BankAccount extends BaseEntity {
 
     @Serial

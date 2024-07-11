@@ -15,6 +15,8 @@ import java.util.Objects;
 @ToString
 @Entity
 @Table(name = "transaction")
+@SequenceGenerator(name = "transaction_seq", sequenceName = "transaction_sequence", allocationSize = 10)
+//Pre-Alloca solo 10 id
 public class Transaction extends BaseEntity {
     @Serial
     private static final long serialVersionUID = 4023048747929019500L;

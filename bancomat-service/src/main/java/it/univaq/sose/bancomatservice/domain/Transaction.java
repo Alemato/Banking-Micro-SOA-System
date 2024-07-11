@@ -13,6 +13,8 @@ import java.util.Objects;
 @Setter
 @Entity
 @Table(name = "transaction")
+@SequenceGenerator(name = "transaction_seq", sequenceName = "transaction_sequence", allocationSize = 10)
+//Pre-Alloca solo 10 id
 public class Transaction extends BaseEntity {
     @Serial
     private static final long serialVersionUID = 2103912109939206498L;

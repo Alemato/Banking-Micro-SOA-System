@@ -38,7 +38,7 @@ public interface AccountService {
             @ApiResponse(
                     responseCode = "201",
                     description = "Save Banker Bank Account",
-                    headers = @Header(name = "Location", description = "URL of the created resource")),
+                    headers = @Header(name = "Location", description = "URL of the created resource", schema = @Schema(type = "string"))),
             @ApiResponse(responseCode = "500", description = "Account whit this Id not found", content = {
                     @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = ErrorResponse.class)),
                     @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = ErrorResponse.class))})
@@ -46,6 +46,7 @@ public interface AccountService {
     @POST
     @Path("/banker-account")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     Response openAccountBanker(@RequestBody(description = "Account to be saved",
             required = true,
             content = {@Content(mediaType = MediaType.APPLICATION_JSON,
@@ -59,7 +60,7 @@ public interface AccountService {
             @ApiResponse(
                     responseCode = "201",
                     description = "Save Admin Bank Account",
-                    headers = @Header(name = "Location", description = "URL of the created resource")),
+                    headers = @Header(name = "Location", description = "URL of the created resource", schema = @Schema(type = "string"))),
             @ApiResponse(responseCode = "500", description = "Account whit this Id not found", content = {
                     @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = ErrorResponse.class)),
                     @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = ErrorResponse.class))})
@@ -67,6 +68,7 @@ public interface AccountService {
     @POST
     @Path("/admin-account")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     Response openAccountAdmin(@RequestBody(description = "Account to be saved",
             required = true,
             content = {@Content(mediaType = MediaType.APPLICATION_JSON,
@@ -80,7 +82,7 @@ public interface AccountService {
             @ApiResponse(
                     responseCode = "201",
                     description = "Save Customer Bank Account",
-                    headers = @Header(name = "Location", description = "URL of the created resource")),
+                    headers = @Header(name = "Location", description = "URL of the created resource", schema = @Schema(type = "string"))),
             @ApiResponse(responseCode = "500", description = "Account whit this Id not found", content = {
                     @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = ErrorResponse.class)),
                     @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = ErrorResponse.class))})
@@ -88,6 +90,7 @@ public interface AccountService {
     @POST
     @Path("/customer-account")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     Response openAccountCustomer(@RequestBody(description = "Account to be saved",
             required = true,
             content = {@Content(mediaType = MediaType.APPLICATION_JSON,
@@ -109,6 +112,7 @@ public interface AccountService {
     @PUT
     @Path("/{id}")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     Response addBankAccount(@PathParam(value = "id") long id, @RequestBody(description = "Bank Account to add",
             required = true,
             content = {@Content(mediaType = MediaType.APPLICATION_JSON,
