@@ -1,5 +1,5 @@
 spring.application:
-    name: BancomatService
+  name: bancomat-service
 
 management:
   endpoints.web.exposure.include: health,info

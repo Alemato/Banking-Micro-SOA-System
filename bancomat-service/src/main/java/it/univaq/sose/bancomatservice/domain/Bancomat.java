@@ -35,6 +35,9 @@ public class Bancomat extends BaseEntity {
     @Column(name = "account_id", nullable = false)
     private Long accountId;
 
+    @Column(name = "bankAccount_id", nullable = false)
+    private Long bankAccountId;
+
     @OneToMany(mappedBy = "bancomat", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Transaction> transactions = new LinkedHashSet<>();
 

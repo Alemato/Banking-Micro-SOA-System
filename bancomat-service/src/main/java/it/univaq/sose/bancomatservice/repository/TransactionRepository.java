@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
     List<Transaction> findDistinctByBancomat_AccountIdOrderByCreateDateDesc(Long accountId);
+
 }

@@ -1,6 +1,7 @@
 package it.univaq.sose.bancomatservice.webservice;
 
 import it.univaq.sose.bancomatservice.business.BancomatManager;
+import it.univaq.sose.bancomatservice.domain.dto.BancomatRequest;
 import it.univaq.sose.bancomatservice.domain.dto.BancomatResponse;
 import it.univaq.sose.bancomatservice.domain.dto.TransactionRequest;
 import it.univaq.sose.bancomatservice.domain.dto.TransactionResponse;
@@ -31,8 +32,8 @@ public class BancomatServiceImpl implements BancomatService {
     }
 
     @Override
-    public BancomatResponse createBancomat(Long accountId) throws BancomatAlradyExistingException {
-        return bancomatManager.createBancomat(accountId);
+    public BancomatResponse createBancomat(BancomatRequest bancomatRequest) throws BancomatAlradyExistingException {
+        return bancomatManager.createBancomat(bancomatRequest);
     }
 
     @Override

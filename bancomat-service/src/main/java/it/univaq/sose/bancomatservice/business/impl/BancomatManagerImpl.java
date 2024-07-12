@@ -3,6 +3,7 @@ package it.univaq.sose.bancomatservice.business.impl;
 import it.univaq.sose.bancomatservice.business.BancomatManager;
 import it.univaq.sose.bancomatservice.domain.Bancomat;
 import it.univaq.sose.bancomatservice.domain.Transaction;
+import it.univaq.sose.bancomatservice.domain.dto.BancomatRequest;
 import it.univaq.sose.bancomatservice.domain.dto.BancomatResponse;
 import it.univaq.sose.bancomatservice.domain.dto.TransactionRequest;
 import it.univaq.sose.bancomatservice.domain.dto.TransactionResponse;
@@ -40,8 +41,8 @@ public class BancomatManagerImpl implements BancomatManager {
 
     @Override
     @Transactional
-    public BancomatResponse createBancomat(Long accountId) throws BancomatAlradyExistingException {
-        if (bancomatRepository.existsByAccountIdAndExpiryDateAfter(accountId, YearMonth.now())) {
+    public BancomatResponse createBancomat(BancomatRequest bancomatRequest) throws BancomatAlradyExistingException {
+        if (bancomatRepository.existsByAccountIdAndExpiryDateAfter(bancomatRequest.getAccountId(), YearMonth.now())) {
             throw new BancomatAlradyExistingException("A non-expired Bancomat already exists");
         }
 
@@ -60,7 +61,8 @@ public class BancomatManagerImpl implements BancomatManager {
         bancomat.setNumber(number);
         bancomat.setCvv(cvv);
         bancomat.setExpiryDate(expiryDate);
-        bancomat.setAccountId(accountId);
+        bancomat.setAccountId(bancomatRequest.getAccountId());
+        bancomat.setBankAccountId(bancomatRequest.getBankAccountId());
 
         bancomat = bancomatRepository.save(bancomat);
 
