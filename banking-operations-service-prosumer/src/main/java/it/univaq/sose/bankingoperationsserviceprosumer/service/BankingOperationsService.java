@@ -5,10 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import it.univaq.sose.bankingoperationsserviceprosumer.domain.ErrorResponse;
-import it.univaq.sose.bankingoperationsserviceprosumer.domain.OpenAccountRequest;
-import it.univaq.sose.bankingoperationsserviceprosumer.domain.OpenAccountResponse;
-import it.univaq.sose.bankingoperationsserviceprosumer.domain.ReportBankAccountResponse;
+import it.univaq.sose.bankingoperationsserviceprosumer.domain.*;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.container.AsyncResponse;
 import jakarta.ws.rs.container.Suspended;
@@ -105,4 +102,90 @@ public interface BankingOperationsService {
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     void getReportBankAccountFromIdAccount(@PathParam("idAccount") long idAccount, @Suspended AsyncResponse asyncResponse);
+
+    @Operation(
+            operationId = "requestAtmCard",
+            description = "requestAtmCard",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Requesting an ATM card",
+                            content = {
+                                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = CreateBancomatResponse.class)),
+                                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = CreateBancomatResponse.class))
+                            }
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Account whit this Id not found",
+                            content = {
+                                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = ErrorResponse.class)),
+                                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = ErrorResponse.class))
+                            }
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = {
+                                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = ErrorResponse.class)),
+                                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = ErrorResponse.class))
+                            }
+                    ),
+                    @ApiResponse(
+                            responseCode = "503",
+                            description = "Service Unavailable",
+                            content = {
+                                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = ErrorResponse.class)),
+                                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = ErrorResponse.class))
+                            }
+                    ),
+            })
+    @POST
+    @Path("/atm-card/{accountId}")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    void requestAtmCard(@Suspended AsyncResponse asyncResponse, @PathParam("accountId") long accountId);
+
+    @Operation(
+            operationId = "getAtmCard",
+            description = "getAtmCard details",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "ATM card details",
+                            content = {
+                                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = CreateBancomatResponse.class)),
+                                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = CreateBancomatResponse.class))
+                            }
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Account whit this Id not found",
+                            content = {
+                                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = ErrorResponse.class)),
+                                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = ErrorResponse.class))
+                            }
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error",
+                            content = {
+                                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = ErrorResponse.class)),
+                                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = ErrorResponse.class))
+                            }
+                    ),
+                    @ApiResponse(
+                            responseCode = "503",
+                            description = "Service Unavailable",
+                            content = {
+                                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = ErrorResponse.class)),
+                                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = ErrorResponse.class))
+                            }
+                    )
+            })
+    @GET
+    @Path("/atm-card/{accountId}")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    void getAtmCard(@Suspended AsyncResponse asyncResponse, @PathParam("accountId") long accountId);
 }

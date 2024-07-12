@@ -181,6 +181,11 @@
                                     <!--<wsdl>${basedir}/src/main/resources/BankAccountService.wsdl</wsdl>-->
                                     <wsdl>${basedir}/../wsdl/BankAccountService.wsdl</wsdl>
                                 </wsdlOption>
+                                <wsdlOption>
+                                    <!--<wsdl>http://localhost:9081/services/BancomatService?wsdl</wsdl>-->
+                                    <!--<wsdl>${basedir}/src/main/resources/BancomatService.wsdl</wsdl>-->
+                                    <wsdl>${basedir}/../wsdl/BancomatService.wsdl</wsdl>
+                                </wsdlOption>
                             </wsdlOptions>
                         </configuration>
                         <goals>

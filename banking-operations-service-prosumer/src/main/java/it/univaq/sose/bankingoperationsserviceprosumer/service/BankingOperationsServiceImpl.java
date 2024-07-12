@@ -4,8 +4,12 @@ import it.univaq.sose.accountservice.api.DefaultApi;
 import it.univaq.sose.accountservice.model.AccountResponse;
 import it.univaq.sose.accountservice.model.AddIdBankAccountRequest;
 import it.univaq.sose.accountservice.model.OpenBankAccountRequest;
+import it.univaq.sose.bancomatservice.webservice.BancomatAlradyExistingException_Exception;
+import it.univaq.sose.bancomatservice.webservice.BancomatRequest;
+import it.univaq.sose.bancomatservice.webservice.BancomatResponse;
 import it.univaq.sose.bankaccountservice.webservice.*;
 import it.univaq.sose.bankingoperationsserviceprosumer.client.AccountServiceClient;
+import it.univaq.sose.bankingoperationsserviceprosumer.client.BancomatServiceClient;
 import it.univaq.sose.bankingoperationsserviceprosumer.client.BankAccountServiceClient;
 import it.univaq.sose.bankingoperationsserviceprosumer.domain.*;
 import it.univaq.sose.bankingoperationsserviceprosumer.util.BankingOperationsUtils;
@@ -22,10 +26,12 @@ import java.util.List;
 public class BankingOperationsServiceImpl implements BankingOperationsService {
     private final AccountServiceClient accountServiceClient;
     private final BankAccountServiceClient bankAccountService;
+    private final BancomatServiceClient bancomatService;
 
-    public BankingOperationsServiceImpl(AccountServiceClient accountServiceClient, BankAccountServiceClient bankAccountService) {
+    public BankingOperationsServiceImpl(AccountServiceClient accountServiceClient, BankAccountServiceClient bankAccountService, BancomatServiceClient bancomatServiceClient) {
         this.accountServiceClient = accountServiceClient;
         this.bankAccountService = bankAccountService;
+        this.bancomatService = bancomatServiceClient;
     }
 
     @Override
@@ -94,6 +100,77 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
                 Response response = Response.serverError().entity(new ErrorResponse(e.getMessage())).build();
                 asyncResponse.resume(response);
                 /* Clean up whatever needs to be handled before interrupting  */
+                Thread.currentThread().interrupt();
+            }
+        }).start();
+    }
+
+    @Override
+    public void requestAtmCard(AsyncResponse asyncResponse, long accountId) {
+        new Thread(() -> {
+
+            try {
+                Thread.sleep(1000); // sleep 1s
+                BankAccountResponse bankAccountResponse = bankAccountService.getBankAccountService().getBankAccountDetails(accountId);
+                log.info("Bank-Account-Service Response for Get Bank Account: {}", bankAccountResponse);
+
+                BancomatRequest bancomatRequest = new BancomatRequest();
+                bancomatRequest.setAccountId(accountId);
+                bancomatRequest.setBankAccountId(bankAccountResponse.getId());
+
+                BancomatResponse bancomatResponse = bancomatService.getBancomatService().createBancomat(bancomatRequest);
+                log.info("Bancomat-Service Response for Create Bancomat: {}", bancomatResponse);
+
+                CreateBancomatResponse createBancomatResponse = new CreateBancomatResponse(
+                        bancomatResponse.getId(), bancomatResponse.getNumber(),
+                        bancomatResponse.getCvv(), bancomatResponse.getDataScadenza()
+                );
+
+                Response response = Response.status(Response.Status.CREATED).entity(createBancomatResponse).build();
+                asyncResponse.resume(response);
+
+            } catch (InterruptedException e) {
+                Response response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new ErrorResponse(e.getMessage())).build();
+                asyncResponse.resume(response);
+                Thread.currentThread().interrupt();
+            } catch (BancomatAlradyExistingException_Exception e) {
+                Response response = Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getMessage())).build();
+                asyncResponse.resume(response);
+                Thread.currentThread().interrupt();
+            } catch (it.univaq.sose.bancomatservice.webservice.NotFoundException_Exception |
+                     NotFoundException_Exception e) {
+                Response response = Response.status(Response.Status.NOT_FOUND).entity(new ErrorResponse(e.getMessage())).build();
+                asyncResponse.resume(response);
+                Thread.currentThread().interrupt();
+            }
+        }).start();
+    }
+
+    @Override
+    public void getAtmCard(AsyncResponse asyncResponse, long accountId) {
+        new Thread(() -> {
+
+            try {
+                Thread.sleep(1000); // sleep 1s
+
+                BancomatResponse bancomatResponse = bancomatService.getBancomatService().getBancomatDetails(accountId);
+                log.info("Bancomat-Service Response for Get Bancomat Details: {}", bancomatResponse);
+
+                CreateBancomatResponse createBancomatResponse = new CreateBancomatResponse(
+                        bancomatResponse.getId(), bancomatResponse.getNumber(),
+                        bancomatResponse.getCvv(), bancomatResponse.getDataScadenza()
+                );
+
+                Response response = Response.status(Response.Status.CREATED).entity(createBancomatResponse).build();
+                asyncResponse.resume(response);
+
+            } catch (InterruptedException e) {
+                Response response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new ErrorResponse(e.getMessage())).build();
+                asyncResponse.resume(response);
+                Thread.currentThread().interrupt();
+            } catch (it.univaq.sose.bancomatservice.webservice.NotFoundException_Exception e) {
+                Response response = Response.status(Response.Status.NOT_FOUND).entity(new ErrorResponse(e.getMessage())).build();
+                asyncResponse.resume(response);
                 Thread.currentThread().interrupt();
             }
         }).start();
