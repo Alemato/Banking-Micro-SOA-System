@@ -10,7 +10,7 @@ import java.util.List;
 public interface BankAccountManager {
     BankAccountResponse createBankAccount(BankAccountRequest bankAccountRequest) throws BankAccountAlradyExistException;
 
-    BankAccountResponse getBankAccountDetails(Long id) throws NotFoundException;
+    BankAccountResponse getBankAccountDetails(Long idAccount) throws NotFoundException;
 
     TransactionResponse addMoney(BalanceUpdateRequest balanceUpdateRequest) throws NotFoundException;
 

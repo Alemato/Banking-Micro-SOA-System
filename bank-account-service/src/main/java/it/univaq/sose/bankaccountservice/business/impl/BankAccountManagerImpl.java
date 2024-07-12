@@ -55,8 +55,8 @@ public class BankAccountManagerImpl implements BankAccountManager {
     }
 
     @Override
-    public BankAccountResponse getBankAccountDetails(Long id) throws NotFoundException {
-        BankAccount bankAccount = bankAccountRepository.findByAccountId(id).orElseThrow(() -> new NotFoundException("Bank Account with ID: " + id + " not found."));
+    public BankAccountResponse getBankAccountDetails(Long idAccount) throws NotFoundException {
+        BankAccount bankAccount = bankAccountRepository.findByAccountId(idAccount).orElseThrow(() -> new NotFoundException("Bank Account with ID: " + idAccount + " not found."));
         return new BankAccountResponse(bankAccount.getId(), bankAccount.getAccountId(), bankAccount.getIban(), bankAccount.getBalance());
     }
 
