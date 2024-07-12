@@ -6,33 +6,26 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.Data;
 
-import java.math.BigDecimal;
-
 @Data
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "BankAccountTransactionResponse")
-public class BankAccountTransactionResponse {
+@XmlRootElement(name = "AccountTransferRequest")
+public class AccountTransferRequest {
 
     @XmlElement(required = true)
-    private Long id;
+    private String name;
 
     @XmlElement(required = true)
-    private Long accountId;
+    private String surname;
 
     @XmlElement(required = true)
     private String iban;
 
-    @XmlElement
-    private BigDecimal balance;
-
-
-    public BankAccountTransactionResponse() {
+    public AccountTransferRequest() {
     }
 
-    public BankAccountTransactionResponse(Long id, Long accountId, String iban, BigDecimal balance) {
-        this.id = id;
-        this.accountId = accountId;
+    public AccountTransferRequest(String name, String surname, String iban) {
+        this.name = name;
+        this.surname = surname;
         this.iban = iban;
-        this.balance = balance;
     }
 }

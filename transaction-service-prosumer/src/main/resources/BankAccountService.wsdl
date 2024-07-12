@@ -3,454 +3,450 @@
                   xmlns:tns="http://webservice.bankaccountservice.sose.univaq.it/"
                   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
                   name="BankAccountService" targetNamespace="http://webservice.bankaccountservice.sose.univaq.it/">
-    <wsdl:types>
-        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-                   xmlns:tns="http://webservice.bankaccountservice.sose.univaq.it/" attributeFormDefault="unqualified"
-                   elementFormDefault="unqualified"
-                   targetNamespace="http://webservice.bankaccountservice.sose.univaq.it/" version="1.0">
-            <xs:element name="addMoney" type="tns:addMoney"/>
-            <xs:element name="addMoneyResponse" type="tns:addMoneyResponse"/>
-            <xs:element name="bancomatPay" type="tns:bancomatPay"/>
-            <xs:element name="bancomatPayResponse" type="tns:bancomatPayResponse"/>
-            <xs:element name="checkBankAccountTransfer" type="tns:checkBankAccountTransfer"/>
-            <xs:element name="checkBankAccountTransferResponse" type="tns:checkBankAccountTransferResponse"/>
-            <xs:element name="createBankAccount" type="tns:createBankAccount"/>
-            <xs:element name="createBankAccountResponse" type="tns:createBankAccountResponse"/>
-            <xs:element name="executeTransfer" type="tns:executeTransfer"/>
-            <xs:element name="executeTransferResponse" type="tns:executeTransferResponse"/>
-            <xs:element name="getBankAccountDetails" type="tns:getBankAccountDetails"/>
-            <xs:element name="getBankAccountDetailsResponse" type="tns:getBankAccountDetailsResponse"/>
-            <xs:element name="getBankAccountTransactions" type="tns:getBankAccountTransactions"/>
-            <xs:element name="getBankAccountTransactionsResponse" type="tns:getBankAccountTransactionsResponse"/>
-            <xs:element name="removeMoney" type="tns:removeMoney"/>
-            <xs:element name="removeMoneyResponse" type="tns:removeMoneyResponse"/>
-            <xs:complexType name="executeTransfer">
-                <xs:sequence>
-                    <xs:element name="transactionRequest" type="tns:TransferRequest"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="TransferRequest">
-                <xs:sequence>
-                    <xs:element name="senderAccountId" type="xs:long"/>
-                    <xs:element name="receiverAccountId" type="xs:long"/>
-                    <xs:element name="amount" type="xs:decimal"/>
-                    <xs:element name="description" type="xs:string"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="executeTransferResponse">
-                <xs:sequence>
-                    <xs:element form="qualified" minOccurs="0" name="ExecuteTransferResponse"
-                                type="tns:TransactionResponse"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="TransactionResponse">
-                <xs:sequence>
-                    <xs:element name="id" type="xs:long"/>
-                    <xs:element name="transactionCode" type="xs:string"/>
-                    <xs:element name="amount" type="xs:decimal"/>
-                    <xs:element name="description" type="xs:string"/>
-                    <xs:element name="transactionType" type="tns:transactionType"/>
-                    <xs:element name="date" type="xs:string"/>
-                    <xs:element minOccurs="0" name="bankAccountSender" type="tns:BankAccountResponse"/>
-                    <xs:element minOccurs="0" name="bankAccountReceiver" type="tns:BankAccountResponse"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="BankAccountResponse">
-                <xs:sequence>
-                    <xs:element name="id" type="xs:long"/>
-                    <xs:element name="accountId" type="xs:long"/>
-                    <xs:element name="iban" type="xs:string"/>
-                    <xs:element name="balance" type="xs:decimal"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="checkBankAccountTransfer">
-                <xs:sequence>
-                    <xs:element name="checkBankAccountTransferRequest" type="tns:CheckBankAccountTransferRequest"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="CheckBankAccountTransferRequest">
-                <xs:sequence>
-                    <xs:element name="senderIban" type="xs:string"/>
-                    <xs:element name="receiverIban" type="xs:string"/>
-                    <xs:element name="amount" type="xs:decimal"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="checkBankAccountTransferResponse">
-                <xs:sequence>
-                    <xs:element form="qualified" minOccurs="0" name="CheckBankAccountTransferResponse"
-                                type="tns:CheckBankAccountRequest"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="CheckBankAccountRequest">
-                <xs:sequence>
-                    <xs:element name="senderAccountId" type="xs:long"/>
-                    <xs:element name="receiverAccountId" type="xs:long"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="addMoney">
-                <xs:sequence>
-                    <xs:element name="balanceUpdateRequest" type="tns:BalanceUpdateRequest"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="BalanceUpdateRequest">
-                <xs:sequence>
-                    <xs:element name="amount" type="xs:decimal"/>
-                    <xs:element name="accountId" type="xs:long"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="addMoneyResponse">
-                <xs:sequence>
-                    <xs:element form="qualified" minOccurs="0" name="AddMoneyResponse" type="tns:TransactionResponse"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="getBankAccountDetails">
-                <xs:sequence>
-                    <xs:element name="accountId" type="xs:long"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="getBankAccountDetailsResponse">
-                <xs:sequence>
-                    <xs:element form="qualified" minOccurs="0" name="BankAccountResponse"
-                                type="tns:BankAccountResponse"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="bancomatPay">
-                <xs:sequence>
-                    <xs:element name="balanceUpdateRequest" type="tns:BalanceUpdateRequest"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="bancomatPayResponse">
-                <xs:sequence>
-                    <xs:element form="qualified" minOccurs="0" name="BancomatPayResponse"
-                                type="tns:TransactionResponse"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="getBankAccountTransactions">
-                <xs:sequence>
-                    <xs:element name="accountId" type="xs:long"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="getBankAccountTransactionsResponse">
-                <xs:sequence>
-                    <xs:element form="qualified" maxOccurs="unbounded" minOccurs="0"
-                                name="GetBankAccountTransactionsResponse" type="tns:TransactionResponse"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="removeMoney">
-                <xs:sequence>
-                    <xs:element name="balanceUpdateRequest" type="tns:BalanceUpdateRequest"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="removeMoneyResponse">
-                <xs:sequence>
-                    <xs:element form="qualified" minOccurs="0" name="RemoveMoneyResponse"
-                                type="tns:TransactionResponse"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="createBankAccount">
-                <xs:sequence>
-                    <xs:element name="bankAccountRequest" type="tns:BankAccountRequest"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="BankAccountRequest">
-                <xs:sequence>
-                    <xs:element name="accountId" type="xs:long"/>
-                    <xs:element name="balance" type="xs:decimal"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:complexType name="createBankAccountResponse">
-                <xs:sequence>
-                    <xs:element form="qualified" minOccurs="0" name="CreateBankAccountResponse"
-                                type="tns:BankAccountResponse"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:simpleType name="transactionType">
-                <xs:restriction base="xs:string">
-                    <xs:enumeration value="DEPOSIT"/>
-                    <xs:enumeration value="WITHDRAWAL"/>
-                    <xs:enumeration value="TRANSFER"/>
-                    <xs:enumeration value="BANCOMAT"/>
-                </xs:restriction>
-            </xs:simpleType>
-            <xs:element name="NotFoundException" type="tns:NotFoundException"/>
-            <xs:complexType name="NotFoundException">
-                <xs:sequence>
-                    <xs:element minOccurs="0" name="message" type="xs:string"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:element name="InsufficientFundsException" type="tns:InsufficientFundsException"/>
-            <xs:complexType name="InsufficientFundsException">
-                <xs:sequence>
-                    <xs:element minOccurs="0" name="message" type="xs:string"/>
-                </xs:sequence>
-            </xs:complexType>
-            <xs:element name="BankAccountAlradyExistException" type="tns:BankAccountAlradyExistException"/>
-            <xs:complexType name="BankAccountAlradyExistException">
-                <xs:sequence>
-                    <xs:element minOccurs="0" name="message" type="xs:string"/>
-                </xs:sequence>
-            </xs:complexType>
-        </xs:schema>
-    </wsdl:types>
-    <wsdl:message name="checkBankAccountTransfer">
-        <wsdl:part element="tns:checkBankAccountTransfer" name="parameters">
-        </wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="InsufficientFundsException">
-        <wsdl:part element="tns:InsufficientFundsException" name="InsufficientFundsException">
-        </wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="getBankAccountDetails">
-        <wsdl:part element="tns:getBankAccountDetails" name="parameters">
-        </wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="getBankAccountDetailsResponse">
-        <wsdl:part element="tns:getBankAccountDetailsResponse" name="parameters">
-        </wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="bancomatPay">
-        <wsdl:part element="tns:bancomatPay" name="parameters">
-        </wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="removeMoney">
-        <wsdl:part element="tns:removeMoney" name="parameters">
-        </wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="getBankAccountTransactionsResponse">
-        <wsdl:part element="tns:getBankAccountTransactionsResponse" name="parameters">
-        </wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="checkBankAccountTransferResponse">
-        <wsdl:part element="tns:checkBankAccountTransferResponse" name="parameters">
-        </wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="bancomatPayResponse">
-        <wsdl:part element="tns:bancomatPayResponse" name="parameters">
-        </wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="addMoneyResponse">
-        <wsdl:part element="tns:addMoneyResponse" name="parameters">
-        </wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="createBankAccountResponse">
-        <wsdl:part element="tns:createBankAccountResponse" name="parameters">
-        </wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="executeTransfer">
-        <wsdl:part element="tns:executeTransfer" name="parameters">
-        </wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="NotFoundException">
-        <wsdl:part element="tns:NotFoundException" name="NotFoundException">
-        </wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="addMoney">
-        <wsdl:part element="tns:addMoney" name="parameters">
-        </wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="getBankAccountTransactions">
-        <wsdl:part element="tns:getBankAccountTransactions" name="parameters">
-        </wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="removeMoneyResponse">
-        <wsdl:part element="tns:removeMoneyResponse" name="parameters">
-        </wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="executeTransferResponse">
-        <wsdl:part element="tns:executeTransferResponse" name="parameters">
-        </wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="BankAccountAlradyExistException">
-        <wsdl:part element="tns:BankAccountAlradyExistException" name="BankAccountAlradyExistException">
-        </wsdl:part>
-    </wsdl:message>
-    <wsdl:message name="createBankAccount">
-        <wsdl:part element="tns:createBankAccount" name="parameters">
-        </wsdl:part>
-    </wsdl:message>
-    <wsdl:portType name="BankAccountService">
-        <wsdl:operation name="executeTransfer">
-            <wsdl:input message="tns:executeTransfer" name="executeTransfer">
-            </wsdl:input>
-            <wsdl:output message="tns:executeTransferResponse" name="executeTransferResponse">
-            </wsdl:output>
-            <wsdl:fault message="tns:InsufficientFundsException" name="InsufficientFundsException">
-            </wsdl:fault>
-            <wsdl:fault message="tns:NotFoundException" name="NotFoundException">
-            </wsdl:fault>
-        </wsdl:operation>
-        <wsdl:operation name="checkBankAccountTransfer">
-            <wsdl:input message="tns:checkBankAccountTransfer" name="checkBankAccountTransfer">
-            </wsdl:input>
-            <wsdl:output message="tns:checkBankAccountTransferResponse" name="checkBankAccountTransferResponse">
-            </wsdl:output>
-            <wsdl:fault message="tns:InsufficientFundsException" name="InsufficientFundsException">
-            </wsdl:fault>
-            <wsdl:fault message="tns:NotFoundException" name="NotFoundException">
-            </wsdl:fault>
-        </wsdl:operation>
-        <wsdl:operation name="addMoney">
-            <wsdl:input message="tns:addMoney" name="addMoney">
-            </wsdl:input>
-            <wsdl:output message="tns:addMoneyResponse" name="addMoneyResponse">
-            </wsdl:output>
-            <wsdl:fault message="tns:NotFoundException" name="NotFoundException">
-            </wsdl:fault>
-        </wsdl:operation>
-        <wsdl:operation name="getBankAccountDetails">
-            <wsdl:input message="tns:getBankAccountDetails" name="getBankAccountDetails">
-            </wsdl:input>
-            <wsdl:output message="tns:getBankAccountDetailsResponse" name="getBankAccountDetailsResponse">
-            </wsdl:output>
-            <wsdl:fault message="tns:NotFoundException" name="NotFoundException">
-            </wsdl:fault>
-        </wsdl:operation>
-        <wsdl:operation name="bancomatPay">
-            <wsdl:input message="tns:bancomatPay" name="bancomatPay">
-            </wsdl:input>
-            <wsdl:output message="tns:bancomatPayResponse" name="bancomatPayResponse">
-            </wsdl:output>
-            <wsdl:fault message="tns:InsufficientFundsException" name="InsufficientFundsException">
-            </wsdl:fault>
-            <wsdl:fault message="tns:NotFoundException" name="NotFoundException">
-            </wsdl:fault>
-        </wsdl:operation>
-        <wsdl:operation name="getBankAccountTransactions">
-            <wsdl:input message="tns:getBankAccountTransactions" name="getBankAccountTransactions">
-            </wsdl:input>
-            <wsdl:output message="tns:getBankAccountTransactionsResponse" name="getBankAccountTransactionsResponse">
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="removeMoney">
-            <wsdl:input message="tns:removeMoney" name="removeMoney">
-            </wsdl:input>
-            <wsdl:output message="tns:removeMoneyResponse" name="removeMoneyResponse">
-            </wsdl:output>
-            <wsdl:fault message="tns:InsufficientFundsException" name="InsufficientFundsException">
-            </wsdl:fault>
-            <wsdl:fault message="tns:NotFoundException" name="NotFoundException">
-            </wsdl:fault>
-        </wsdl:operation>
-        <wsdl:operation name="createBankAccount">
-            <wsdl:input message="tns:createBankAccount" name="createBankAccount">
-            </wsdl:input>
-            <wsdl:output message="tns:createBankAccountResponse" name="createBankAccountResponse">
-            </wsdl:output>
-            <wsdl:fault message="tns:BankAccountAlradyExistException" name="BankAccountAlradyExistException">
-            </wsdl:fault>
-        </wsdl:operation>
-    </wsdl:portType>
-    <wsdl:binding name="BankAccountServiceSoapBinding" type="tns:BankAccountService">
-        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
-        <wsdl:operation name="executeTransfer">
-            <soap:operation soapAction="urn:ExecuteTransfer" style="document"/>
-            <wsdl:input name="executeTransfer">
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output name="executeTransferResponse">
-                <soap:body use="literal"/>
-            </wsdl:output>
-            <wsdl:fault name="InsufficientFundsException">
-                <soap:fault name="InsufficientFundsException" use="literal"/>
-            </wsdl:fault>
-            <wsdl:fault name="NotFoundException">
-                <soap:fault name="NotFoundException" use="literal"/>
-            </wsdl:fault>
-        </wsdl:operation>
-        <wsdl:operation name="checkBankAccountTransfer">
-            <soap:operation soapAction="urn:CheckBankAccountTransfer" style="document"/>
-            <wsdl:input name="checkBankAccountTransfer">
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output name="checkBankAccountTransferResponse">
-                <soap:body use="literal"/>
-            </wsdl:output>
-            <wsdl:fault name="InsufficientFundsException">
-                <soap:fault name="InsufficientFundsException" use="literal"/>
-            </wsdl:fault>
-            <wsdl:fault name="NotFoundException">
-                <soap:fault name="NotFoundException" use="literal"/>
-            </wsdl:fault>
-        </wsdl:operation>
-        <wsdl:operation name="addMoney">
-            <soap:operation soapAction="urn:AddMoney" style="document"/>
-            <wsdl:input name="addMoney">
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output name="addMoneyResponse">
-                <soap:body use="literal"/>
-            </wsdl:output>
-            <wsdl:fault name="NotFoundException">
-                <soap:fault name="NotFoundException" use="literal"/>
-            </wsdl:fault>
-        </wsdl:operation>
-        <wsdl:operation name="getBankAccountDetails">
-            <soap:operation soapAction="urn:GetBankAccountDetails" style="document"/>
-            <wsdl:input name="getBankAccountDetails">
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output name="getBankAccountDetailsResponse">
-                <soap:body use="literal"/>
-            </wsdl:output>
-            <wsdl:fault name="NotFoundException">
-                <soap:fault name="NotFoundException" use="literal"/>
-            </wsdl:fault>
-        </wsdl:operation>
-        <wsdl:operation name="bancomatPay">
-            <soap:operation soapAction="urn:BancomatPay" style="document"/>
-            <wsdl:input name="bancomatPay">
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output name="bancomatPayResponse">
-                <soap:body use="literal"/>
-            </wsdl:output>
-            <wsdl:fault name="InsufficientFundsException">
-                <soap:fault name="InsufficientFundsException" use="literal"/>
-            </wsdl:fault>
-            <wsdl:fault name="NotFoundException">
-                <soap:fault name="NotFoundException" use="literal"/>
-            </wsdl:fault>
-        </wsdl:operation>
-        <wsdl:operation name="getBankAccountTransactions">
-            <soap:operation soapAction="urn:GetBankAccountTransactions" style="document"/>
-            <wsdl:input name="getBankAccountTransactions">
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output name="getBankAccountTransactionsResponse">
-                <soap:body use="literal"/>
-            </wsdl:output>
-        </wsdl:operation>
-        <wsdl:operation name="removeMoney">
-            <soap:operation soapAction="urn:RemoveMoney" style="document"/>
-            <wsdl:input name="removeMoney">
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output name="removeMoneyResponse">
-                <soap:body use="literal"/>
-            </wsdl:output>
-            <wsdl:fault name="InsufficientFundsException">
-                <soap:fault name="InsufficientFundsException" use="literal"/>
-            </wsdl:fault>
-            <wsdl:fault name="NotFoundException">
-                <soap:fault name="NotFoundException" use="literal"/>
-            </wsdl:fault>
-        </wsdl:operation>
-        <wsdl:operation name="createBankAccount">
-            <soap:operation soapAction="urn:CreateBankAccount" style="document"/>
-            <wsdl:input name="createBankAccount">
-                <soap:body use="literal"/>
-            </wsdl:input>
-            <wsdl:output name="createBankAccountResponse">
-                <soap:body use="literal"/>
-            </wsdl:output>
-            <wsdl:fault name="BankAccountAlradyExistException">
-                <soap:fault name="BankAccountAlradyExistException" use="literal"/>
-            </wsdl:fault>
-        </wsdl:operation>
-    </wsdl:binding>
-    <wsdl:service name="BankAccountService">
-        <wsdl:port binding="tns:BankAccountServiceSoapBinding" name="BankAccountPort">
-            <soap:address location="http://192.168.178.37:9081/services/BankAccountService"/>
-        </wsdl:port>
-    </wsdl:service>
+  <wsdl:types>
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+               xmlns:tns="http://webservice.bankaccountservice.sose.univaq.it/" attributeFormDefault="unqualified"
+               elementFormDefault="unqualified" targetNamespace="http://webservice.bankaccountservice.sose.univaq.it/"
+               version="1.0">
+      <xs:element name="addMoney" type="tns:addMoney"/>
+      <xs:element name="addMoneyResponse" type="tns:addMoneyResponse"/>
+      <xs:element name="bancomatPay" type="tns:bancomatPay"/>
+      <xs:element name="bancomatPayResponse" type="tns:bancomatPayResponse"/>
+      <xs:element name="checkBankAccountTransfer" type="tns:checkBankAccountTransfer"/>
+      <xs:element name="checkBankAccountTransferResponse" type="tns:checkBankAccountTransferResponse"/>
+      <xs:element name="createBankAccount" type="tns:createBankAccount"/>
+      <xs:element name="createBankAccountResponse" type="tns:createBankAccountResponse"/>
+      <xs:element name="executeTransfer" type="tns:executeTransfer"/>
+      <xs:element name="executeTransferResponse" type="tns:executeTransferResponse"/>
+      <xs:element name="getBankAccountDetails" type="tns:getBankAccountDetails"/>
+      <xs:element name="getBankAccountDetailsResponse" type="tns:getBankAccountDetailsResponse"/>
+      <xs:element name="getBankAccountTransactions" type="tns:getBankAccountTransactions"/>
+      <xs:element name="getBankAccountTransactionsResponse" type="tns:getBankAccountTransactionsResponse"/>
+      <xs:element name="removeMoney" type="tns:removeMoney"/>
+      <xs:element name="removeMoneyResponse" type="tns:removeMoneyResponse"/>
+      <xs:complexType name="executeTransfer">
+        <xs:sequence>
+          <xs:element name="transactionRequest" type="tns:TransferRequest"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="TransferRequest">
+        <xs:sequence>
+          <xs:element name="senderAccountId" type="xs:long"/>
+          <xs:element name="receiverAccountId" type="xs:long"/>
+          <xs:element name="amount" type="xs:decimal"/>
+          <xs:element name="description" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="executeTransferResponse">
+        <xs:sequence>
+          <xs:element form="qualified" minOccurs="0" name="ExecuteTransferResponse" type="tns:TransactionResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="TransactionResponse">
+        <xs:sequence>
+          <xs:element name="id" type="xs:long"/>
+          <xs:element name="transactionCode" type="xs:string"/>
+          <xs:element name="amount" type="xs:decimal"/>
+          <xs:element name="description" type="xs:string"/>
+          <xs:element name="transactionType" type="tns:transactionType"/>
+          <xs:element name="date" type="xs:string"/>
+          <xs:element minOccurs="0" name="bankAccountSender" type="tns:BankAccountResponse"/>
+          <xs:element minOccurs="0" name="bankAccountReceiver" type="tns:BankAccountResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="BankAccountResponse">
+        <xs:sequence>
+          <xs:element name="id" type="xs:long"/>
+          <xs:element name="accountId" type="xs:long"/>
+          <xs:element name="iban" type="xs:string"/>
+          <xs:element name="balance" type="xs:decimal"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="checkBankAccountTransfer">
+        <xs:sequence>
+          <xs:element name="checkBankAccountTransferRequest" type="tns:CheckBankAccountTransferRequest"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="CheckBankAccountTransferRequest">
+        <xs:sequence>
+          <xs:element name="senderIban" type="xs:string"/>
+          <xs:element name="receiverIban" type="xs:string"/>
+          <xs:element name="amount" type="xs:decimal"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="checkBankAccountTransferResponse">
+        <xs:sequence>
+          <xs:element form="qualified" minOccurs="0" name="CheckBankAccountTransferResponse"
+                      type="tns:CheckBankAccountRequest"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="CheckBankAccountRequest">
+        <xs:sequence>
+          <xs:element name="senderAccountId" type="xs:long"/>
+          <xs:element name="receiverAccountId" type="xs:long"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="addMoney">
+        <xs:sequence>
+          <xs:element name="balanceUpdateRequest" type="tns:BalanceUpdateRequest"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="BalanceUpdateRequest">
+        <xs:sequence>
+          <xs:element name="amount" type="xs:decimal"/>
+          <xs:element name="bankAccountId" type="xs:long"/>
+          <xs:element name="description" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="addMoneyResponse">
+        <xs:sequence>
+          <xs:element form="qualified" minOccurs="0" name="AddMoneyResponse" type="tns:TransactionResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getBankAccountDetails">
+        <xs:sequence>
+          <xs:element name="accountId" type="xs:long"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getBankAccountDetailsResponse">
+        <xs:sequence>
+          <xs:element form="qualified" minOccurs="0" name="BankAccountResponse" type="tns:BankAccountResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="bancomatPay">
+        <xs:sequence>
+          <xs:element name="balanceUpdateRequest" type="tns:BalanceUpdateRequest"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="bancomatPayResponse">
+        <xs:sequence>
+          <xs:element form="qualified" minOccurs="0" name="BancomatPayResponse" type="tns:TransactionResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getBankAccountTransactions">
+        <xs:sequence>
+          <xs:element name="accountId" type="xs:long"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="getBankAccountTransactionsResponse">
+        <xs:sequence>
+          <xs:element form="qualified" maxOccurs="unbounded" minOccurs="0" name="GetBankAccountTransactionsResponse"
+                      type="tns:TransactionResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeMoney">
+        <xs:sequence>
+          <xs:element name="balanceUpdateRequest" type="tns:BalanceUpdateRequest"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="removeMoneyResponse">
+        <xs:sequence>
+          <xs:element form="qualified" minOccurs="0" name="RemoveMoneyResponse" type="tns:TransactionResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createBankAccount">
+        <xs:sequence>
+          <xs:element name="bankAccountRequest" type="tns:BankAccountRequest"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="BankAccountRequest">
+        <xs:sequence>
+          <xs:element name="accountId" type="xs:long"/>
+          <xs:element name="balance" type="xs:decimal"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="createBankAccountResponse">
+        <xs:sequence>
+          <xs:element form="qualified" minOccurs="0" name="CreateBankAccountResponse" type="tns:BankAccountResponse"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="transactionType">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="DEPOSIT"/>
+          <xs:enumeration value="WITHDRAWAL"/>
+          <xs:enumeration value="TRANSFER"/>
+          <xs:enumeration value="BANCOMAT"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="NotFoundException" type="tns:NotFoundException"/>
+      <xs:complexType name="NotFoundException">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="message" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="InsufficientFundsException" type="tns:InsufficientFundsException"/>
+      <xs:complexType name="InsufficientFundsException">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="message" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="BankAccountAlradyExistException" type="tns:BankAccountAlradyExistException"/>
+      <xs:complexType name="BankAccountAlradyExistException">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="message" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="checkBankAccountTransfer">
+    <wsdl:part element="tns:checkBankAccountTransfer" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="InsufficientFundsException">
+    <wsdl:part element="tns:InsufficientFundsException" name="InsufficientFundsException">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankAccountDetails">
+    <wsdl:part element="tns:getBankAccountDetails" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankAccountDetailsResponse">
+    <wsdl:part element="tns:getBankAccountDetailsResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="bancomatPay">
+    <wsdl:part element="tns:bancomatPay" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeMoney">
+    <wsdl:part element="tns:removeMoney" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankAccountTransactionsResponse">
+    <wsdl:part element="tns:getBankAccountTransactionsResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="checkBankAccountTransferResponse">
+    <wsdl:part element="tns:checkBankAccountTransferResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="bancomatPayResponse">
+    <wsdl:part element="tns:bancomatPayResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="addMoneyResponse">
+    <wsdl:part element="tns:addMoneyResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createBankAccountResponse">
+    <wsdl:part element="tns:createBankAccountResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="executeTransfer">
+    <wsdl:part element="tns:executeTransfer" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="NotFoundException">
+    <wsdl:part element="tns:NotFoundException" name="NotFoundException">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="addMoney">
+    <wsdl:part element="tns:addMoney" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getBankAccountTransactions">
+    <wsdl:part element="tns:getBankAccountTransactions" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removeMoneyResponse">
+    <wsdl:part element="tns:removeMoneyResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="executeTransferResponse">
+    <wsdl:part element="tns:executeTransferResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="BankAccountAlradyExistException">
+    <wsdl:part element="tns:BankAccountAlradyExistException" name="BankAccountAlradyExistException">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="createBankAccount">
+    <wsdl:part element="tns:createBankAccount" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="BankAccountService">
+    <wsdl:operation name="executeTransfer">
+      <wsdl:input message="tns:executeTransfer" name="executeTransfer">
+      </wsdl:input>
+      <wsdl:output message="tns:executeTransferResponse" name="executeTransferResponse">
+      </wsdl:output>
+      <wsdl:fault message="tns:InsufficientFundsException" name="InsufficientFundsException">
+      </wsdl:fault>
+      <wsdl:fault message="tns:NotFoundException" name="NotFoundException">
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="checkBankAccountTransfer">
+      <wsdl:input message="tns:checkBankAccountTransfer" name="checkBankAccountTransfer">
+      </wsdl:input>
+      <wsdl:output message="tns:checkBankAccountTransferResponse" name="checkBankAccountTransferResponse">
+      </wsdl:output>
+      <wsdl:fault message="tns:InsufficientFundsException" name="InsufficientFundsException">
+      </wsdl:fault>
+      <wsdl:fault message="tns:NotFoundException" name="NotFoundException">
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="addMoney">
+      <wsdl:input message="tns:addMoney" name="addMoney">
+      </wsdl:input>
+      <wsdl:output message="tns:addMoneyResponse" name="addMoneyResponse">
+      </wsdl:output>
+      <wsdl:fault message="tns:NotFoundException" name="NotFoundException">
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="getBankAccountDetails">
+      <wsdl:input message="tns:getBankAccountDetails" name="getBankAccountDetails">
+      </wsdl:input>
+      <wsdl:output message="tns:getBankAccountDetailsResponse" name="getBankAccountDetailsResponse">
+      </wsdl:output>
+      <wsdl:fault message="tns:NotFoundException" name="NotFoundException">
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="bancomatPay">
+      <wsdl:input message="tns:bancomatPay" name="bancomatPay">
+      </wsdl:input>
+      <wsdl:output message="tns:bancomatPayResponse" name="bancomatPayResponse">
+      </wsdl:output>
+      <wsdl:fault message="tns:InsufficientFundsException" name="InsufficientFundsException">
+      </wsdl:fault>
+      <wsdl:fault message="tns:NotFoundException" name="NotFoundException">
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="getBankAccountTransactions">
+      <wsdl:input message="tns:getBankAccountTransactions" name="getBankAccountTransactions">
+      </wsdl:input>
+      <wsdl:output message="tns:getBankAccountTransactionsResponse" name="getBankAccountTransactionsResponse">
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeMoney">
+      <wsdl:input message="tns:removeMoney" name="removeMoney">
+      </wsdl:input>
+      <wsdl:output message="tns:removeMoneyResponse" name="removeMoneyResponse">
+      </wsdl:output>
+      <wsdl:fault message="tns:InsufficientFundsException" name="InsufficientFundsException">
+      </wsdl:fault>
+      <wsdl:fault message="tns:NotFoundException" name="NotFoundException">
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="createBankAccount">
+      <wsdl:input message="tns:createBankAccount" name="createBankAccount">
+      </wsdl:input>
+      <wsdl:output message="tns:createBankAccountResponse" name="createBankAccountResponse">
+      </wsdl:output>
+      <wsdl:fault message="tns:BankAccountAlradyExistException" name="BankAccountAlradyExistException">
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BankAccountServiceSoapBinding" type="tns:BankAccountService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="executeTransfer">
+      <soap:operation soapAction="urn:ExecuteTransfer" style="document"/>
+      <wsdl:input name="executeTransfer">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="executeTransferResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="InsufficientFundsException">
+        <soap:fault name="InsufficientFundsException" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="NotFoundException">
+        <soap:fault name="NotFoundException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="checkBankAccountTransfer">
+      <soap:operation soapAction="urn:CheckBankAccountTransfer" style="document"/>
+      <wsdl:input name="checkBankAccountTransfer">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="checkBankAccountTransferResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="InsufficientFundsException">
+        <soap:fault name="InsufficientFundsException" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="NotFoundException">
+        <soap:fault name="NotFoundException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="addMoney">
+      <soap:operation soapAction="urn:AddMoney" style="document"/>
+      <wsdl:input name="addMoney">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="addMoneyResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="NotFoundException">
+        <soap:fault name="NotFoundException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="getBankAccountDetails">
+      <soap:operation soapAction="urn:GetBankAccountDetails" style="document"/>
+      <wsdl:input name="getBankAccountDetails">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankAccountDetailsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="NotFoundException">
+        <soap:fault name="NotFoundException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="bancomatPay">
+      <soap:operation soapAction="urn:BancomatPay" style="document"/>
+      <wsdl:input name="bancomatPay">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="bancomatPayResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="InsufficientFundsException">
+        <soap:fault name="InsufficientFundsException" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="NotFoundException">
+        <soap:fault name="NotFoundException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="getBankAccountTransactions">
+      <soap:operation soapAction="urn:GetBankAccountTransactions" style="document"/>
+      <wsdl:input name="getBankAccountTransactions">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getBankAccountTransactionsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="removeMoney">
+      <soap:operation soapAction="urn:RemoveMoney" style="document"/>
+      <wsdl:input name="removeMoney">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removeMoneyResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="InsufficientFundsException">
+        <soap:fault name="InsufficientFundsException" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="NotFoundException">
+        <soap:fault name="NotFoundException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="createBankAccount">
+      <soap:operation soapAction="urn:CreateBankAccount" style="document"/>
+      <wsdl:input name="createBankAccount">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="createBankAccountResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="BankAccountAlradyExistException">
+        <soap:fault name="BankAccountAlradyExistException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="BankAccountService">
+    <wsdl:port binding="tns:BankAccountServiceSoapBinding" name="BankAccountPort">
+      <soap:address location="http://192.168.178.37:9081/services/BankAccountService"/>
+    </wsdl:port>
+  </wsdl:service>
 </wsdl:definitions>

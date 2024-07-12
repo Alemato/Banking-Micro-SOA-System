@@ -15,16 +15,20 @@ import java.math.BigDecimal;
 public class BalanceUpdateRequest {
 
     @XmlElement(required = true)
-    private Long accountId;
+    private Long bankAccountId;
 
     @XmlElement(required = true)
     private BigDecimal amount;
 
+    @XmlElement(required = true)
+    private String description;
+
     public BalanceUpdateRequest() {
     }
 
-    public BalanceUpdateRequest(BigDecimal amount, Long accountId) {
+    public BalanceUpdateRequest(Long bankAccountId, BigDecimal amount, String description) {
+        this.bankAccountId = bankAccountId;
         this.amount = amount;
-        this.accountId = accountId;
+        this.description = description;
     }
 }
