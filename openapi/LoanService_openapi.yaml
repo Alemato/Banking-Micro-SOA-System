@@ -1,0 +1,245 @@
+openapi: 3.0.1
+info:
+  title: Loan Service (Prosumer) for Banking Micro-SOA System
+  description: This is Loan Service (Prosumer) for Banking Micro-SOA System. Uses
+    Apache CXF and Spring Boot on JAX-RS.
+  contact:
+    name: The Banking Micro-SOA System team
+  license:
+    name: Apache 2.0 License
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.0.1-SNAPSHOT
+servers:
+  - url: http://169.254.88.143:9085/services
+paths:
+  /api/loan/close-loan/{idLoan}:
+    put:
+      description: This endpoint allows users to close a loan by its ID.
+      operationId: closeLoanByIdLoan_1
+      parameters:
+        - name: idLoan
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Loan Closed Successfully
+        "404":
+          description: Loan Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/loan/bank-account/{idBankAccount}:
+    get:
+      description: This endpoint allows users to retrieve all loans by bank account
+        ID.
+      operationId: getAllLoanByIdBankAccount_1
+      parameters:
+        - name: idBankAccount
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Loans Retrieved Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoanDto"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/LoanDto"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/loan/{idLoan}:
+    get:
+      description: This endpoint allows users to retrieve loans by ID.
+      operationId: getLoanByIdLoan_1
+      parameters:
+        - name: idLoan
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Loans Retrieved Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoanDto"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/LoanDto"
+        "404":
+          description: Loan Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/loan:
+    post:
+      description: This endpoint allows users to open a new loan.
+      operationId: OpenLoan_1
+      requestBody:
+        description: OpenLoanRequest
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OpenLoanRequest"
+          application/xml:
+            schema:
+              $ref: "#/components/schemas/OpenLoanRequest"
+        required: true
+      responses:
+        "200":
+          description: Open Loan Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoanDto"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/LoanDto"
+        "503":
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    ErrorResponse:
+      required:
+        - error
+      type: object
+      properties:
+        error:
+          type: string
+      xml:
+        name: ErrorResponse
+    LoanDto:
+      required:
+        - amount
+        - borrowerName
+        - createDate
+        - id
+        - idAccount
+        - idBankAccount
+        - interestRate
+        - loanStatus
+        - termInYears
+        - updateDate
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        amount:
+          type: number
+        interestRate:
+          type: number
+          format: double
+        termInYears:
+          type: integer
+          format: int32
+        borrowerName:
+          type: string
+        loanStatus:
+          type: string
+          enum:
+            - PENDING
+            - APPROVED
+            - REJECTED
+            - CLOSED
+        idBankAccount:
+          type: integer
+          format: int64
+        idAccount:
+          type: integer
+          format: int64
+        createDate:
+          type: string
+          format: date-time
+        updateDate:
+          type: string
+          format: date-time
+      xml:
+        name: Loan
+    OpenLoanRequest:
+      required:
+        - amount
+        - borrowerName
+        - idAccount
+        - idBankAccount
+        - interestRate
+        - termInYears
+      type: object
+      properties:
+        amount:
+          type: number
+        interestRate:
+          type: number
+          format: double
+        termInYears:
+          type: integer
+          format: int32
+        borrowerName:
+          type: string
+        idBankAccount:
+          type: integer
+          format: int64
+        idAccount:
+          type: integer
+          format: int64
+      xml:
+        name: OpenLoanRequest

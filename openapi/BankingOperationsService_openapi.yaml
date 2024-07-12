@@ -1,0 +1,387 @@
+openapi: 3.0.1
+info:
+  title: Banking Operations Service (Prosumer) for Banking Micro-SOA System
+  description: This is Banking Operations Service (Prosumer) for Banking Micro-SOA
+    System. Uses Apache CXF and Spring Boot on JAX-RS.
+  contact:
+    name: The Banking Micro-SOA System team
+  license:
+    name: Apache 2.0 License
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.0.1-SNAPSHOT
+servers:
+  - url: http://169.254.88.143:9083/services
+paths:
+  /api/bank/atm-card/{accountId}:
+    get:
+      description: getAtmCard details
+      operationId: getAtmCard_1
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "201":
+          description: ATM card details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateBancomatResponse"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/CreateBancomatResponse"
+        "404":
+          description: Account whit this Id not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "503":
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      description: requestAtmCard
+      operationId: requestAtmCard_1
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "201":
+          description: Requesting an ATM card
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateBancomatResponse"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/CreateBancomatResponse"
+        "404":
+          description: Account whit this Id not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "503":
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/bank/report-bank-account-by-account/{idAccount}:
+    get:
+      description: This endpoint allows users to retrieve the report of a bank account
+        using the account ID.
+      operationId: GetReportBankAccountByIdAccount_1
+      parameters:
+        - name: idAccount
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Report Retrieved Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportBankAccountResponse"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/ReportBankAccountResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "503":
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/bank/open-account:
+    post:
+      description: This endpoint allows users to create their personal profile and
+        open a new bank account in a single operation.
+      operationId: OpenAccount_1
+      requestBody:
+        description: OpenAccount
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OpenAccountRequest"
+          application/xml:
+            schema:
+              $ref: "#/components/schemas/OpenAccountRequest"
+        required: true
+      responses:
+        "201":
+          description: Open Account Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OpenAccountResponse"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/OpenAccountResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "503":
+          description: Service Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    CreateBancomatResponse:
+      required:
+        - cvv
+        - dataScadenza
+        - id
+        - number
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        number:
+          type: string
+        cvv:
+          type: string
+        dataScadenza:
+          type: string
+      xml:
+        name: CreateBancomatResponse
+    ErrorResponse:
+      required:
+        - error
+      type: object
+      properties:
+        error:
+          type: string
+      xml:
+        name: ErrorResponse
+    AccountDetails:
+      required:
+        - email
+        - id
+        - name
+        - phone
+        - surname
+        - username
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        surname:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+      xml:
+        name: AccountDetails
+    BankAccountDetails:
+      required:
+        - balance
+        - iban
+      type: object
+      properties:
+        iban:
+          type: string
+        balance:
+          type: number
+      xml:
+        name: BankAccountDetails
+    BankAccountResponse:
+      required:
+        - balance
+        - iban
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        accountId:
+          type: integer
+          format: int64
+        iban:
+          type: string
+        balance:
+          type: number
+    ReportBankAccountResponse:
+      required:
+        - account
+        - bankAccount
+        - transactions
+      type: object
+      properties:
+        account:
+          $ref: "#/components/schemas/AccountDetails"
+        bankAccount:
+          $ref: "#/components/schemas/BankAccountDetails"
+        transactions:
+          type: array
+          items:
+            $ref: "#/components/schemas/TransactionResponse"
+      xml:
+        name: ReportBankAccountResponse
+    TransactionResponse:
+      required:
+        - amount
+        - date
+        - description
+        - transactionCode
+        - transactionType
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        transactionCode:
+          type: string
+        amount:
+          type: number
+        description:
+          type: string
+        transactionType:
+          type: string
+          enum:
+            - DEPOSIT
+            - WITHDRAWAL
+            - TRANSFER
+            - BANCOMAT
+        date:
+          type: string
+        bankAccountSender:
+          $ref: "#/components/schemas/BankAccountResponse"
+        bankAccountReceiver:
+          $ref: "#/components/schemas/BankAccountResponse"
+    OpenAccountResponse:
+      required:
+        - balance
+        - email
+        - iban
+        - id
+        - name
+        - phone
+        - surname
+        - username
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        surname:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        iban:
+          type: string
+        balance:
+          type: number
+      xml:
+        name: OpenAccountResponse
+    OpenAccountRequest:
+      required:
+        - balance
+        - email
+        - name
+        - password
+        - phone
+        - surname
+        - username
+      type: object
+      properties:
+        name:
+          type: string
+        surname:
+          type: string
+        username:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        balance:
+          type: number
+      xml:
+        name: OpenAccountRequest
