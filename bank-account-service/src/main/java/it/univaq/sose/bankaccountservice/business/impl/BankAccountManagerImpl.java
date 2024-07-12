@@ -63,9 +63,9 @@ public class BankAccountManagerImpl implements BankAccountManager {
     @Override
     @Transactional
     public TransactionResponse addMoney(BalanceUpdateRequest balanceUpdateRequest) throws NotFoundException {
-        BankAccount bankAccount = bankAccountRepository.findByAccountId(balanceUpdateRequest.getAccountId()).orElseThrow(() -> new NotFoundException("Bank Account with Account ID: " + balanceUpdateRequest.getAccountId() + " not found."));
+        BankAccount bankAccount = bankAccountRepository.findById(balanceUpdateRequest.getBankAccountId()).orElseThrow(() -> new NotFoundException("Bank Account with ID: " + balanceUpdateRequest.getBankAccountId() + " not found."));
         bankAccount.setBalance(bankAccount.getBalance().add(balanceUpdateRequest.getAmount()));
-        Transaction transaction = saveTransaction(null, bankAccount, balanceUpdateRequest.getAmount(), TransactionType.DEPOSIT, "Balance operation");
+        Transaction transaction = saveTransaction(null, bankAccount, balanceUpdateRequest.getAmount(), TransactionType.DEPOSIT, balanceUpdateRequest.getDescription());
         bankAccount = bankAccountRepository.save(bankAccount);
         BankAccountResponse receiverBankAccountResponse = new BankAccountResponse(bankAccount.getId(), bankAccount.getAccountId(), bankAccount.getIban(), bankAccount.getBalance());
         return new TransactionResponse(transaction.getId(), transaction.getTransactionCode(), transaction.getAmount(), transaction.getDescription(), transaction.getTransactionType(), transaction.getCreateDate(), null, receiverBankAccountResponse);
@@ -74,12 +74,12 @@ public class BankAccountManagerImpl implements BankAccountManager {
     @Override
     @Transactional
     public TransactionResponse removeMoney(BalanceUpdateRequest balanceUpdateRequest) throws InsufficientFundsException, NotFoundException {
-        BankAccount bankAccount = bankAccountRepository.findByAccountId(balanceUpdateRequest.getAccountId()).orElseThrow(() -> new NotFoundException("Bank Account with Account ID: " + balanceUpdateRequest.getAccountId() + " not found."));
+        BankAccount bankAccount = bankAccountRepository.findById(balanceUpdateRequest.getBankAccountId()).orElseThrow(() -> new NotFoundException("Bank Account with ID: " + balanceUpdateRequest.getBankAccountId() + " not found."));
         if (bankAccount.getBalance().compareTo(balanceUpdateRequest.getAmount()) < 0) {
             throw new InsufficientFundsException("Insufficient funds");
         }
         bankAccount.setBalance(bankAccount.getBalance().subtract(balanceUpdateRequest.getAmount()));
-        Transaction transaction = saveTransaction(bankAccount, null, balanceUpdateRequest.getAmount(), TransactionType.WITHDRAWAL, "Balance operation");
+        Transaction transaction = saveTransaction(bankAccount, null, balanceUpdateRequest.getAmount(), TransactionType.WITHDRAWAL, balanceUpdateRequest.getDescription());
         bankAccount = bankAccountRepository.save(bankAccount);
 
         BankAccountResponse senderBankAccountResponse = new BankAccountResponse(bankAccount.getId(), bankAccount.getAccountId(), bankAccount.getIban(), bankAccount.getBalance());
@@ -89,12 +89,12 @@ public class BankAccountManagerImpl implements BankAccountManager {
     @Override
     @Transactional
     public TransactionResponse bancomatPay(BalanceUpdateRequest balanceUpdateRequest) throws InsufficientFundsException, NotFoundException {
-        BankAccount bankAccount = bankAccountRepository.findByAccountId(balanceUpdateRequest.getAccountId()).orElseThrow(() -> new NotFoundException("Bank Account with Account ID: " + balanceUpdateRequest.getAccountId() + " not found."));
+        BankAccount bankAccount = bankAccountRepository.findById(balanceUpdateRequest.getBankAccountId()).orElseThrow(() -> new NotFoundException("Bank Account with ID: " + balanceUpdateRequest.getBankAccountId() + " not found."));
         if (bankAccount.getBalance().compareTo(balanceUpdateRequest.getAmount()) < 0) {
             throw new InsufficientFundsException("Insufficient funds");
         }
         bankAccount.setBalance(bankAccount.getBalance().subtract(balanceUpdateRequest.getAmount()));
-        Transaction transaction = saveTransaction(bankAccount, null, balanceUpdateRequest.getAmount(), TransactionType.BANCOMAT, "Bancomat operation");
+        Transaction transaction = saveTransaction(bankAccount, null, balanceUpdateRequest.getAmount(), TransactionType.BANCOMAT, balanceUpdateRequest.getDescription());
         bankAccount = bankAccountRepository.save(bankAccount);
 
         BankAccountResponse senderBankAccountResponse = new BankAccountResponse(bankAccount.getId(), bankAccount.getAccountId(), bankAccount.getIban(), bankAccount.getBalance());
@@ -103,7 +103,7 @@ public class BankAccountManagerImpl implements BankAccountManager {
 
     @Override
     @Transactional
-    public TransactionResponse executeTransaction(TransferRequest transferRequest) throws NotFoundException, InsufficientFundsException {
+    public TransactionResponse executeTransfer(TransferRequest transferRequest) throws NotFoundException, InsufficientFundsException {
         BankAccount senderBankAccount = bankAccountRepository.findByAccountId(transferRequest.getSenderAccountId())
                 .orElseThrow(() -> new NotFoundException("Bank Account with Account ID: " + transferRequest.getSenderAccountId() + " not found."));
 
@@ -144,7 +144,7 @@ public class BankAccountManagerImpl implements BankAccountManager {
         if (bankAccountSender.getBalance().compareTo(checkBankAccountTransferRequest.getAmount()) < 0) {
             throw new InsufficientFundsException("Insufficient funds");
         }
-        BankAccount bankAccountReceiver = bankAccountRepository.findByIban(checkBankAccountTransferRequest.getSenderIban())
+        BankAccount bankAccountReceiver = bankAccountRepository.findByIban(checkBankAccountTransferRequest.getReceiverIban())
                 .orElseThrow(() -> new NotFoundException("Bank Account with Iban " + checkBankAccountTransferRequest.getReceiverIban() + " not found."));
         return new CheckBankAccountTransferResponse(bankAccountSender.getAccountId(), bankAccountReceiver.getAccountId());
     }
