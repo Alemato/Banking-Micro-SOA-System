@@ -21,5 +21,7 @@ public class OpenLoanRequest {
     @XmlElement(required = true)
     String borrowerName;
     @XmlElement(required = true)
-    Long idBankAccount;
+    long idBankAccount;
+    @XmlElement(required = true)
+    long idAccount;
 }

@@ -39,6 +39,9 @@ public class Loan extends BaseEntity {
     @Column(name = "id_bank_account", nullable = false)
     private Long idBankAccount;
 
+    @Column(name = "id_account", nullable = false)
+    private Long idAccount;
+
     @Override
     public final boolean equals(Object object) {
         if (this == object) return true;

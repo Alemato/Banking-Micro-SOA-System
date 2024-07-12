@@ -31,8 +31,9 @@ public class LoanManagerImpl implements LoanManager {
         loan.setBorrowerName(request.getBorrowerName());
         loan.setLoanStatus(LoanStatus.APPROVED);
         loan.setIdBankAccount(request.getIdBankAccount());
+        loan.setIdAccount(request.getIdAccount());
         loan = repository.save(loan);
-        return new LoanDto(loan.getId(), loan.getAmount(), loan.getInterestRate(), loan.getTermInYears(), loan.getBorrowerName(), loan.getLoanStatus(), loan.getIdBankAccount(), loan.getCreateDate(), loan.getUpdateDate());
+        return new LoanDto(loan.getId(), loan.getAmount(), loan.getInterestRate(), loan.getTermInYears(), loan.getBorrowerName(), loan.getLoanStatus(), loan.getIdBankAccount(), loan.getIdAccount(), loan.getCreateDate(), loan.getUpdateDate());
     }
 
     @Override
@@ -47,6 +48,13 @@ public class LoanManagerImpl implements LoanManager {
         Loan loan = repository.findById(idLoan).orElseThrow(() -> new LoanNotFoundException("Loan not found"));
         loan.setLoanStatus(LoanStatus.CLOSED);
         loan = repository.save(loan);
-        return new LoanDto(loan.getId(), loan.getAmount(), loan.getInterestRate(), loan.getTermInYears(), loan.getBorrowerName(), loan.getLoanStatus(), loan.getIdBankAccount(), loan.getCreateDate(), loan.getUpdateDate());
+        return new LoanDto(loan.getId(), loan.getAmount(), loan.getInterestRate(), loan.getTermInYears(), loan.getBorrowerName(), loan.getLoanStatus(), loan.getIdBankAccount(), loan.getIdAccount(), loan.getCreateDate(), loan.getUpdateDate());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public LoanDto getLoanById(long idLoan) throws LoanNotFoundException {
+        Loan loan = repository.findById(idLoan).orElseThrow(() -> new LoanNotFoundException("Loan not found"));
+        return new LoanDto(loan.getId(), loan.getAmount(), loan.getInterestRate(), loan.getTermInYears(), loan.getBorrowerName(), loan.getLoanStatus(), loan.getIdBankAccount(), loan.getIdAccount(), loan.getCreateDate(), loan.getUpdateDate());
     }
 }
