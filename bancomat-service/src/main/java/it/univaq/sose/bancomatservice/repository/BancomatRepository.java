@@ -13,5 +13,6 @@ public interface BancomatRepository extends JpaRepository<Bancomat, Long> {
 
     boolean existsByAccountIdAndExpiryDateAfter(Long accountId, YearMonth dataScadenza);
 
+    Optional<Bancomat> findByNumber(String number);
 
 }

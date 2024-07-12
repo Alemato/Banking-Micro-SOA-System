@@ -40,6 +40,12 @@ public class BancomatManagerImpl implements BancomatManager {
     }
 
     @Override
+    public BancomatResponse getBancomatDetailsByNumber(String number) throws NotFoundException {
+        Bancomat bancomat = bancomatRepository.findByNumber(number).orElseThrow(() -> new NotFoundException("Bancomat with number: " + number + " not found."));
+        return new BancomatResponse(bancomat.getId(), bancomat.getNumber(), bancomat.getCvv(), bancomat.getExpiryDate().toString(), bancomat.getAccountId());
+    }
+
+    @Override
     @Transactional
     public BancomatResponse createBancomat(BancomatRequest bancomatRequest) throws BancomatAlradyExistingException {
         if (bancomatRepository.existsByAccountIdAndExpiryDateAfter(bancomatRequest.getAccountId(), YearMonth.now())) {
@@ -72,8 +78,9 @@ public class BancomatManagerImpl implements BancomatManager {
     @Override
     @Transactional
     public TransactionResponse executeTransaction(TransactionRequest transactionRequest) throws NotFoundException, ExpiredBancomatException {
-        Bancomat bancomat = bancomatRepository.findByAccountId(transactionRequest.getAccountId())
-                .orElseThrow(() -> new NotFoundException("Bancomat with account ID: " + transactionRequest.getAccountId() + " not found."));
+        Bancomat bancomat = bancomatRepository.findByNumber(transactionRequest.getNumber())
+
+                .orElseThrow(() -> new NotFoundException("Bancomat with number: " + transactionRequest.getNumber() + " not found."));
 
         if (YearMonth.now().isAfter(bancomat.getExpiryDate())) {
             throw new ExpiredBancomatException("Bancomat expired");

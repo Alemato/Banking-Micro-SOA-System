@@ -32,6 +32,11 @@ public class BancomatServiceImpl implements BancomatService {
     }
 
     @Override
+    public BancomatResponse getBancomatDetailsByNumber(String number) throws NotFoundException {
+        return bancomatManager.getBancomatDetailsByNumber(number);
+    }
+
+    @Override
     public BancomatResponse createBancomat(BancomatRequest bancomatRequest) throws BancomatAlradyExistingException {
         return bancomatManager.createBancomat(bancomatRequest);
     }

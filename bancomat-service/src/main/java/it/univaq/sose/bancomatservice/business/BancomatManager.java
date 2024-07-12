@@ -13,6 +13,8 @@ import java.util.List;
 public interface BancomatManager {
     BancomatResponse getBancomatDetails(Long accountId) throws NotFoundException;
 
+    BancomatResponse getBancomatDetailsByNumber(String number) throws NotFoundException;
+
     BancomatResponse createBancomat(BancomatRequest bancomatRequest) throws BancomatAlradyExistingException;
 
     TransactionResponse executeTransaction(TransactionRequest transactionRequest) throws NotFoundException, ExpiredBancomatException;

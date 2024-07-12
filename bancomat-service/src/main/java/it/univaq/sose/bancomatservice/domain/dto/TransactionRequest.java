@@ -14,11 +14,11 @@ import java.math.BigDecimal;
 @Setter
 @ToString
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "TransactionRequest", propOrder = {"accountId", "amount", "description"})
+@XmlType(name = "TransactionRequest", propOrder = {"number", "amount", "description"})
 public class TransactionRequest {
 
     @XmlElement(required = true)
-    private Long accountId;
+    private String number;
 
     @XmlElement(required = true)
     private BigDecimal amount;
@@ -29,7 +29,8 @@ public class TransactionRequest {
     public TransactionRequest() {
     }
 
-    public TransactionRequest(BigDecimal amount, String description) {
+    public TransactionRequest(String number, BigDecimal amount, String description) {
+        this.number = number;
         this.amount = amount;
         this.description = description;
     }
