@@ -9,11 +9,7 @@ import it.univaq.sose.transactionserviceprosumer.domain.dto.BalanceUpdateRequest
 import it.univaq.sose.transactionserviceprosumer.domain.dto.ErrorResponse;
 import it.univaq.sose.transactionserviceprosumer.domain.dto.ExecuteTransactionResponse;
 import it.univaq.sose.transactionserviceprosumer.domain.dto.ExecuteTransferRequest;
-import jakarta.jws.WebParam;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.container.AsyncResponse;
 import jakarta.ws.rs.container.Suspended;
 import jakarta.ws.rs.core.MediaType;
@@ -110,10 +106,10 @@ public interface TransactionService {
                     @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = ErrorResponse.class))})
     })
     @POST
-    @Path("/request-atm-card")
+    @Path("/request-atm-card/{accountId}")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    void requestAtmCard(@Suspended AsyncResponse asyncResponse, @WebParam(name = "accountId") Long accountId);
+    void requestAtmCard(@Suspended AsyncResponse asyncResponse, @PathParam(value = "accountId") Long bankAccountId);
 
 
 }

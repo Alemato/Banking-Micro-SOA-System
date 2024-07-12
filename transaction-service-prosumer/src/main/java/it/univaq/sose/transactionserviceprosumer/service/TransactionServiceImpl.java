@@ -2,8 +2,12 @@ package it.univaq.sose.transactionserviceprosumer.service;
 
 import it.univaq.sose.accountservice.api.DefaultApi;
 import it.univaq.sose.accountservice.model.AccountResponse;
+import it.univaq.sose.bancomatservice.webservice.BancomatAlradyExistingException_Exception;
+import it.univaq.sose.bancomatservice.webservice.BancomatRequest;
+import it.univaq.sose.bancomatservice.webservice.BancomatResponse;
 import it.univaq.sose.bankaccountservice.webservice.*;
 import it.univaq.sose.transactionserviceprosumer.client.AccountServiceClient;
+import it.univaq.sose.transactionserviceprosumer.client.BancomatServiceClient;
 import it.univaq.sose.transactionserviceprosumer.client.BankAccountServiceClient;
 import it.univaq.sose.transactionserviceprosumer.domain.TransactionType;
 import it.univaq.sose.transactionserviceprosumer.domain.dto.BalanceUpdateRequest;
@@ -22,10 +26,12 @@ import java.time.LocalDateTime;
 public class TransactionServiceImpl implements TransactionService {
 
     private final BankAccountServiceClient bankAccountServiceClient;
+    private final BancomatServiceClient bancomatServiceClient;
     private final AccountServiceClient accountServiceClient;
 
-    public TransactionServiceImpl(BankAccountServiceClient bankAccountServiceClient, AccountServiceClient accountServiceClient) {
+    public TransactionServiceImpl(BankAccountServiceClient bankAccountServiceClient, BancomatServiceClient bancomatServiceClient, AccountServiceClient accountServiceClient) {
         this.bankAccountServiceClient = bankAccountServiceClient;
+        this.bancomatServiceClient = bancomatServiceClient;
         this.accountServiceClient = accountServiceClient;
     }
 
@@ -175,7 +181,44 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public void requestAtmCard(AsyncResponse asyncResponse, Long accountId) {
+        new Thread(() -> {
 
+            try {
+                BankAccountResponse bankAccountResponse = bankAccountServiceClient.getBankAccountService().getBankAccountDetails(accountId);
+                log.info("Bank-Account-Service Response for Get Bank Account: {}", bankAccountResponse);
+
+                Thread.sleep(1000); // sleep 1s
+
+                BancomatRequest bancomatRequest = new BancomatRequest();
+                bancomatRequest.setAccountId(accountId);
+                bancomatRequest.setBankAccountId(bankAccountResponse.getId());
+
+                BancomatResponse bancomatResponse = bancomatServiceClient.getBancomatService().createBancomat(bancomatRequest);
+                log.info("Bancomat-Service Response for Create Bancomat: {}", bancomatResponse);
+
+                CreateBancomatResponse createBancomatResponse = new CreateBancomatResponse(
+                        bancomatResponse.getId(), bancomatResponse.getNumber(),
+                        bancomatResponse.getCvv(), bancomatResponse.getDataScadenza()
+                );
+
+                Response response = Response.ok(createBancomatResponse).build();
+                asyncResponse.resume(response);
+
+            } catch (InterruptedException e) {
+                Response response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new ErrorResponse(e.getMessage())).build();
+                asyncResponse.resume(response);
+                Thread.currentThread().interrupt();
+            } catch (BancomatAlradyExistingException_Exception e) {
+                Response response = Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getMessage())).build();
+                asyncResponse.resume(response);
+                Thread.currentThread().interrupt();
+            } catch (it.univaq.sose.bancomatservice.webservice.NotFoundException_Exception |
+                     NotFoundException_Exception e) {
+                Response response = Response.status(Response.Status.NOT_FOUND).entity(new ErrorResponse(e.getMessage())).build();
+                asyncResponse.resume(response);
+                Thread.currentThread().interrupt();
+            }
+        }).start();
     }
 
     private AccountResponse getAccountDetailsByAccountId(long idAccount) throws AccountServiceException {

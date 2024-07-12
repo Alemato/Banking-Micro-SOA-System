@@ -212,10 +212,14 @@
                             <sourceRoot>${project.build.directory}/generated-sources/cxf</sourceRoot>
                             <wsdlOptions>
                                 <wsdlOption>
-                                    <wsdl>${basedir}/src/main/resources/BankAccountService.wsdl</wsdl>
+                                    <!--<wsdl>http://localhost:9081/services/BankAccountService?wsdl</wsdl>-->
+                                    <!--<wsdl>${basedir}/src/main/resources/BankAccountService.wsdl</wsdl>-->
+                                    <wsdl>${basedir}/../wsdl/BankAccountService.wsdl</wsdl>
                                 </wsdlOption>
                                 <wsdlOption>
-                                    <wsdl>${basedir}/src/main/resources/BancomatService.wsdl</wsdl>
+                                    <!--<wsdl>http://localhost:9081/services/BancomatService?wsdl</wsdl>-->
+                                    <!--<wsdl>${basedir}/src/main/resources/BancomatService.wsdl</wsdl>-->
+                                    <wsdl>${basedir}/../wsdl/BancomatService.wsdl</wsdl>
                                 </wsdlOption>
                             </wsdlOptions>
                         </configuration>
@@ -258,7 +262,8 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <!--<inputSpec>http://localhost:9080/services/openapi.yaml</inputSpec>-->
-                            <inputSpec>${basedir}/src/main/resources/AccountService_openapi.yaml</inputSpec>
+                            <!--<inputSpec>${basedir}/src/main/resources/AccountService_openapi.yaml</inputSpec>-->
+                            <inputSpec>${basedir}/../openapi/AccountService_openapi.yaml</inputSpec>
                             <generatorName>jaxrs-cxf</generatorName>
                             <output>${project.build.directory}/generated-sources/openapi</output>
                             <packageName>it.univaq.sose.accountservice</packageName>
