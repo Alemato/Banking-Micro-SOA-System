@@ -1,6 +1,6 @@
 package it.univaq.sose.bankingoperationsserviceprosumer.service;
 
-import it.univaq.sose.accountservice.api.DefaultApi;
+import it.univaq.sose.accountservice.api.AccountServiceDefaultClient;
 import it.univaq.sose.accountservice.model.AccountResponse;
 import it.univaq.sose.accountservice.model.AddIdBankAccountRequest;
 import it.univaq.sose.accountservice.model.OpenBankAccountRequest;
@@ -22,8 +22,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 @Slf4j
+@Service
 public class BankingOperationsServiceImpl implements BankingOperationsService {
     private final AccountServiceClient accountServiceClient;
     private final BankAccountServiceClient bankAccountService;
@@ -72,6 +72,10 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
                 asyncResponse.resume(response);
                 /* Clean up whatever needs to be handled before interrupting  */
                 Thread.currentThread().interrupt();
+            } catch (ServiceUnavailableException e) {
+                /* Trigger ExceptionMapper */
+                asyncResponse.resume(e);
+                Thread.currentThread().interrupt();
             }
         }).start();
     }
@@ -101,6 +105,10 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
                 Response response = Response.serverError().entity(new ErrorResponse(e.getMessage())).build();
                 asyncResponse.resume(response);
                 /* Clean up whatever needs to be handled before interrupting  */
+                Thread.currentThread().interrupt();
+            } catch (ServiceUnavailableException e) {
+                /* Trigger ExceptionMapper */
+                asyncResponse.resume(e);
                 Thread.currentThread().interrupt();
             }
         }).start();
@@ -143,6 +151,10 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
                 Response response = Response.status(Response.Status.NOT_FOUND).entity(new ErrorResponse(e.getMessage())).build();
                 asyncResponse.resume(response);
                 Thread.currentThread().interrupt();
+            } catch (ServiceUnavailableException e) {
+                /* Trigger ExceptionMapper */
+                asyncResponse.resume(e);
+                Thread.currentThread().interrupt();
             }
         }).start();
     }
@@ -176,6 +188,10 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
                 Response response = Response.status(Response.Status.NOT_FOUND).entity(new ErrorResponse(e.getMessage())).build();
                 asyncResponse.resume(response);
                 Thread.currentThread().interrupt();
+            } catch (ServiceUnavailableException e) {
+                /* Trigger ExceptionMapper */
+                asyncResponse.resume(e);
+                Thread.currentThread().interrupt();
             }
         }).start();
     }
@@ -202,7 +218,7 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
 
     private AccountResponse getAccountDetailsByAccountId(long idAccount) throws AccountServiceException {
         try {
-            DefaultApi client = accountServiceClient.getAccountService();
+            AccountServiceDefaultClient client = accountServiceClient.getAccountService();
             return client.getAccount1(idAccount);
         } catch (Exception e) {
             throw new AccountServiceException("Error for Account Service (Get Account)");
@@ -211,7 +227,7 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
     }
 
 
-    private OpenAccountResponse getOpenAccountResponse(OpenAccountRequest openAccountRequest, long idAccount) throws BankAccountAlradyExistException_Exception, AccountServiceException {
+    private OpenAccountResponse getOpenAccountResponse(OpenAccountRequest openAccountRequest, long idAccount) throws BankAccountAlradyExistException_Exception, AccountServiceException, ServiceUnavailableException {
         BankAccountRequest bankAccountRequest = new BankAccountRequest();
         bankAccountRequest.setAccountId(idAccount);
         bankAccountRequest.setBalance(openAccountRequest.getBalance());
@@ -220,7 +236,7 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
         BankAccountResponse bankAccountResponse = bankAccountClient.createBankAccount(bankAccountRequest);
         log.info("Bank-Account-Service Response for Create Bank Account: {}", bankAccountResponse);
 
-        DefaultApi client = accountServiceClient.getAccountService();
+        AccountServiceDefaultClient client = accountServiceClient.getAccountService();
         try {
             client.addBankAccount1(idAccount, new AddIdBankAccountRequest().idBankAccount(bankAccountResponse.getId()));
         } catch (Exception e) {
@@ -232,7 +248,7 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
 
     private OpenAccountResponse getOpenAccountResponse(long idAccount, BankAccountResponse bankAccountResponse) throws AccountServiceException {
         try {
-            DefaultApi client = accountServiceClient.getAccountService();
+            AccountServiceDefaultClient client = accountServiceClient.getAccountService();
             AccountResponse account = client.getAccount1(idAccount);
             log.info("Account-Service Response for Get Account: {}", account);
             OpenAccountResponse openAccountResponse = new OpenAccountResponse();

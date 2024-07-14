@@ -91,8 +91,8 @@ public class FinancialReportServiceImpl implements FinancialReportService {
                     Thread.currentThread().interrupt();
                 }
             } catch (ServiceUnavailableException e) {
-                jakarta.ws.rs.core.Response response = jakarta.ws.rs.core.Response.serverError().entity(new ErrorResponse(e.getMessage())).build();
-                asyncResponse.resume(response);
+                /* Trigger ExceptionMapper */
+                asyncResponse.resume(e);
             }
         }).start();
     }
