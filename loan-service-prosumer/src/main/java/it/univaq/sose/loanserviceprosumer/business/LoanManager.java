@@ -11,6 +11,8 @@ public interface LoanManager {
 
     List<LoanDto> getAllLoanByIdBankAccount(long idBankAccount);
 
+    List<LoanDto> getAllLoanByIdAccount(long idAccount);
+
     LoanDto closeLoanByIdLoan(long idLoan) throws LoanNotFoundException;
 
     LoanDto getLoanById(long idLoan) throws LoanNotFoundException;

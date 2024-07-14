@@ -99,6 +99,25 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
+    public void getAllLoanByIdAccount(long idAccount, AsyncResponse asyncResponse) {
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000);
+
+                List<LoanDto> loanDtoList = loanManager.getAllLoanByIdAccount(idAccount);
+
+                Response response = Response.ok().entity(loanDtoList).build();
+                asyncResponse.resume(response);
+            } catch (InterruptedException e) {
+                Response response = Response.serverError().entity(new ErrorResponse(e.getMessage())).build();
+                asyncResponse.resume(response);
+                /* Clean up whatever needs to be handled before interrupting  */
+                Thread.currentThread().interrupt();
+            }
+        }).start();
+    }
+
+    @Override
     public void closeLoanByIdLoan(long idLoan, AsyncResponse asyncResponse) {
         new Thread(() -> {
             try {

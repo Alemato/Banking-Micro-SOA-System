@@ -37,9 +37,15 @@ public class LoanManagerImpl implements LoanManager {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<LoanDto> getAllLoanByIdBankAccount(long idBankAccount) {
         return repository.findByIdBankAccountOrderByCreateDateDesc(idBankAccount);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<LoanDto> getAllLoanByIdAccount(long idAccount) {
+        return repository.findByIdAccountOrderByCreateDateDesc(idAccount);
     }
 
     @Override

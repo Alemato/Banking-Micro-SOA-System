@@ -17,7 +17,9 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
             "FROM Loan l WHERE l.idBankAccount = :idBankAccount ORDER BY l.createDate DESC")
     List<LoanDto> findByIdBankAccountOrderByCreateDateDesc(@Param("idBankAccount") Long idBankAccount);
 
-//    List<LoanDto> findByIdBankAccountOrderByCreateDateDesc(Long idBankAccount);
-
-
+    @Query("SELECT new it.univaq.sose.loanserviceprosumer.domain.dto.LoanDto(" +
+            "l.id, l.amount, l.interestRate, l.termInYears, l.borrowerName, " +
+            "l.loanStatus, l.idBankAccount, l.idAccount, l.createDate, l.updateDate) " +
+            "FROM Loan l WHERE l.idAccount = :idAccount ORDER BY l.createDate DESC")
+    List<LoanDto> findByIdAccountOrderByCreateDateDesc(@Param("idAccount") Long idAccount);
 }

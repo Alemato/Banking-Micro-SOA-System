@@ -97,8 +97,8 @@ public interface LoanService {
                             responseCode = "200",
                             description = "Loans Retrieved Successfully",
                             content = {
-                                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = LoanDto.class, type = "array")),
-                                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = LoanDto.class, type = "array"))
+                                    @Content(mediaType = MediaType.APPLICATION_JSON, array = @ArraySchema(schema = @Schema(implementation = LoanDto.class))),
+                                    @Content(mediaType = MediaType.APPLICATION_XML, array = @ArraySchema(schema = @Schema(implementation = LoanDto.class)))
                             }),
                     @ApiResponse(
                             responseCode = "500",
@@ -114,6 +114,33 @@ public interface LoanService {
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     void getAllLoanByIdBankAccount(@PathParam("idBankAccount") long idBankAccount, @Suspended AsyncResponse asyncResponse);
+
+
+    @Operation(
+            operationId = "getAllLoanByIdAccount",
+            description = "This endpoint allows users to retrieve all loans by account ID.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Loans Retrieved Successfully",
+                            content = {
+                                    @Content(mediaType = MediaType.APPLICATION_JSON, array = @ArraySchema(schema = @Schema(implementation = LoanDto.class))),
+                                    @Content(mediaType = MediaType.APPLICATION_XML, array = @ArraySchema(schema = @Schema(implementation = LoanDto.class)))
+                            }),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = {
+                                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = ErrorResponse.class)),
+                                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = ErrorResponse.class))
+                            }
+                    )
+            })
+    @GET
+    @Path("/account/{idAccount}")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    void getAllLoanByIdAccount(@PathParam("idAccount") long idAccount, @Suspended AsyncResponse asyncResponse);
 
     @Operation(
             operationId = "closeLoanByIdLoan",

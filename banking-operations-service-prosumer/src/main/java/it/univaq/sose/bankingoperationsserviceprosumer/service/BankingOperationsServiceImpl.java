@@ -4,13 +4,14 @@ import it.univaq.sose.accountservice.api.DefaultApi;
 import it.univaq.sose.accountservice.model.AccountResponse;
 import it.univaq.sose.accountservice.model.AddIdBankAccountRequest;
 import it.univaq.sose.accountservice.model.OpenBankAccountRequest;
-import it.univaq.sose.bancomatservice.webservice.BancomatAlradyExistingException_Exception;
-import it.univaq.sose.bancomatservice.webservice.BancomatRequest;
-import it.univaq.sose.bancomatservice.webservice.BancomatResponse;
+import it.univaq.sose.bancomatservice.webservice.*;
+import it.univaq.sose.bankaccountservice.webservice.NotFoundException_Exception;
+import it.univaq.sose.bankaccountservice.webservice.TransactionResponse;
 import it.univaq.sose.bankaccountservice.webservice.*;
 import it.univaq.sose.bankingoperationsserviceprosumer.client.AccountServiceClient;
 import it.univaq.sose.bankingoperationsserviceprosumer.client.BancomatServiceClient;
 import it.univaq.sose.bankingoperationsserviceprosumer.client.BankAccountServiceClient;
+import it.univaq.sose.bankingoperationsserviceprosumer.domain.CreateBancomatResponse;
 import it.univaq.sose.bankingoperationsserviceprosumer.domain.*;
 import it.univaq.sose.bankingoperationsserviceprosumer.util.BankingOperationsUtils;
 import jakarta.ws.rs.container.AsyncResponse;
@@ -133,7 +134,7 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
                 Response response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new ErrorResponse(e.getMessage())).build();
                 asyncResponse.resume(response);
                 Thread.currentThread().interrupt();
-            } catch (BancomatAlradyExistingException_Exception e) {
+            } catch (BancomatAlreadyExistingException_Exception e) {
                 Response response = Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getMessage())).build();
                 asyncResponse.resume(response);
                 Thread.currentThread().interrupt();
@@ -152,8 +153,10 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
 
             try {
                 Thread.sleep(1000); // sleep 1s
-
-                BancomatResponse bancomatResponse = bancomatService.getBancomatService().getBancomatDetails(accountId);
+                GetBancomatDetails request = new GetBancomatDetails();
+                request.setAccountId(accountId);
+                GetBancomatDetailsResponse getBancomatDetailsResponse = bancomatService.getBancomatService().getBancomatDetails(request);
+                BancomatResponse bancomatResponse = getBancomatDetailsResponse.getGetBancomatDetailsResponse();
                 log.info("Bancomat-Service Response for Get Bancomat Details: {}", bancomatResponse);
 
                 CreateBancomatResponse createBancomatResponse = new CreateBancomatResponse(
@@ -168,7 +171,8 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
                 Response response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new ErrorResponse(e.getMessage())).build();
                 asyncResponse.resume(response);
                 Thread.currentThread().interrupt();
-            } catch (it.univaq.sose.bancomatservice.webservice.NotFoundException_Exception e) {
+            } catch (it.univaq.sose.bancomatservice.webservice.NotFoundException_Exception |
+                     BancomatException_Exception e) {
                 Response response = Response.status(Response.Status.NOT_FOUND).entity(new ErrorResponse(e.getMessage())).build();
                 asyncResponse.resume(response);
                 Thread.currentThread().interrupt();
