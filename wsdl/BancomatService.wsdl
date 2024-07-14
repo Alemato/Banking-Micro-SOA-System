@@ -3,288 +3,308 @@
                   xmlns:tns="http://webservice.bancomatservice.sose.univaq.it/"
                   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
                   name="BancomatService" targetNamespace="http://webservice.bancomatservice.sose.univaq.it/">
-  <wsdl:types>
-    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://webservice.bancomatservice.sose.univaq.it/"
-               attributeFormDefault="unqualified" elementFormDefault="unqualified"
-               targetNamespace="http://webservice.bancomatservice.sose.univaq.it/" version="1.0">
-      <xs:element name="createBancomat" type="tns:createBancomat"/>
-      <xs:element name="createBancomatResponse" type="tns:createBancomatResponse"/>
-      <xs:element name="executeTransaction" type="tns:executeTransaction"/>
-      <xs:element name="executeTransactionResponse" type="tns:executeTransactionResponse"/>
-      <xs:element name="getBancomatDetails" type="tns:getBancomatDetails"/>
-      <xs:element name="getBancomatDetailsByNumber" type="tns:getBancomatDetailsByNumber"/>
-      <xs:element name="getBancomatDetailsByNumberResponse" type="tns:getBancomatDetailsByNumberResponse"/>
-      <xs:element name="getBancomatDetailsResponse" type="tns:getBancomatDetailsResponse"/>
-      <xs:element name="getBancomatTransactions" type="tns:getBancomatTransactions"/>
-      <xs:element name="getBancomatTransactionsResponse" type="tns:getBancomatTransactionsResponse"/>
-      <xs:complexType name="createBancomat">
-        <xs:sequence>
-          <xs:element name="bancomatRequest" type="tns:BancomatRequest"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="BancomatRequest">
-        <xs:sequence>
-          <xs:element name="accountId" type="xs:long"/>
-          <xs:element name="bankAccountId" type="xs:long"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createBancomatResponse">
-        <xs:sequence>
-          <xs:element form="qualified" minOccurs="0" name="CreateBancomatResponse" type="tns:BancomatResponse"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="BancomatResponse">
-        <xs:sequence>
-          <xs:element name="id" type="xs:long"/>
-          <xs:element name="number" type="xs:string"/>
-          <xs:element name="cvv" type="xs:string"/>
-          <xs:element name="dataScadenza" type="xs:string"/>
-          <xs:element name="accountId" type="xs:long"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="executeTransaction">
-        <xs:sequence>
-          <xs:element name="transactionRequest" type="tns:TransactionRequest"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="TransactionRequest">
-        <xs:sequence>
-          <xs:element name="number" type="xs:string"/>
-          <xs:element name="amount" type="xs:decimal"/>
-          <xs:element name="description" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="executeTransactionResponse">
-        <xs:sequence>
-          <xs:element form="qualified" minOccurs="0" name="ExecuteTransactionResponse" type="tns:TransactionResponse"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="TransactionResponse">
-        <xs:sequence>
-          <xs:element name="id" type="xs:long"/>
-          <xs:element name="transactionCode" type="xs:string"/>
-          <xs:element name="amount" type="xs:decimal"/>
-          <xs:element name="description" type="xs:string"/>
-          <xs:element name="date" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="getBancomatDetailsByNumber">
-        <xs:sequence>
-          <xs:element name="number" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="getBancomatDetailsByNumberResponse">
-        <xs:sequence>
-          <xs:element form="qualified" minOccurs="0" name="GetBancomatDetailsByNumberResponse"
-                      type="tns:BancomatResponse"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="getBancomatDetails">
-        <xs:sequence>
-          <xs:element name="accountId" type="xs:long"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="getBancomatDetailsResponse">
-        <xs:sequence>
-          <xs:element form="qualified" minOccurs="0" name="GetBancomatDetailsResponse" type="tns:BancomatResponse"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="getBancomatTransactions">
-        <xs:sequence>
-          <xs:element name="accountId" type="xs:long"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="getBancomatTransactionsResponse">
-        <xs:sequence>
-          <xs:element form="qualified" maxOccurs="unbounded" minOccurs="0" name="GetBancomatTransactionsResponse"
-                      type="tns:TransactionResponse"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:element name="NotFoundException" type="tns:NotFoundException"/>
-      <xs:complexType name="NotFoundException">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="message" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:element name="BancomatAlradyExistingException" type="tns:BancomatAlradyExistingException"/>
-      <xs:complexType name="BancomatAlradyExistingException">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="message" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:element name="ExpiredBancomatException" type="tns:ExpiredBancomatException"/>
-      <xs:complexType name="ExpiredBancomatException">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="message" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-    </xs:schema>
-  </wsdl:types>
-  <wsdl:message name="getBancomatDetailsResponse">
-    <wsdl:part element="tns:getBancomatDetailsResponse" name="parameters">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="getBancomatTransactions">
-    <wsdl:part element="tns:getBancomatTransactions" name="parameters">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="ExpiredBancomatException">
-    <wsdl:part element="tns:ExpiredBancomatException" name="ExpiredBancomatException">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="executeTransaction">
-    <wsdl:part element="tns:executeTransaction" name="parameters">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="getBancomatDetailsByNumberResponse">
-    <wsdl:part element="tns:getBancomatDetailsByNumberResponse" name="parameters">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createBancomatResponse">
-    <wsdl:part element="tns:createBancomatResponse" name="parameters">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="getBancomatDetailsByNumber">
-    <wsdl:part element="tns:getBancomatDetailsByNumber" name="parameters">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="BancomatAlradyExistingException">
-    <wsdl:part element="tns:BancomatAlradyExistingException" name="BancomatAlradyExistingException">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="getBancomatDetails">
-    <wsdl:part element="tns:getBancomatDetails" name="parameters">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="executeTransactionResponse">
-    <wsdl:part element="tns:executeTransactionResponse" name="parameters">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="createBancomat">
-    <wsdl:part element="tns:createBancomat" name="parameters">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="NotFoundException">
-    <wsdl:part element="tns:NotFoundException" name="NotFoundException">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:message name="getBancomatTransactionsResponse">
-    <wsdl:part element="tns:getBancomatTransactionsResponse" name="parameters">
-    </wsdl:part>
-  </wsdl:message>
-  <wsdl:portType name="BancomatService">
-    <wsdl:operation name="createBancomat">
-      <wsdl:input message="tns:createBancomat" name="createBancomat">
-      </wsdl:input>
-      <wsdl:output message="tns:createBancomatResponse" name="createBancomatResponse">
-      </wsdl:output>
-      <wsdl:fault message="tns:BancomatAlradyExistingException" name="BancomatAlradyExistingException">
-      </wsdl:fault>
-      <wsdl:fault message="tns:NotFoundException" name="NotFoundException">
-      </wsdl:fault>
-    </wsdl:operation>
-    <wsdl:operation name="executeTransaction">
-      <wsdl:input message="tns:executeTransaction" name="executeTransaction">
-      </wsdl:input>
-      <wsdl:output message="tns:executeTransactionResponse" name="executeTransactionResponse">
-      </wsdl:output>
-      <wsdl:fault message="tns:ExpiredBancomatException" name="ExpiredBancomatException">
-      </wsdl:fault>
-      <wsdl:fault message="tns:NotFoundException" name="NotFoundException">
-      </wsdl:fault>
-    </wsdl:operation>
-    <wsdl:operation name="getBancomatDetailsByNumber">
-      <wsdl:input message="tns:getBancomatDetailsByNumber" name="getBancomatDetailsByNumber">
-      </wsdl:input>
-      <wsdl:output message="tns:getBancomatDetailsByNumberResponse" name="getBancomatDetailsByNumberResponse">
-      </wsdl:output>
-      <wsdl:fault message="tns:NotFoundException" name="NotFoundException">
-      </wsdl:fault>
-    </wsdl:operation>
-    <wsdl:operation name="getBancomatDetails">
-      <wsdl:input message="tns:getBancomatDetails" name="getBancomatDetails">
-      </wsdl:input>
-      <wsdl:output message="tns:getBancomatDetailsResponse" name="getBancomatDetailsResponse">
-      </wsdl:output>
-      <wsdl:fault message="tns:NotFoundException" name="NotFoundException">
-      </wsdl:fault>
-    </wsdl:operation>
-    <wsdl:operation name="getBancomatTransactions">
-      <wsdl:input message="tns:getBancomatTransactions" name="getBancomatTransactions">
-      </wsdl:input>
-      <wsdl:output message="tns:getBancomatTransactionsResponse" name="getBancomatTransactionsResponse">
-      </wsdl:output>
-    </wsdl:operation>
-  </wsdl:portType>
-  <wsdl:binding name="BancomatServiceSoapBinding" type="tns:BancomatService">
-    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
-    <wsdl:operation name="createBancomat">
-      <soap:operation soapAction="urn:CreateBancomat" style="document"/>
-      <wsdl:input name="createBancomat">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="createBancomatResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-      <wsdl:fault name="BancomatAlradyExistingException">
-        <soap:fault name="BancomatAlradyExistingException" use="literal"/>
-      </wsdl:fault>
-      <wsdl:fault name="NotFoundException">
-        <soap:fault name="NotFoundException" use="literal"/>
-      </wsdl:fault>
-    </wsdl:operation>
-    <wsdl:operation name="executeTransaction">
-      <soap:operation soapAction="urn:ExecuteTransaction" style="document"/>
-      <wsdl:input name="executeTransaction">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="executeTransactionResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-      <wsdl:fault name="ExpiredBancomatException">
-        <soap:fault name="ExpiredBancomatException" use="literal"/>
-      </wsdl:fault>
-      <wsdl:fault name="NotFoundException">
-        <soap:fault name="NotFoundException" use="literal"/>
-      </wsdl:fault>
-    </wsdl:operation>
-    <wsdl:operation name="getBancomatDetailsByNumber">
-      <soap:operation soapAction="urn:GetBancomatDetailsByNumber" style="document"/>
-      <wsdl:input name="getBancomatDetailsByNumber">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="getBancomatDetailsByNumberResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-      <wsdl:fault name="NotFoundException">
-        <soap:fault name="NotFoundException" use="literal"/>
-      </wsdl:fault>
-    </wsdl:operation>
-    <wsdl:operation name="getBancomatDetails">
-      <soap:operation soapAction="urn:GetBancomatDetails" style="document"/>
-      <wsdl:input name="getBancomatDetails">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="getBancomatDetailsResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-      <wsdl:fault name="NotFoundException">
-        <soap:fault name="NotFoundException" use="literal"/>
-      </wsdl:fault>
-    </wsdl:operation>
-    <wsdl:operation name="getBancomatTransactions">
-      <soap:operation soapAction="urn:GetBancomatTransactions" style="document"/>
-      <wsdl:input name="getBancomatTransactions">
-        <soap:body use="literal"/>
-      </wsdl:input>
-      <wsdl:output name="getBancomatTransactionsResponse">
-        <soap:body use="literal"/>
-      </wsdl:output>
-    </wsdl:operation>
-  </wsdl:binding>
-  <wsdl:service name="BancomatService">
-    <wsdl:port binding="tns:BancomatServiceSoapBinding" name="BancomatPort">
-      <soap:address location="http://192.168.178.37:9082/services/BancomatService"/>
-    </wsdl:port>
-  </wsdl:service>
+    <wsdl:types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                   xmlns:tns="http://webservice.bancomatservice.sose.univaq.it/" attributeFormDefault="unqualified"
+                   elementFormDefault="unqualified" targetNamespace="http://webservice.bancomatservice.sose.univaq.it/"
+                   version="1.0">
+            <xs:element name="createBancomat" type="tns:createBancomat"/>
+            <xs:element name="createBancomatResponse" type="tns:createBancomatResponse"/>
+            <xs:element name="executeTransaction" type="tns:executeTransaction"/>
+            <xs:element name="executeTransactionResponse" type="tns:executeTransactionResponse"/>
+            <xs:element name="getBancomatDetails" type="tns:getBancomatDetails"/>
+            <xs:element name="getBancomatDetailsByNumber" type="tns:getBancomatDetailsByNumber"/>
+            <xs:element name="getBancomatDetailsByNumberResponse" type="tns:getBancomatDetailsByNumberResponse"/>
+            <xs:element name="getBancomatTransactions" type="tns:getBancomatTransactions"/>
+            <xs:complexType name="createBancomat">
+                <xs:sequence>
+                    <xs:element name="bancomatRequest" type="tns:BancomatRequest"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="BancomatRequest">
+                <xs:sequence>
+                    <xs:element name="accountId" type="xs:long"/>
+                    <xs:element name="bankAccountId" type="xs:long"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="createBancomatResponse">
+                <xs:sequence>
+                    <xs:element form="qualified" minOccurs="0" name="CreateBancomatResponse"
+                                type="tns:BancomatResponse"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="BancomatResponse">
+                <xs:sequence>
+                    <xs:element name="id" type="xs:long"/>
+                    <xs:element name="number" type="xs:string"/>
+                    <xs:element name="cvv" type="xs:string"/>
+                    <xs:element name="dataScadenza" type="xs:string"/>
+                    <xs:element name="accountId" type="xs:long"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="executeTransaction">
+                <xs:sequence>
+                    <xs:element name="transactionRequest" type="tns:TransactionRequest"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="TransactionRequest">
+                <xs:sequence>
+                    <xs:element name="number" type="xs:string"/>
+                    <xs:element name="amount" type="xs:decimal"/>
+                    <xs:element name="description" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="executeTransactionResponse">
+                <xs:sequence>
+                    <xs:element form="qualified" minOccurs="0" name="ExecuteTransactionResponse"
+                                type="tns:TransactionResponse"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="TransactionResponse">
+                <xs:sequence>
+                    <xs:element name="id" type="xs:long"/>
+                    <xs:element name="transactionCode" type="xs:string"/>
+                    <xs:element name="amount" type="xs:decimal"/>
+                    <xs:element name="description" type="xs:string"/>
+                    <xs:element name="date" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="getBancomatDetailsByNumber">
+                <xs:sequence>
+                    <xs:element name="number" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="getBancomatDetailsByNumberResponse">
+                <xs:sequence>
+                    <xs:element form="qualified" minOccurs="0" name="GetBancomatDetailsByNumberResponse"
+                                type="tns:BancomatResponse"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="getBancomatDetails">
+                <xs:sequence>
+                    <xs:element name="accountId" type="xs:long"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="getBancomatDetailsResponse">
+                <xs:sequence>
+                    <xs:element form="qualified" minOccurs="0" name="GetBancomatDetailsResponse"
+                                type="tns:BancomatResponse"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="getBancomatTransactions">
+                <xs:sequence>
+                    <xs:element name="accountId" type="xs:long"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="getBancomatTransactionsResponse">
+                <xs:sequence>
+                    <xs:element form="qualified" maxOccurs="unbounded" minOccurs="0"
+                                name="GetBancomatTransactionsResponse" type="tns:TransactionResponse"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="BancomatAlreadyExistingException" type="tns:BancomatAlreadyExistingException"/>
+            <xs:complexType name="BancomatAlreadyExistingException">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="message" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="NotFoundException" type="tns:NotFoundException"/>
+            <xs:complexType name="NotFoundException">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="message" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ExpiredBancomatException" type="tns:ExpiredBancomatException"/>
+            <xs:complexType name="ExpiredBancomatException">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="message" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="getBancomatDetailsResponse" nillable="true" type="tns:getBancomatDetailsResponse"/>
+            <xs:element name="BancomatException" type="tns:BancomatException"/>
+            <xs:complexType name="BancomatException">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="message" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="getBancomatTransactionsResponse" nillable="true"
+                        type="tns:getBancomatTransactionsResponse"/>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="getBancomatDetailsResponse">
+        <wsdl:part element="tns:getBancomatDetailsResponse" name="parameters">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="BancomatAlreadyExistingException">
+        <wsdl:part element="tns:BancomatAlreadyExistingException" name="BancomatAlreadyExistingException">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getBancomatTransactions">
+        <wsdl:part element="tns:getBancomatTransactions" name="parameters">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="ExpiredBancomatException">
+        <wsdl:part element="tns:ExpiredBancomatException" name="ExpiredBancomatException">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="executeTransaction">
+        <wsdl:part element="tns:executeTransaction" name="parameters">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getBancomatDetailsByNumberResponse">
+        <wsdl:part element="tns:getBancomatDetailsByNumberResponse" name="parameters">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="createBancomatResponse">
+        <wsdl:part element="tns:createBancomatResponse" name="parameters">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getBancomatDetailsByNumber">
+        <wsdl:part element="tns:getBancomatDetailsByNumber" name="parameters">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getBancomatDetails">
+        <wsdl:part element="tns:getBancomatDetails" name="parameters">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="executeTransactionResponse">
+        <wsdl:part element="tns:executeTransactionResponse" name="parameters">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="BancomatException">
+        <wsdl:part element="tns:BancomatException" name="BancomatException">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="createBancomat">
+        <wsdl:part element="tns:createBancomat" name="parameters">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="NotFoundException">
+        <wsdl:part element="tns:NotFoundException" name="NotFoundException">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="getBancomatTransactionsResponse">
+        <wsdl:part element="tns:getBancomatTransactionsResponse" name="parameters">
+        </wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="BancomatService">
+        <wsdl:operation name="createBancomat">
+            <wsdl:input message="tns:createBancomat" name="createBancomat">
+            </wsdl:input>
+            <wsdl:output message="tns:createBancomatResponse" name="createBancomatResponse">
+            </wsdl:output>
+            <wsdl:fault message="tns:BancomatAlreadyExistingException" name="BancomatAlreadyExistingException">
+            </wsdl:fault>
+            <wsdl:fault message="tns:NotFoundException" name="NotFoundException">
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="executeTransaction">
+            <wsdl:input message="tns:executeTransaction" name="executeTransaction">
+            </wsdl:input>
+            <wsdl:output message="tns:executeTransactionResponse" name="executeTransactionResponse">
+            </wsdl:output>
+            <wsdl:fault message="tns:ExpiredBancomatException" name="ExpiredBancomatException">
+            </wsdl:fault>
+            <wsdl:fault message="tns:NotFoundException" name="NotFoundException">
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getBancomatDetailsByNumber">
+            <wsdl:input message="tns:getBancomatDetailsByNumber" name="getBancomatDetailsByNumber">
+            </wsdl:input>
+            <wsdl:output message="tns:getBancomatDetailsByNumberResponse" name="getBancomatDetailsByNumberResponse">
+            </wsdl:output>
+            <wsdl:fault message="tns:NotFoundException" name="NotFoundException">
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getBancomatDetails">
+            <wsdl:input message="tns:getBancomatDetails" name="getBancomatDetails">
+            </wsdl:input>
+            <wsdl:output message="tns:getBancomatDetailsResponse" name="getBancomatDetailsResponse">
+            </wsdl:output>
+            <wsdl:fault message="tns:NotFoundException" name="NotFoundException">
+            </wsdl:fault>
+            <wsdl:fault message="tns:BancomatException" name="BancomatException">
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getBancomatTransactions">
+            <wsdl:input message="tns:getBancomatTransactions" name="getBancomatTransactions">
+            </wsdl:input>
+            <wsdl:output message="tns:getBancomatTransactionsResponse" name="getBancomatTransactionsResponse">
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="BancomatServiceSoapBinding" type="tns:BancomatService">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="createBancomat">
+            <soap:operation soapAction="urn:CreateBancomat" style="document"/>
+            <wsdl:input name="createBancomat">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="createBancomatResponse">
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="BancomatAlreadyExistingException">
+                <soap:fault name="BancomatAlreadyExistingException" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="NotFoundException">
+                <soap:fault name="NotFoundException" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="executeTransaction">
+            <soap:operation soapAction="urn:ExecuteTransaction" style="document"/>
+            <wsdl:input name="executeTransaction">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="executeTransactionResponse">
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="ExpiredBancomatException">
+                <soap:fault name="ExpiredBancomatException" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="NotFoundException">
+                <soap:fault name="NotFoundException" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getBancomatDetailsByNumber">
+            <soap:operation soapAction="urn:GetBancomatDetailsByNumber" style="document"/>
+            <wsdl:input name="getBancomatDetailsByNumber">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="getBancomatDetailsByNumberResponse">
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="NotFoundException">
+                <soap:fault name="NotFoundException" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getBancomatDetails">
+            <soap:operation soapAction="urn:GetBancomatDetails" style="document"/>
+            <wsdl:input name="getBancomatDetails">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="getBancomatDetailsResponse">
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="NotFoundException">
+                <soap:fault name="NotFoundException" use="literal"/>
+            </wsdl:fault>
+            <wsdl:fault name="BancomatException">
+                <soap:fault name="BancomatException" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="getBancomatTransactions">
+            <soap:operation soapAction="urn:GetBancomatTransactions" style="document"/>
+            <wsdl:input name="getBancomatTransactions">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="getBancomatTransactionsResponse">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="BancomatService">
+        <wsdl:port binding="tns:BancomatServiceSoapBinding" name="BancomatPort">
+            <soap:address location="http://169.254.88.143:9082/services/BancomatService"/>
+        </wsdl:port>
+    </wsdl:service>
 </wsdl:definitions>

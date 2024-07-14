@@ -92,10 +92,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/LoanDto"
+                type: array
+                items:
+                  $ref: "#/components/schemas/LoanDto"
             application/xml:
               schema:
-                $ref: "#/components/schemas/LoanDto"
+                type: array
+                items:
+                  $ref: "#/components/schemas/LoanDto"
         "404":
           description: Loan Not Found
           content:
