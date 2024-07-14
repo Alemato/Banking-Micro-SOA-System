@@ -32,7 +32,7 @@ public class AccountManagerImpl implements AccountManager {
         if (!passwordService.checkPassword(userCredentials.getPassword(), account.getPassword())) {
             throw new AuthenticationException("Username o Password errata. Riprovare.");
         }
-        return JWTGenerator.createJwtToken(account.getUsername(), account.getRole());
+        return JWTGenerator.createJwtToken(account.getUsername(), account.getIdBankAccount(), account.getRole());
     }
 
     @Override
