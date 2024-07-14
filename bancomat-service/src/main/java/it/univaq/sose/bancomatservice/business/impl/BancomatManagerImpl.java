@@ -9,7 +9,7 @@ import it.univaq.sose.bancomatservice.domain.dto.TransactionRequest;
 import it.univaq.sose.bancomatservice.domain.dto.TransactionResponse;
 import it.univaq.sose.bancomatservice.repository.BancomatRepository;
 import it.univaq.sose.bancomatservice.repository.TransactionRepository;
-import it.univaq.sose.bancomatservice.webservice.BancomatAlradyExistingException;
+import it.univaq.sose.bancomatservice.webservice.BancomatAlreadyExistingException;
 import it.univaq.sose.bancomatservice.webservice.ExpiredBancomatException;
 import it.univaq.sose.bancomatservice.webservice.NotFoundException;
 import org.springframework.stereotype.Service;
@@ -47,9 +47,9 @@ public class BancomatManagerImpl implements BancomatManager {
 
     @Override
     @Transactional
-    public BancomatResponse createBancomat(BancomatRequest bancomatRequest) throws BancomatAlradyExistingException {
+    public BancomatResponse createBancomat(BancomatRequest bancomatRequest) throws BancomatAlreadyExistingException {
         if (bancomatRepository.existsByAccountIdAndExpiryDateAfter(bancomatRequest.getAccountId(), YearMonth.now())) {
-            throw new BancomatAlradyExistingException("A non-expired Bancomat already exists");
+            throw new BancomatAlreadyExistingException("A non-expired Bancomat already exists");
         }
 
         long numberPart1 = random.nextLong() % 100000000L;

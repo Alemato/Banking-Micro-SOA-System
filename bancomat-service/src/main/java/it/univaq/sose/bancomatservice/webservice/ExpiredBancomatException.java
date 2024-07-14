@@ -2,7 +2,7 @@ package it.univaq.sose.bancomatservice.webservice;
 
 import java.io.Serial;
 
-public class ExpiredBancomatException extends Exception {
+public class ExpiredBancomatException extends BancomatException {
     @Serial
     private static final long serialVersionUID = -8854097433627315768L;
 

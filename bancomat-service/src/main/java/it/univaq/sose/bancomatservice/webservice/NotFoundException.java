@@ -2,7 +2,7 @@ package it.univaq.sose.bancomatservice.webservice;
 
 import java.io.Serial;
 
-public class NotFoundException extends Exception {
+public class NotFoundException extends BancomatException {
     @Serial
     private static final long serialVersionUID = 1292673996797365627L;
 
