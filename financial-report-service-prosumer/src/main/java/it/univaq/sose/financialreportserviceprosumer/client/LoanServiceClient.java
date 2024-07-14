@@ -75,16 +75,16 @@ public class LoanServiceClient {
         }
     }
 
-    public LoanServiceDefaultClient getBankingOperationsServiceClient() throws ServiceUnavailableException {
+    public LoanServiceDefaultClient getLoanServiceClient() throws ServiceUnavailableException {
         return JAXRSClientFactory.create(getUrlServiceFromEureka(), LoanServiceDefaultClient.class, List.of(jacksonProvider));
     }
 
-    public Client getClientBankingOperationsService() throws ServiceUnavailableException {
+    public Client getClientLoanService() throws ServiceUnavailableException {
         LoanServiceDefaultClient api = JAXRSClientFactory.create(getUrlServiceFromEureka(), LoanServiceDefaultClient.class, List.of(jacksonProvider));
         return WebClient.client(api);
     }
 
-    public WebClient getWebClientAccountService() throws ServiceUnavailableException {
+    public WebClient getWebClientLoanService() throws ServiceUnavailableException {
         LoanServiceDefaultClient api = JAXRSClientFactory.create(getUrlServiceFromEureka(), LoanServiceDefaultClient.class, List.of(jacksonProvider));
         Client client = WebClient.client(api);
         WebClient webClient = WebClient.fromClient(client);
@@ -92,7 +92,7 @@ public class LoanServiceClient {
         return webClient;
     }
 
-    public ClientConfiguration getClientConfigurationAccountService() throws ServiceUnavailableException {
+    public ClientConfiguration getClientConfigurationLoanService() throws ServiceUnavailableException {
         LoanServiceDefaultClient api = JAXRSClientFactory.create(getUrlServiceFromEureka(), LoanServiceDefaultClient.class, List.of(jacksonProvider));
         Client client = WebClient.client(api);
         return WebClient.getConfig(client);

@@ -70,6 +70,9 @@ public class TransactionServiceImpl implements TransactionService {
                 Response response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new ErrorResponse(e.getMessage())).build();
                 asyncResponse.resume(response);
                 Thread.currentThread().interrupt();
+            } catch (ServiceUnavailableException e) {
+                asyncResponse.resume(e);
+                Thread.currentThread().interrupt();
             }
         }).start();
     }
@@ -118,6 +121,9 @@ public class TransactionServiceImpl implements TransactionService {
             } catch (InterruptedException e) {
                 Response response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new ErrorResponse(e.getMessage())).build();
                 asyncResponse.resume(response);
+                Thread.currentThread().interrupt();
+            } catch (ServiceUnavailableException e) {
+                asyncResponse.resume(e);
                 Thread.currentThread().interrupt();
             }
         }).start();
@@ -175,6 +181,9 @@ public class TransactionServiceImpl implements TransactionService {
                      InsufficientFundsException_Exception e) {
                 Response response = Response.serverError().entity(new ErrorResponse(e.getMessage())).build();
                 asyncResponse.resume(response);
+                Thread.currentThread().interrupt();
+            } catch (ServiceUnavailableException e) {
+                asyncResponse.resume(e);
                 Thread.currentThread().interrupt();
             }
         }).start();
@@ -238,6 +247,9 @@ public class TransactionServiceImpl implements TransactionService {
             } catch (InsufficientFundsException_Exception e) {
                 Response response = Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getMessage())).build();
                 asyncResponse.resume(response);
+                Thread.currentThread().interrupt();
+            } catch (ServiceUnavailableException e) {
+                asyncResponse.resume(e);
                 Thread.currentThread().interrupt();
             }
         }).start();

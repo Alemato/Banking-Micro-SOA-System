@@ -84,7 +84,7 @@ public class BankingOperationsServiceClient {
         return WebClient.client(api);
     }
 
-    public WebClient getWebClientAccountService() throws ServiceUnavailableException {
+    public WebClient getWebClientBankingOperationsService() throws ServiceUnavailableException {
         BankingOperationsServiceDefaultClient api = JAXRSClientFactory.create(getUrlServiceFromEureka(), BankingOperationsServiceDefaultClient.class, List.of(jacksonProvider));
         Client client = WebClient.client(api);
         WebClient webClient = WebClient.fromClient(client);
@@ -92,7 +92,7 @@ public class BankingOperationsServiceClient {
         return webClient;
     }
 
-    public ClientConfiguration getClientConfigurationAccountService() throws ServiceUnavailableException {
+    public ClientConfiguration getClientConfigurationBankingOperationsService() throws ServiceUnavailableException {
         BankingOperationsServiceDefaultClient api = JAXRSClientFactory.create(getUrlServiceFromEureka(), BankingOperationsServiceDefaultClient.class, List.of(jacksonProvider));
         Client client = WebClient.client(api);
         return WebClient.getConfig(client);
