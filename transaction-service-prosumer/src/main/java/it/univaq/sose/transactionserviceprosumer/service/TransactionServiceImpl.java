@@ -15,14 +15,12 @@ import it.univaq.sose.transactionserviceprosumer.domain.dto.*;
 import jakarta.ws.rs.container.AsyncResponse;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.cxf.feature.Features;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 @Slf4j
 @Service
-@Features(features = "org.apache.cxf.ext.logging.LoggingFeature")
 public class TransactionServiceImpl implements TransactionService {
 
     private final BankAccountServiceClient bankAccountServiceClient;
