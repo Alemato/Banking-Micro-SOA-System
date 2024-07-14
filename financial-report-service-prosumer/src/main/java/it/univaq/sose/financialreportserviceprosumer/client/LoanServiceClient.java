@@ -33,21 +33,23 @@ public class LoanServiceClient {
 
     private String getUrlServiceFromEureka() throws ServiceUnavailableException {
         try {
-            List<InstanceInfo> instances = eurekaClient.getInstancesByVipAddress("LOAN-SERVICE", false);
+            List<InstanceInfo> instances = eurekaClient.getInstancesByVipAddress("LOAN-SERVICE-PROSUMER", false);
             if (instances.isEmpty()) {
                 log.error("No instances available for LOAN-SERVICE");
                 throw new ServiceUnavailableException("No instances available for LOAN-SERVICE");
             }
 
             // Rimuove l'ultima istanza utilizzata dalla lista
-            instances.removeIf(instance -> {
-                try {
-                    return Objects.equals(new URL(instance.getHomePageUrl() + "services"), new URL(lastUrlService));
-                } catch (MalformedURLException e) {
-                    log.error("Malformed URL while filtering instances: {}", e.getMessage(), e);
-                    return false;
-                }
-            });
+            if (lastUrlService != null) {
+                instances.removeIf(instance -> {
+                    try {
+                        return Objects.equals(new URL(instance.getHomePageUrl() + "services"), new URL(lastUrlService));
+                    } catch (MalformedURLException e) {
+                        log.error("Malformed URL while filtering instances: {}", e.getMessage(), e);
+                        return false;
+                    }
+                });
+            }
 
             // Se non ci sono istanze alternative disponibili, utilizza l'ultima istanza utilizzata
             if (instances.isEmpty()) {
@@ -94,5 +96,9 @@ public class LoanServiceClient {
         LoanServiceDefaultClient api = JAXRSClientFactory.create(getUrlServiceFromEureka(), LoanServiceDefaultClient.class, List.of(jacksonProvider));
         Client client = WebClient.client(api);
         return WebClient.getConfig(client);
+    }
+
+    public String getEndpoint() throws ServiceUnavailableException {
+        return getUrlServiceFromEureka();
     }
 }
