@@ -127,7 +127,7 @@ public interface AccountService {
             @ApiResponse(description = "Get Account by ID", content = {
                     @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = AccountResponse.class)),
                     @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = AccountResponse.class))}),
-            @ApiResponse(responseCode = "404", description = "Account whit this Id not found", content = {
+            @ApiResponse(responseCode = "404", description = "Account with this Id not found", content = {
                     @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = ErrorResponse.class)),
                     @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = ErrorResponse.class))})
     })
