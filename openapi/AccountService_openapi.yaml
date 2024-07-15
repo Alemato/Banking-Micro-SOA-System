@@ -34,7 +34,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/AccountResponse"
         "404":
-          description: Account whit this Id not found
+          description: Account with this Id not found
           content:
             application/json:
               schema:
@@ -81,6 +81,30 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  /api/account/check-token:
+    post:
+      description: Check JWT
+      operationId: checkTokenResponse_1
+      requestBody:
+        description: Token
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TokenResponse"
+          application/xml:
+            schema:
+              $ref: "#/components/schemas/TokenResponse"
+        required: true
+      responses:
+        "200":
+          description: Check successful
+          content:
+            application/json:
+              schema:
+                type: boolean
+            application/xml:
+              schema:
+                type: boolean
   /api/account/login:
     post:
       description: Authenticate user and return JWT

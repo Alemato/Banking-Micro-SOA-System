@@ -33,6 +33,22 @@ public interface AccountService {
             }
     ) UserCredentials credentials);
 
+    @Operation(operationId = "checkTokenResponse", description = "Check JWT", responses = {
+            @ApiResponse(responseCode = "200", description = "Check successful", content = {
+                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = Boolean.class)),
+                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = Boolean.class))})
+    })
+    @POST
+    @Path("/check-token")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    Boolean checkTokenResponse(@RequestBody(description = "Token",
+            required = true,
+            content = {@Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = TokenResponse.class)),
+                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = TokenResponse.class)),
+            }
+    ) TokenResponse token);
+
 
     @Operation(operationId = "openAccountBanker", description = "openAccountBanker", responses = {
             @ApiResponse(

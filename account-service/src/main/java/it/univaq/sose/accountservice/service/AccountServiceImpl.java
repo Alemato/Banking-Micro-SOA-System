@@ -34,6 +34,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public Boolean checkTokenResponse(TokenResponse token) {
+        return accountManager.checkJwtToken(token.getToken());
+    }
+
+    @Override
     public Response openAccountBanker(OpenBankAccountRequest request) {
         try {
             return generateResponseLocationFromAccountResponse(accountManager.createAccountBanker(request));

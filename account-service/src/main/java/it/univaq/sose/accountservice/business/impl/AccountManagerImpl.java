@@ -10,6 +10,7 @@ import it.univaq.sose.accountservice.domain.dto.UserCredentials;
 import it.univaq.sose.accountservice.repository.AccountRepository;
 import it.univaq.sose.accountservice.security.AuthenticationException;
 import it.univaq.sose.accountservice.security.JWTGenerator;
+import it.univaq.sose.accountservice.security.JWTVerify;
 import it.univaq.sose.accountservice.security.PasswordService;
 import it.univaq.sose.accountservice.service.NotFoundException;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,12 @@ public class AccountManagerImpl implements AccountManager {
         if (!passwordService.checkPassword(userCredentials.getPassword(), account.getPassword())) {
             throw new AuthenticationException("Username o Password errata. Riprovare.");
         }
-        return JWTGenerator.createJwtToken(account.getUsername(), account.getIdBankAccount(), account.getRole());
+        return JWTGenerator.createJwtToken(account.getUsername(), account.getId(), account.getRole());
+    }
+
+    @Override
+    public Boolean checkJwtToken(String token) {
+        return JWTVerify.verifyJwtToken(token);
     }
 
     @Override

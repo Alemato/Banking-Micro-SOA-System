@@ -11,6 +11,8 @@ public interface AccountManager {
 
     String getJwtToken(UserCredentials userCredentials) throws AuthenticationException;
 
+    Boolean checkJwtToken(String token);
+
     AccountResponse createAccountCustomer(OpenBankAccountRequest openBankAccountRequest);
 
     AccountResponse updateAccountWithIdBankAccount(long id, AddIdBankAccountRequest request) throws NotFoundException;
