@@ -41,7 +41,6 @@ public class FinancialReportServiceImpl implements FinancialReportService {
                 AllLoanCallBack loanServiceCallBack = new AllLoanCallBack();
 
                 BancomatService bancomatService = bancomatServiceClient.getBancomatService();
-                BancomatService bancomatService1 = bancomatServiceClient.getBancomatService();
 
                 GetBancomatDetails requestBancomat = new GetBancomatDetails();
                 requestBancomat.setAccountId(idAccount);
@@ -50,7 +49,7 @@ public class FinancialReportServiceImpl implements FinancialReportService {
                 requestBancomatTransactions.setAccountId(idAccount);
 
                 Response<GetBancomatDetailsResponse> bancomatResponse = bancomatService.getBancomatDetailsAsync(requestBancomat);
-                Response<GetBancomatTransactionsResponse> bancomatTransactionsResponse = bancomatService1.getBancomatTransactionsAsync(requestBancomatTransactions);
+                Response<GetBancomatTransactionsResponse> bancomatTransactionsResponse = bancomatService.getBancomatTransactionsAsync(requestBancomatTransactions);
 
                 try (Client client = ClientBuilder.newClient(); Client client1 = ClientBuilder.newClient()) {
                     Future<jakarta.ws.rs.core.Response> bankingResponse = client.target(bankingServiceClient.getEndpoint() + "/api/bank/report-bank-account-by-account/" + idAccount).request().async().get(bankingServiceCallBack);

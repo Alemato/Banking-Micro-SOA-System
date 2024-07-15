@@ -21,6 +21,7 @@
     <module>transaction-service-prosumer</module>
     <module>loan-service-prosumer</module>
     <module>financial-report-service-prosumer</module>
+    <module>gateway-service</module>
     <module>banking-service-client</module>
     <!-- Aggiungi altri moduli qui -->
   </modules>

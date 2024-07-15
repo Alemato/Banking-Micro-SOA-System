@@ -1,0 +1,227 @@
+spring.application:
+  name: gateway-service
+
+management:
+  endpoints.web.exposure.include: health,info
+  info.env.enabled: true
+
+info.application:
+  name: gateway-service
+  description: Gateway Service for Banking Micro-SOA System
+  version: 0.0.1-SNAPSHOT
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+---
+server:
+  port: 9087
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        # Rotte non sicure Per ACCOUNT-SERVICE
+        - id: login_route
+          uri: lb://ACCOUNT-SERVICE
+          predicates:
+            - Path=/api/account/login
+          filters:
+            - RewritePath=/api/account/login, /services/api/account/login
+
+        - id: check_token_route
+          uri: lb://ACCOUNT-SERVICE
+          predicates:
+            - Path=/api/account/check-token
+          filters:
+            - RewritePath=/api/account/check-token, /services/api/account/check-token
+
+        - id: banker_account_route
+          uri: lb://ACCOUNT-SERVICE
+          predicates:
+            - Path=/api/account/banker-account
+          filters:
+            - RewritePath=/api/account/banker-account, /services/api/account/banker-account
+
+        - id: admin_account_route
+          uri: lb://ACCOUNT-SERVICE
+          predicates:
+            - Path=/api/account/admin-account
+          filters:
+            - RewritePath=/api/account/admin-account, /services/api/account/admin-account
+
+        - id: customer_account_route
+          uri: lb://ACCOUNT-SERVICE
+          predicates:
+            - Path=/api/account/customer-account
+          filters:
+            - RewritePath=/api/account/customer-account, /services/api/account/customer-account
+
+        # Rotte sicure Per ACCOUNT-SERVICE
+        - id: secure_customer_account_route
+          uri: lb://ACCOUNT-SERVICE
+          predicates:
+            - Path=/api/account/{id}
+          filters:
+            - RewritePath=/api/account/(?<segment>.*), /services/api/account/${segment}
+            - name: AuthorizationFilter
+              args:
+                roles:
+                  - "CUSTOMER"
+                  - "BANKER"
+                  - "ADMIN"
+                checkPathWithIdentifier: true
+
+        # Rotte Non sicure per BANKING-OPERATIONS-SERVICE-PROSUMER
+        - id: open_banking_account
+          uri: lb://BANKING-OPERATIONS-SERVICE-PROSUMER
+          predicates:
+            - Path=/api/bank/open-account
+          filters:
+            - RewritePath=/api/bank/open-account, /services/api/bank/open-account
+
+        # Rotte sicure per BANKING-OPERATIONS-SERVICE-PROSUMER
+        - id: banking_atm
+          uri: lb://BANKING-OPERATIONS-SERVICE-PROSUMER
+          predicates:
+            - Path=/api/bank/atm-card/{accounId}
+          filters:
+            - RewritePath=/api/bank/atm-card/account/(?<segment>.*), /services/api/bank/atm-card/account/${segment}
+            - name: AuthorizationFilter
+              args:
+                roles:
+                  - "CUSTOMER"
+                  - "BANKER"
+                  - "ADMIN"
+                checkPathWithIdentifier: true
+
+        - id: banking_report
+          uri: lb://BANKING-OPERATIONS-SERVICE-PROSUMER
+          predicates:
+            - Path=/api/bank/report-bank-account-by-account/{idAccount}
+          filters:
+            - RewritePath=/api/bank/report-bank-account-by-account/(?<segment>.*), /services/api/bank/report-bank-account-by-account/${segment}
+            - name: AuthorizationFilter
+              args:
+                roles:
+                  - "CUSTOMER"
+                  - "BANKER"
+                  - "ADMIN"
+                checkPathWithIdentifier: true
+
+        # Rotte sicure per TRANSACTION-SERVICE-PROSUMER
+        - id: transaction_service
+          uri: lb://TRANSACTION-SERVICE-PROSUMER
+          predicates:
+            - Path=/api/transaction/**
+          filters:
+            - RewritePath=/api/transaction/(?<segment>.*), /services/api/transaction/${segment}
+            - name: AuthorizationFilter
+              args:
+                roles:
+                  - "CUSTOMER"
+                  - "BANKER"
+                  - "ADMIN"
+                checkPathWithIdentifier: false
+
+        # Rotte sicure per LOAN-SERVICE-PROSUMER
+        - id: loan_close_loan
+          uri: lb://LOAN-SERVICE-PROSUMER
+          predicates:
+            - Path=/api/loan/close-loan/{idLoan}
+          filters:
+            - RewritePath=/api/loan/close-loan/(?<segment>.*), /services/api/loan/close-loan/${segment}
+            - name: AuthorizationFilter
+              args:
+                roles:
+                  - "CUSTOMER"
+                  - "BANKER"
+                  - "ADMIN"
+                checkPathWithIdentifier: false
+
+        - id: loan_get_account
+          uri: lb://LOAN-SERVICE-PROSUMER
+          predicates:
+            - Path=/api/loan/account/{idAccount}
+          filters:
+            - RewritePath=/api/loan/account/(?<segment>.*), /services/api/loan/account/${segment}
+            - name: AuthorizationFilter
+              args:
+                roles:
+                  - "CUSTOMER"
+                  - "BANKER"
+                  - "ADMIN"
+                checkPathWithIdentifier: true
+
+        - id: loan_get_bank_account
+          uri: lb://LOAN-SERVICE-PROSUMER
+          predicates:
+            - Path=/api/loan/bank-account/{idBankAccount}
+          filters:
+            - RewritePath=/api/loan/bank-account/(?<segment>.*), /services/api/loan/bank-account/${segment}
+            - name: AuthorizationFilter
+              args:
+                roles:
+                  - "CUSTOMER"
+                  - "BANKER"
+                  - "ADMIN"
+                checkPathWithIdentifier: false
+
+        - id: loan_get
+          uri: lb://LOAN-SERVICE-PROSUMER
+          predicates:
+            - Path=/api/loan/{idLoan}
+          filters:
+            - RewritePath=/api/loan/(?<segment>.*), /services/api/loan/${segment}
+            - name: AuthorizationFilter
+              args:
+                roles:
+                  - "CUSTOMER"
+                  - "BANKER"
+                  - "ADMIN"
+                checkPathWithIdentifier: false
+
+        - id: loan_open_loan
+          uri: lb://LOAN-SERVICE-PROSUMER
+          predicates:
+            - Path=/api/loan
+          filters:
+            - RewritePath=/api/loan, /services/api/loan
+            - name: AuthorizationFilter
+              args:
+                roles:
+                  - "CUSTOMER"
+                  - "BANKER"
+                  - "ADMIN"
+                checkPathWithIdentifier: false
+
+        # Rotte sicure per FINANCIAL-REPORT-SERVICE-PROSUMER
+        - id: financial_report
+          uri: lb://FINANCIAL-REPORT-SERVICE-PROSUMER
+          predicates:
+            - Path=/api/bank/financial-report/{idAccount}
+          filters:
+            - RewritePath=/api/bank/financial-report/(?<segment>.*), /services/api/bank/financial-report/${segment}
+            - name: AuthorizationFilter
+              args:
+                roles:
+                  - "CUSTOMER"
+                  - "BANKER"
+                  - "ADMIN"
+                checkPathWithIdentifier: true
+---
+eureka:
+  client:
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://${EUREKA_HOST:host.docker.internal}:${EUREKA_PORT:8761}/eureka/
+  instance:
+    # Request a lease with a validity of 11 seconds. If until then the
+    # lease has not been renewed, it expires and the Eureka server can evict it.
+    # Default: 90s
+    lease-expiration-duration-in-seconds: 70
+    # The cadence of lease renewal, i.e. how often a heartbeat is sent to Eureka server.
+    # In this case every 5 seconds. Use this only for development / debugging. In production use the ...
+    # Default: 30s
+    lease-renewal-interval-in-seconds: 10
+    prefer-ip-address: true

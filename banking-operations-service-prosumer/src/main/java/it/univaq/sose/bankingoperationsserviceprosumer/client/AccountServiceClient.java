@@ -36,7 +36,7 @@ public class AccountServiceClient {
             List<InstanceInfo> instances = eurekaClient.getInstancesByVipAddress("ACCOUNT-SERVICE", false);
             if (instances.isEmpty()) {
                 log.error("No instances available for ACCOUNT-SERVICE");
-                throw new ServiceUnavailableException("No instances available for BANKING-OPERATIONS-SERVICE");
+                throw new ServiceUnavailableException("No instances available for ACCOUNT-SERVICE");
             }
 
             // Rimuove l'ultima istanza utilizzata dalla lista

@@ -1,5 +1,5 @@
 spring.application:
-  name: transaction-service
+  name: transaction-service-prosumer
 
 management:
   endpoints.web.exposure.include: health,info
