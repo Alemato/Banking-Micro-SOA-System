@@ -6,7 +6,6 @@ import it.univaq.sose.accountservice.model.AddIdBankAccountRequest;
 import it.univaq.sose.accountservice.model.OpenBankAccountRequest;
 import it.univaq.sose.bancomatservice.webservice.*;
 import it.univaq.sose.bankaccountservice.webservice.NotFoundException_Exception;
-import it.univaq.sose.bankaccountservice.webservice.TransactionResponse;
 import it.univaq.sose.bankaccountservice.webservice.*;
 import it.univaq.sose.bankingoperationsserviceprosumer.client.AccountServiceClient;
 import it.univaq.sose.bankingoperationsserviceprosumer.client.BancomatServiceClient;
@@ -205,6 +204,8 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
         accountDetails.setPhone(account.getPhone());
 
         BankAccountDetails bankAccountDetails = new BankAccountDetails();
+        bankAccountDetails.setId(bankAccountResponse.getId());
+        bankAccountDetails.setAccountId(bankAccountResponse.getAccountId());
         bankAccountDetails.setIban(bankAccountResponse.getIban());
         bankAccountDetails.setBalance(bankAccountResponse.getBalance());
 

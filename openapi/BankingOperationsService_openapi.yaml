@@ -253,10 +253,18 @@ components:
         name: AccountDetails
     BankAccountDetails:
       required:
+        - accountId
         - balance
         - iban
+        - id
       type: object
       properties:
+        id:
+          type: integer
+          format: int64
+        accountId:
+          type: integer
+          format: int64
         iban:
           type: string
         balance:

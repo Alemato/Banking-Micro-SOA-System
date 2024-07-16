@@ -13,6 +13,10 @@ import java.math.BigDecimal;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BankAccountDetails {
     @XmlElement(required = true)
+    private long id;
+    @XmlElement(required = true)
+    private long accountId;
+    @XmlElement(required = true)
     private String iban;
     @XmlElement(required = true)
     private BigDecimal balance;
