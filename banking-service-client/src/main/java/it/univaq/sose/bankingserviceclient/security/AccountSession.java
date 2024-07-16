@@ -47,11 +47,26 @@ public class AccountSession {
         accountDetails.setEmail(financialReportResponse.getAccount().getEmail());
         accountDetails.setPhone(financialReportResponse.getAccount().getPhone());
 
-        accountDetails.setBankAccount(new BankAccount(financialReportResponse.getBankAccount().getIban(), financialReportResponse.getBankAccount().getBalance()));
-        accountDetails.setBancomat(new Bancomat(financialReportResponse.getBancomat().getId(), financialReportResponse.getBancomat().getNumber(), financialReportResponse.getBancomat().getCvv(), financialReportResponse.getBancomat().getDataScadenza()));
+        accountDetails.setBankAccount(
+                new BankAccount(
+                        financialReportResponse.getBankAccount().getId(),
+                        financialReportResponse.getBankAccount().getIban(),
+                        financialReportResponse.getBankAccount().getBalance()));
+        accountDetails.setBancomat(
+                new Bancomat(
+                        financialReportResponse.getBancomat().getId(),
+                        financialReportResponse.getBancomat().getNumber(),
+                        financialReportResponse.getBancomat().getCvv(),
+                        financialReportResponse.getBancomat().getDataScadenza()));
         List<Loan> loans = new ArrayList<>();
         for (LoanDto ld : financialReportResponse.getLoans()) {
-            loans.add(new Loan(ld.getId(), ld.getAmount(), ld.getInterestRate(), ld.getTermInYears(), ld.getBorrowerName()));
+            loans.add(
+                    new Loan(
+                            ld.getId(),
+                            ld.getAmount(),
+                            ld.getInterestRate(),
+                            ld.getTermInYears(),
+                            ld.getBorrowerName()));
         }
         accountDetails.setLoans(loans);
     }
@@ -64,7 +79,11 @@ public class AccountSession {
         accountDetails.setEmail(reportBankAccountResponse.getAccount().getEmail());
         accountDetails.setPhone(reportBankAccountResponse.getAccount().getPhone());
 
-        accountDetails.setBankAccount(new BankAccount(reportBankAccountResponse.getBankAccount().getIban(), reportBankAccountResponse.getBankAccount().getBalance()));
+        accountDetails.setBankAccount(
+                new BankAccount(
+                        reportBankAccountResponse.getBankAccount().getId(),
+                        reportBankAccountResponse.getBankAccount().getIban(),
+                        reportBankAccountResponse.getBankAccount().getBalance()));
     }
 
     public void updateAccountDetailsFromOpenBankAccount(OpenAccountResponse openAccountResponse) {
@@ -75,7 +94,11 @@ public class AccountSession {
         accountDetails.setEmail(openAccountResponse.getEmail());
         accountDetails.setPhone(openAccountResponse.getPhone());
 
-        accountDetails.setBankAccount(new BankAccount(openAccountResponse.getIban(), openAccountResponse.getBalance()));
+        accountDetails.setBankAccount(
+                new BankAccount(
+                        openAccountResponse.getId(),
+                        openAccountResponse.getIban(),
+                        openAccountResponse.getBalance()));
     }
 
     public void updateAccountDetailsFromLoan(it.univaq.sose.loanserviceprosumer.model.LoanDto loan) {
