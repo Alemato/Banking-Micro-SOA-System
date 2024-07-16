@@ -14,19 +14,19 @@ public class TableFormatter {
     }
 
     public static String formatObjectDetails(Object obj, String title) {
-        Table table;
+        System.out.println("\n" + title);
+
         if (obj instanceof Collection<?> collection) {
             if (collection.isEmpty()) {
                 throw new IllegalArgumentException("Collection is empty");
             }
-            table = formatCollectionDetails(collection, title);
+            return formatCollectionDetails(collection).render(100);
         } else {
-            table = formatSingleObjectDetails(obj, title);
+            return formatSingleObjectDetails(obj).render(100);
         }
-        return table.render(80);
     }
 
-    private static Table formatSingleObjectDetails(Object obj, String title) {
+    private static Table formatSingleObjectDetails(Object obj) {
         Field[] fields = obj.getClass().getDeclaredFields();
         String[] headers = new String[fields.length];
         String[] values = new String[fields.length];
@@ -42,10 +42,10 @@ public class TableFormatter {
             }
         }
 
-        return buildTableWithTitle(title, headers, values);
+        return buildTable(headers, values);
     }
 
-    private static Table formatCollectionDetails(Collection<?> collection, String title) {
+    private static Table formatCollectionDetails(Collection<?> collection) {
         Object firstObj = collection.iterator().next();
         Field[] fields = firstObj.getClass().getDeclaredFields();
         String[] headers = new String[fields.length];
@@ -54,14 +54,10 @@ public class TableFormatter {
             headers[i] = fields[i].getName();
         }
 
-        String[][] data = new String[collection.size() + 2][fields.length];
-        data[0][0] = title; // Title row
-        for (int i = 1; i < fields.length; i++) {
-            data[0][i] = "";
-        }
-        data[1] = headers; // Headers row
+        String[][] data = new String[collection.size() + 1][fields.length];
+        data[0] = headers;
 
-        int rowIndex = 2;
+        int rowIndex = 1;
         for (Object obj : collection) {
             String[] values = new String[fields.length];
             for (int j = 0; j < fields.length; j++) {
@@ -78,27 +74,17 @@ public class TableFormatter {
         TableModel model = new ArrayTableModel(data);
         TableBuilder tableBuilder = new TableBuilder(model);
 
-        tableBuilder.on(CellMatchers.row(0)).addAligner(SimpleHorizontalAligner.center); // Center the title
-        tableBuilder.addFullBorder(BorderStyle.fancy_light);
-
-        return tableBuilder.build();
+        return tableBuilder.addFullBorder(BorderStyle.fancy_light).build();
     }
 
-    private static Table buildTableWithTitle(String title, String[] headers, String[] values) {
-        String[][] data = new String[3][headers.length];
-        data[0][0] = title; // Title row
-        for (int i = 1; i < headers.length; i++) {
-            data[0][i] = "";
-        }
-        data[1] = headers; // Headers row
-        data[2] = values; // Values row
+    private static Table buildTable(String[] headers, String[] values) {
+        String[][] data = new String[2][headers.length];
+        data[0] = headers;
+        data[1] = values;
 
         TableModel model = new ArrayTableModel(data);
         TableBuilder tableBuilder = new TableBuilder(model);
 
-        tableBuilder.on(CellMatchers.row(0)).addAligner(SimpleHorizontalAligner.center); // Center the title
-        tableBuilder.addFullBorder(BorderStyle.fancy_light);
-
-        return tableBuilder.build();
+        return tableBuilder.addFullBorder(BorderStyle.fancy_light).build();
     }
 }
