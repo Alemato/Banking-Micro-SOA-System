@@ -9,6 +9,7 @@ import it.univaq.sose.bankingserviceclient.model.BankAccount;
 import it.univaq.sose.bankingserviceclient.model.Loan;
 import it.univaq.sose.financialreportserviceprosumer.model.FinancialReportResponse;
 import it.univaq.sose.financialreportserviceprosumer.model.LoanDto;
+import lombok.Getter;
 import org.apache.cxf.rs.security.jose.jwt.JwtClaims;
 import org.springframework.stereotype.Component;
 
@@ -17,11 +18,14 @@ import java.util.List;
 
 @Component
 public class AccountSession {
+    @Getter
+    private boolean isLoggedIn = false;
 
     private AccountDetails accountDetails;
 
     public void AccountSession(AccountDetails accountDetails) {
         this.accountDetails = accountDetails;
+        this.isLoggedIn = true;
     }
 
     public AccountDetails getAccountDetails() {

@@ -28,8 +28,10 @@ import jakarta.ws.rs.client.Invocation;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.springframework.shell.Availability;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellMethodAvailability;
 
 import javax.ws.rs.core.MediaType;
 import java.util.List;
@@ -87,12 +89,14 @@ public class AccountCommands {
     }
 
     @ShellMethod(key = "get-personal-account", value = "Show personal customer Account")
+    @ShellMethodAvailability("isAuthenticated")
     public String getPersonalCustomerAccount() {
         AccountDetails accountDetails = accountSession.getAccountDetails();
         return TableFormatter.formatObjectDetails(accountDetails, "Account");
     }
 
     @ShellMethod(key = "get-account", value = "Get account details")
+    @ShellMethodAvailability("isAuthenticated")
     public String getAccountByAccountId() {
         Long id;
         try {
@@ -116,6 +120,7 @@ public class AccountCommands {
     }
 
     @ShellMethod("Show Financial Report")
+    @ShellMethodAvailability("isAuthenticated")
     public String financialReport() {
         AccountDetails accountDetails = accountSession.getAccountDetails();
         try {
@@ -128,6 +133,7 @@ public class AccountCommands {
     }
 
     @ShellMethod("Show Financial Report")
+    @ShellMethodAvailability("isAuthenticated")
     public String bankAccountReport() {
         AccountDetails accountDetails = accountSession.getAccountDetails();
         ReportBankAccountResponse reportBankAccountResponse;
@@ -312,5 +318,11 @@ public class AccountCommands {
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid input! Please try again");
         }
+    }
+
+    private Availability isAuthenticated() {
+        return accountSession.isLoggedIn()
+                ? Availability.available()
+                : Availability.unavailable("You are not logged in");
     }
 }
