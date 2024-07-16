@@ -86,7 +86,7 @@ spring:
           predicates:
             - Path=/api/bank/atm-card/{accounId}
           filters:
-            - RewritePath=/api/bank/atm-card/account/(?<segment>.*), /services/api/bank/atm-card/account/${segment}
+            - RewritePath=/api/bank/atm-card/(?<segment>.*), /services/api/bank/atm-card/${segment}
             - name: AuthorizationFilter
               args:
                 roles:
