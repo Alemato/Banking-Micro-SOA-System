@@ -71,7 +71,7 @@ public class FinancialReportServiceImpl implements FinancialReportService {
                     }
 
                     BancomatResponse bancomatReply = bancomatResponse.get().getGetBancomatDetailsResponse();
-                    List<TransactionResponse> bancomatTransactionsReply = bancomatTransactionsResponse.get().getGetBancomatTransactionsResponse();
+                    List<BancomatTransactionResponse> bancomatTransactionsReply = bancomatTransactionsResponse.get().getGetBancomatTransactionsResponse();
                     ReportBankAccountResponse reportBankAccountReplay = bankingServiceCallBack.getReportBankAccountResponse();
                     List<LoanDto> allLoanReplay = loanServiceCallBack.getLoanListResponses();
 

@@ -1,0 +1,248 @@
+openapi: 3.0.1
+info:
+  title: Financial Report Service (Prosumer) for Banking Micro-SOA System
+  description: This is Financial Report Service (Prosumer) for Banking Micro-SOA System.
+    Uses Apache CXF and Spring Boot on JAX-RS.
+  contact:
+    name: The Banking Micro-SOA System team
+  license:
+    name: Apache 2.0 License
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.0.1-SNAPSHOT
+servers:
+  - url: http://192.168.178.37:9086/services
+paths:
+  /api/bank/financial-report/{idAccount}:
+    get:
+      description: This endpoint allows users to retrieve loans by ID.
+      operationId: getLoanByIdLoan_1
+      parameters:
+        - name: idAccount
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: Loans Retrieved Successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FinancialReportResponse"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/FinancialReportResponse"
+        "404":
+          description: Loan Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    AccountDetails:
+      required:
+        - email
+        - id
+        - name
+        - phone
+        - surname
+        - username
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        surname:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+    BancomatResponse:
+      required:
+        - cvv
+        - dataScadenza
+        - number
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        number:
+          type: string
+        cvv:
+          type: string
+        dataScadenza:
+          type: string
+        accountId:
+          type: integer
+          format: int64
+    BancomatTransactionResponse:
+      required:
+        - amount
+        - date
+        - description
+        - transactionCode
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        transactionCode:
+          type: string
+        amount:
+          type: number
+        description:
+          type: string
+        date:
+          type: string
+    BankAccountDetails:
+      required:
+        - balance
+        - iban
+      type: object
+      properties:
+        iban:
+          type: string
+        balance:
+          type: number
+    BankAccountResponse:
+      required:
+        - balance
+        - iban
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        accountId:
+          type: integer
+          format: int64
+        iban:
+          type: string
+        balance:
+          type: number
+    FinancialReportResponse:
+      required:
+        - account
+        - bancomat
+        - bancomatTransactions
+        - bankAccount
+        - bankAccountTransactions
+        - loans
+      type: object
+      properties:
+        account:
+          $ref: "#/components/schemas/AccountDetails"
+        bankAccount:
+          $ref: "#/components/schemas/BankAccountDetails"
+        bankAccountTransactions:
+          type: array
+          items:
+            $ref: "#/components/schemas/TransactionResponse"
+        bancomat:
+          $ref: "#/components/schemas/BancomatResponse"
+        bancomatTransactions:
+          type: array
+          items:
+            $ref: "#/components/schemas/BancomatTransactionResponse"
+        loans:
+          type: array
+          items:
+            $ref: "#/components/schemas/LoanDto"
+      xml:
+        name: FinancialReportResponse
+    LoanDto:
+      required:
+        - amount
+        - borrowerName
+        - createDate
+        - id
+        - idAccount
+        - idBankAccount
+        - interestRate
+        - loanStatus
+        - termInYears
+        - updateDate
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        amount:
+          type: number
+        interestRate:
+          type: number
+          format: double
+        termInYears:
+          type: integer
+          format: int32
+        borrowerName:
+          type: string
+        loanStatus:
+          type: string
+        idBankAccount:
+          type: integer
+          format: int64
+        idAccount:
+          type: integer
+          format: int64
+        createDate:
+          type: string
+          format: date-time
+        updateDate:
+          type: string
+          format: date-time
+    TransactionResponse:
+      required:
+        - amount
+        - date
+        - description
+        - transactionCode
+        - transactionType
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        transactionCode:
+          type: string
+        amount:
+          type: number
+        description:
+          type: string
+        transactionType:
+          type: string
+        date:
+          type: string
+        bankAccountSender:
+          $ref: "#/components/schemas/BankAccountResponse"
+        bankAccountReceiver:
+          $ref: "#/components/schemas/BankAccountResponse"
+    ErrorResponse:
+      required:
+        - error
+      type: object
+      properties:
+        error:
+          type: string
+      xml:
+        name: ErrorResponse

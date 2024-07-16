@@ -31,7 +31,7 @@ public class FinancialReportResponse {
     private BancomatResponse bancomat;
 
     @XmlElement(required = true)
-    private List<it.univaq.sose.bancomatservice.webservice.TransactionResponse> bancomatTransactions = new ArrayList<>();
+    private List<it.univaq.sose.bancomatservice.webservice.BancomatTransactionResponse> bancomatTransactions = new ArrayList<>();
 
     @XmlElement(required = true)
     private List<LoanDto> loans = new ArrayList<>();
@@ -39,7 +39,7 @@ public class FinancialReportResponse {
     public FinancialReportResponse() {
     }
 
-    public FinancialReportResponse(AccountDetails account, BankAccountDetails bankAccount, List<TransactionResponse> bankAccountTransactions, BancomatResponse bancomat, List<it.univaq.sose.bancomatservice.webservice.TransactionResponse> bancomatTransactions, List<LoanDto> loans) {
+    public FinancialReportResponse(AccountDetails account, BankAccountDetails bankAccount, List<TransactionResponse> bankAccountTransactions, BancomatResponse bancomat, List<it.univaq.sose.bancomatservice.webservice.BancomatTransactionResponse> bancomatTransactions, List<LoanDto> loans) {
         this.account = account;
         this.bankAccount = bankAccount;
         this.bankAccountTransactions = bankAccountTransactions;
