@@ -217,7 +217,7 @@ public class TransactionServiceImpl implements TransactionService {
                 transactionRequest.setAmount(bancomatTransactionRequest.getAmount());
                 transactionRequest.setDescription(bancomatTransactionRequest.getDescription());
 
-                it.univaq.sose.bancomatservice.webservice.TransactionResponse transactionResponse = bancomatServiceClient.getBancomatService().executeTransaction(transactionRequest);
+                it.univaq.sose.bancomatservice.webservice.BancomatTransactionResponse transactionResponse = bancomatServiceClient.getBancomatService().executeTransaction(transactionRequest);
                 log.info("Bancomat-Service Response for ATM Execute Transaction: {}", transactionResponse);
                 BancomatTransactionResponse bancomatTransactionResponse = new BancomatTransactionResponse(
                         transactionResponse.getId(), transactionResponse.getTransactionCode(),
