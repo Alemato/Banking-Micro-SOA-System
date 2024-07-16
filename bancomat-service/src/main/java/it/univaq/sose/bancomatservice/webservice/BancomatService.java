@@ -46,7 +46,7 @@ public interface BancomatService {
     @WebResult(name = "ExecuteTransactionResponse",
             targetNamespace = "http://webservice.bancomatservice.sose.univaq.it/")
     @WebMethod(action = "urn:ExecuteTransaction")
-    public TransactionResponse executeTransaction(@XmlElement(required = true) @WebParam(name = "transactionRequest",
+    public BancomatTransactionResponse executeTransaction(@XmlElement(required = true) @WebParam(name = "transactionRequest",
             targetNamespace = "http://webservice.bancomatservice.sose.univaq.it/") TransactionRequest transactionRequest) throws NotFoundException, ExpiredBancomatException;
 
     @WebResult(name = "GetBancomatTransactionsResponse",
@@ -54,7 +54,7 @@ public interface BancomatService {
     @WebMethod(action = "urn:GetBancomatTransactions")
     @ResponseWrapper(localName = "getBancomatTransactionsResponse",
             className = "it.univaq.sose.bancomatservice.domain.dto.GetBancomatTransactionsResponse")
-    public List<TransactionResponse> getBancomatTransactions(@XmlElement(required = true) @WebParam(name = "accountId",
+    public List<BancomatTransactionResponse> getBancomatTransactions(@XmlElement(required = true) @WebParam(name = "accountId",
             targetNamespace = "http://webservice.bancomatservice.sose.univaq.it/") Long accountId);
 
     @WebResult(name = "GetBancomatTransactionsResponseAsync",

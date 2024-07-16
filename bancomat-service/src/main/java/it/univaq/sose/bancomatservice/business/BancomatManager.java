@@ -2,8 +2,8 @@ package it.univaq.sose.bancomatservice.business;
 
 import it.univaq.sose.bancomatservice.domain.dto.BancomatRequest;
 import it.univaq.sose.bancomatservice.domain.dto.BancomatResponse;
+import it.univaq.sose.bancomatservice.domain.dto.BancomatTransactionResponse;
 import it.univaq.sose.bancomatservice.domain.dto.TransactionRequest;
-import it.univaq.sose.bancomatservice.domain.dto.TransactionResponse;
 import it.univaq.sose.bancomatservice.webservice.BancomatAlreadyExistingException;
 import it.univaq.sose.bancomatservice.webservice.ExpiredBancomatException;
 import it.univaq.sose.bancomatservice.webservice.NotFoundException;
@@ -17,7 +17,7 @@ public interface BancomatManager {
 
     BancomatResponse createBancomat(BancomatRequest bancomatRequest) throws BancomatAlreadyExistingException;
 
-    TransactionResponse executeTransaction(TransactionRequest transactionRequest) throws NotFoundException, ExpiredBancomatException;
+    BancomatTransactionResponse executeTransaction(TransactionRequest transactionRequest) throws NotFoundException, ExpiredBancomatException;
 
-    List<TransactionResponse> getBancomatTransactions(Long accountId);
+    List<BancomatTransactionResponse> getBancomatTransactions(Long accountId);
 }

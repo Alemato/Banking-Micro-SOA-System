@@ -17,8 +17,8 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "TransactionResponse", propOrder = {"id", "transactionCode", "amount", "description", "date"})
-public class TransactionResponse {
+@XmlType(name = "BancomatTransactionResponse", propOrder = {"id", "transactionCode", "amount", "description", "date"})
+public class BancomatTransactionResponse {
 
     @XmlElement(required = true)
     private Long id;
@@ -36,10 +36,10 @@ public class TransactionResponse {
     @XmlElement(required = true)
     private LocalDateTime date;
 
-    public TransactionResponse() {
+    public BancomatTransactionResponse() {
     }
 
-    public TransactionResponse(Long id, String transactionCode, BigDecimal amount, String description, LocalDateTime date) {
+    public BancomatTransactionResponse(Long id, String transactionCode, BigDecimal amount, String description, LocalDateTime date) {
         this.id = id;
         this.transactionCode = transactionCode;
         this.amount = amount;

@@ -32,7 +32,7 @@ import java.util.List;
 public class GetBancomatTransactionsResponse {
 
     @XmlElement(name = "GetBancomatTransactionsResponse", namespace = "http://webservice.bancomatservice.sose.univaq.it/")
-    protected List<TransactionResponse> getBancomatTransactionsResponse;
+    protected List<BancomatTransactionResponse> getBancomatTransactionsResponse;
 
     /**
      * Gets the value of the getBancomatTransactionsResponse property.
@@ -52,11 +52,11 @@ public class GetBancomatTransactionsResponse {
      *
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link TransactionResponse }
+     * {@link BancomatTransactionResponse }
      */
-    public List<TransactionResponse> getGetBancomatTransactionsResponse() {
+    public List<BancomatTransactionResponse> getGetBancomatTransactionsResponse() {
         if (getBancomatTransactionsResponse == null) {
-            getBancomatTransactionsResponse = new ArrayList<TransactionResponse>();
+            getBancomatTransactionsResponse = new ArrayList<BancomatTransactionResponse>();
         }
         return this.getBancomatTransactionsResponse;
     }

@@ -5,8 +5,8 @@ import it.univaq.sose.bancomatservice.domain.Bancomat;
 import it.univaq.sose.bancomatservice.domain.Transaction;
 import it.univaq.sose.bancomatservice.domain.dto.BancomatRequest;
 import it.univaq.sose.bancomatservice.domain.dto.BancomatResponse;
+import it.univaq.sose.bancomatservice.domain.dto.BancomatTransactionResponse;
 import it.univaq.sose.bancomatservice.domain.dto.TransactionRequest;
-import it.univaq.sose.bancomatservice.domain.dto.TransactionResponse;
 import it.univaq.sose.bancomatservice.repository.BancomatRepository;
 import it.univaq.sose.bancomatservice.repository.TransactionRepository;
 import it.univaq.sose.bancomatservice.webservice.BancomatAlreadyExistingException;
@@ -77,7 +77,7 @@ public class BancomatManagerImpl implements BancomatManager {
 
     @Override
     @Transactional
-    public TransactionResponse executeTransaction(TransactionRequest transactionRequest) throws NotFoundException, ExpiredBancomatException {
+    public BancomatTransactionResponse executeTransaction(TransactionRequest transactionRequest) throws NotFoundException, ExpiredBancomatException {
         Bancomat bancomat = bancomatRepository.findByNumber(transactionRequest.getNumber())
 
                 .orElseThrow(() -> new NotFoundException("Bancomat with number: " + transactionRequest.getNumber() + " not found."));
@@ -94,12 +94,12 @@ public class BancomatManagerImpl implements BancomatManager {
 
         transaction = transactionRepository.save(transaction);
 
-        return new TransactionResponse(transaction.getId(), transaction.getTransactionCode(), transaction.getAmount(), transaction.getDescription(), transaction.getCreateDate());
+        return new BancomatTransactionResponse(transaction.getId(), transaction.getTransactionCode(), transaction.getAmount(), transaction.getDescription(), transaction.getCreateDate());
     }
 
     @Override
-    public List<TransactionResponse> getBancomatTransactions(Long accountId) {
+    public List<BancomatTransactionResponse> getBancomatTransactions(Long accountId) {
         List<Transaction> transactions = transactionRepository.findDistinctByBancomat_AccountIdOrderByCreateDateDesc(accountId);
-        return transactions.stream().map(t -> new TransactionResponse(t.getId(), t.getTransactionCode(), t.getAmount(), t.getDescription(), t.getCreateDate())).toList();
+        return transactions.stream().map(t -> new BancomatTransactionResponse(t.getId(), t.getTransactionCode(), t.getAmount(), t.getDescription(), t.getCreateDate())).toList();
     }
 }

@@ -71,14 +71,14 @@ public class BancomatServiceImpl implements BancomatService {
     }
 
     @Override
-    public TransactionResponse executeTransaction(TransactionRequest transactionRequest) throws NotFoundException, ExpiredBancomatException {
+    public BancomatTransactionResponse executeTransaction(TransactionRequest transactionRequest) throws NotFoundException, ExpiredBancomatException {
         return bancomatManager.executeTransaction(transactionRequest);
     }
 
     @Override
     @UseAsyncMethod
-    public List<TransactionResponse> getBancomatTransactions(Long accountId) {
-        List<TransactionResponse> response = bancomatManager.getBancomatTransactions(accountId);
+    public List<BancomatTransactionResponse> getBancomatTransactions(Long accountId) {
+        List<BancomatTransactionResponse> response = bancomatManager.getBancomatTransactions(accountId);
         return response;
     }
 
@@ -89,9 +89,9 @@ public class BancomatServiceImpl implements BancomatService {
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
-                List<TransactionResponse> transactionResponseList = bancomatManager.getBancomatTransactions(accountId);
+                List<BancomatTransactionResponse> bancomatTransactionResponseList = bancomatManager.getBancomatTransactions(accountId);
                 GetBancomatTransactionsResponse response = new GetBancomatTransactionsResponse();
-                response.getGetBancomatTransactionsResponse().addAll(transactionResponseList);
+                response.getGetBancomatTransactionsResponse().addAll(bancomatTransactionResponseList);
                 r.set(response);
                 asyncHandler.handleResponse(r);
             } catch (InterruptedException e) {
