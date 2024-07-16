@@ -13,18 +13,20 @@ public class TableFormatter {
         throw new IllegalStateException("Utility class");
     }
 
-    public static Table formatObjectDetails(Object obj) {
+    public static String formatObjectDetails(Object obj, String title) {
+        Table table;
         if (obj instanceof Collection<?> collection) {
             if (collection.isEmpty()) {
                 throw new IllegalArgumentException("Collection is empty");
             }
-            return formatCollectionDetails(collection);
+            table = formatCollectionDetails(collection, title);
         } else {
-            return formatSingleObjectDetails(obj);
+            table = formatSingleObjectDetails(obj, title);
         }
+        return table.render(80);
     }
 
-    private static Table formatSingleObjectDetails(Object obj) {
+    private static Table formatSingleObjectDetails(Object obj, String title) {
         Field[] fields = obj.getClass().getDeclaredFields();
         String[] headers = new String[fields.length];
         String[] values = new String[fields.length];
@@ -33,25 +35,17 @@ public class TableFormatter {
             fields[i].setAccessible(true);
             headers[i] = fields[i].getName();
             try {
-                values[i] = fields[i].get(obj).toString();
+                Object value = fields[i].get(obj);
+                values[i] = value != null ? value.toString() : "N/A";
             } catch (IllegalAccessException e) {
                 values[i] = "N/A";
             }
         }
 
-        String[][] data = combineArrays(headers, values);
-
-        TableModel model = new ArrayTableModel(data);
-        TableBuilder tableBuilder = new TableBuilder(model);
-
-        return tableBuilder.addFullBorder(BorderStyle.fancy_light).build();
+        return buildTableWithTitle(title, headers, values);
     }
 
-    private static Table formatCollectionDetails(Collection<?> collection) {
-        if (collection.isEmpty()) {
-            throw new IllegalArgumentException("Collection is empty");
-        }
-
+    private static Table formatCollectionDetails(Collection<?> collection, String title) {
         Object firstObj = collection.iterator().next();
         Field[] fields = firstObj.getClass().getDeclaredFields();
         String[] headers = new String[fields.length];
@@ -60,15 +54,20 @@ public class TableFormatter {
             headers[i] = fields[i].getName();
         }
 
-        String[][] data = new String[collection.size() + 1][fields.length];
-        data[0] = headers;
+        String[][] data = new String[collection.size() + 2][fields.length];
+        data[0][0] = title; // Title row
+        for (int i = 1; i < fields.length; i++) {
+            data[0][i] = "";
+        }
+        data[1] = headers; // Headers row
 
-        int rowIndex = 1;
+        int rowIndex = 2;
         for (Object obj : collection) {
             String[] values = new String[fields.length];
             for (int j = 0; j < fields.length; j++) {
                 try {
-                    values[j] = fields[j].get(obj).toString();
+                    Object value = fields[j].get(obj);
+                    values[j] = value != null ? value.toString() : "N/A";
                 } catch (IllegalAccessException e) {
                     values[j] = "N/A";
                 }
@@ -79,13 +78,27 @@ public class TableFormatter {
         TableModel model = new ArrayTableModel(data);
         TableBuilder tableBuilder = new TableBuilder(model);
 
-        return tableBuilder.addFullBorder(BorderStyle.fancy_light).build();
+        tableBuilder.on(CellMatchers.row(0)).addAligner(SimpleHorizontalAligner.center); // Center the title
+        tableBuilder.addFullBorder(BorderStyle.fancy_light);
+
+        return tableBuilder.build();
     }
 
-    private static String[][] combineArrays(String[] headers, String[] values) {
-        String[][] data = new String[2][headers.length];
-        data[0] = headers;
-        data[1] = values;
-        return data;
+    private static Table buildTableWithTitle(String title, String[] headers, String[] values) {
+        String[][] data = new String[3][headers.length];
+        data[0][0] = title; // Title row
+        for (int i = 1; i < headers.length; i++) {
+            data[0][i] = "";
+        }
+        data[1] = headers; // Headers row
+        data[2] = values; // Values row
+
+        TableModel model = new ArrayTableModel(data);
+        TableBuilder tableBuilder = new TableBuilder(model);
+
+        tableBuilder.on(CellMatchers.row(0)).addAligner(SimpleHorizontalAligner.center); // Center the title
+        tableBuilder.addFullBorder(BorderStyle.fancy_light);
+
+        return tableBuilder.build();
     }
 }

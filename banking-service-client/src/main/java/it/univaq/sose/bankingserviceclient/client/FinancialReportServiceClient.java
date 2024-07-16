@@ -18,13 +18,13 @@ import java.util.Objects;
 
 @Slf4j
 @Service
-public class AccountServiceClient {
+public class FinancialReportServiceClient {
     private final EurekaClient eurekaClient;
     private final JacksonJsonProvider jacksonProvider;
     private final JwtTokenProvider jwtTokenProvider;
-    private String lastUrlAccountService;
+    private String lastUrlFinancialReportService;
 
-    public AccountServiceClient(EurekaClient eurekaClient, JacksonJsonProvider jacksonProvider, JwtTokenProvider jwtTokenProvider) {
+    public FinancialReportServiceClient(EurekaClient eurekaClient, JacksonJsonProvider jacksonProvider, JwtTokenProvider jwtTokenProvider) {
         this.eurekaClient = eurekaClient;
         this.jacksonProvider = jacksonProvider;
         this.jwtTokenProvider = jwtTokenProvider;
@@ -32,29 +32,29 @@ public class AccountServiceClient {
 
     private String getUrlServiceFromEureka() {
         try {
-            InstanceInfo instance = eurekaClient.getNextServerFromEureka("ACCOUNT-SERVICE", false);
+            InstanceInfo instance = eurekaClient.getNextServerFromEureka("FINANCIAL-REPORT-SERVICE-PROSUMER", false);
             String eurekaUrl = instance.getHomePageUrl() + "services";
-            if (!Objects.equals(lastUrlAccountService, eurekaUrl)) {
-                log.info("New Retrieved AccountService URL: {}", eurekaUrl);
-                lastUrlAccountService = eurekaUrl;
+            if (!Objects.equals(lastUrlFinancialReportService, eurekaUrl)) {
+                log.info("New Retrieved FinancialReportService URL: {}", eurekaUrl);
+                lastUrlFinancialReportService = eurekaUrl;
             }
-            return lastUrlAccountService;
+            return lastUrlFinancialReportService;
         } catch (Exception e) {
-            log.error("Failed to retrieve AccountService URL: {}", e.getMessage(), e);
+            log.error("Failed to retrieve FinancialReportService URL: {}", e.getMessage(), e);
         }
         return null;
     }
 
-    public DefaultApi getAccountService() {
+    public DefaultApi getFinancialReportService() {
         return JAXRSClientFactory.create(getUrlServiceFromEureka(), DefaultApi.class, List.of(jacksonProvider));
     }
 
-    public Client getClientAccountService() {
+    public Client getClientFinancialReportService() {
         DefaultApi api = JAXRSClientFactory.create(getUrlServiceFromEureka(), DefaultApi.class, List.of(jacksonProvider));
         return WebClient.client(api);
     }
 
-    public WebClient getWebClientAccountService() {
+    public WebClient getWebClientFinancialReportService() {
         DefaultApi api = JAXRSClientFactory.create(getUrlServiceFromEureka(), DefaultApi.class, List.of(jacksonProvider));
         Client client = WebClient.client(api);
         WebClient webClient = WebClient.fromClient(client);
@@ -62,19 +62,18 @@ public class AccountServiceClient {
         return webClient;
     }
 
-    public ClientConfiguration getClientConfigurationAccountService() {
+    public ClientConfiguration getClientConfigurationFinancialReportService() {
         DefaultApi api = JAXRSClientFactory.create(getUrlServiceFromEureka(), DefaultApi.class, List.of(jacksonProvider));
         Client client = WebClient.client(api);
         return WebClient.getConfig(client);
     }
 
     public WebClient getWebClientWithAuth() {
-        WebClient webClient = getWebClientAccountService();
+        WebClient webClient = getWebClientFinancialReportService();
         String token = jwtTokenProvider.getToken();
         if (token != null) {
             webClient.header("Authorization", "Bearer " + token);
         }
         return webClient;
     }
-
 }

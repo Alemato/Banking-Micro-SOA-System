@@ -3,18 +3,24 @@ spring.application:
 ---
 spring:
   main:
+    #    web-application-type: none
     banner-mode: console
     allow-bean-definition-overriding: true
   shell:
     interactive:
       enabled: true
 ---
-eureka:
-  client:
-    registerWithEureka: false
-    serviceUrl:
-      defaultZone: http://${EUREKA_HOST:host.docker.internal}:${EUREKA_SERVER_PORT:8761}/eureka/
-    fetchRegistry: true
+#logging:
+#  level:
+#    root: OFF
 ---
-jwt:
-  token: your_jwt_token_here
+gateway:
+  base: host.docker.internal
+  port: 9087
+  paths:
+    account: /api/account
+    bankingOperation: /api/bank
+    loan: /api/loan
+    financialReport: /api/bank/financial-report
+    transaction: /api/transaction
+
