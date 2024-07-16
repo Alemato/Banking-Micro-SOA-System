@@ -1,6 +1,6 @@
 package it.univaq.sose.transactionserviceprosumer.service;
 
-import it.univaq.sose.accountservice.api.DefaultApi;
+import it.univaq.sose.accountservice.api.AccountServiceDefaultClient;
 import it.univaq.sose.accountservice.model.AccountResponse;
 import it.univaq.sose.bancomatservice.webservice.BancomatResponse;
 import it.univaq.sose.bancomatservice.webservice.ExpiredBancomatException_Exception;
@@ -255,7 +255,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     private AccountResponse getAccountDetailsByAccountId(long idAccount) throws AccountServiceException {
         try {
-            DefaultApi client = accountServiceClient.getAccountService();
+            AccountServiceDefaultClient client = accountServiceClient.getAccountService();
             return client.getAccount1(idAccount);
         } catch (Exception e) {
             throw new AccountServiceException("Error for Account Service (Get Account)");

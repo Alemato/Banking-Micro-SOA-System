@@ -15,16 +15,17 @@ import org.springframework.stereotype.Service;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class LoanServiceClient {
     private final EurekaClient eurekaClient;
     private final JacksonJsonProvider jacksonProvider;
-    private String lastUrlService;
+    private final AtomicReference<String> lastUrlService = new AtomicReference<>();
+    private final List<InstanceInfo> lastInstancesCache = Collections.synchronizedList(new ArrayList<>());
 
     public LoanServiceClient(EurekaClient eurekaClient, JacksonJsonProvider jacksonProvider) {
         this.eurekaClient = eurekaClient;
@@ -33,17 +34,33 @@ public class LoanServiceClient {
 
     private String getUrlServiceFromEureka() throws ServiceUnavailableException {
         try {
-            List<InstanceInfo> instances = eurekaClient.getInstancesByVipAddress("LOAN-SERVICE-PROSUMER", false);
-            if (instances.isEmpty()) {
-                log.error("No instances available for LOAN-SERVICE");
-                throw new ServiceUnavailableException("No instances available for LOAN-SERVICE");
+            List<InstanceInfo> instances = Optional.ofNullable(eurekaClient.getInstancesByVipAddress("LOAN-SERVICE-PROSUMER", false))
+                    .filter(list -> !list.isEmpty())
+                    .orElseGet(() -> {
+                        log.warn("Using cached instances for LOAN-SERVICE");
+                        log.warn("lastInstancesCache {}", lastInstancesCache);
+                        synchronized (lastInstancesCache) {
+                            return new ArrayList<>(lastInstancesCache);  // Return a copy of the cached instances
+                        }
+                    });
+
+            if (instances == null || instances.isEmpty()) {
+                log.error("No instances available for LOAN-SERVICE-PROSUMER");
+                throw new ServiceUnavailableException("No instances available for LOAN-SERVICE-PROSUMER");
+            }
+
+            // Aggiorna la cache delle istanze in modo sincronizzato
+            synchronized (lastInstancesCache) {
+                lastInstancesCache.clear();
+                lastInstancesCache.addAll(deepCopyInstanceInfoList(instances));
             }
 
             // Rimuove l'ultima istanza utilizzata dalla lista
-            if (lastUrlService != null) {
+            String lastUrl = lastUrlService.get();
+            if (lastUrl != null) {
                 instances.removeIf(instance -> {
                     try {
-                        return Objects.equals(new URL(instance.getHomePageUrl() + "services"), new URL(lastUrlService));
+                        return Objects.equals(new URL(instance.getHomePageUrl() + "services"), new URL(lastUrl));
                     } catch (MalformedURLException e) {
                         log.error("Malformed URL while filtering instances: {}", e.getMessage(), e);
                         return false;
@@ -54,8 +71,8 @@ public class LoanServiceClient {
             // Se non ci sono istanze alternative disponibili, utilizza l'ultima istanza utilizzata
             if (instances.isEmpty()) {
                 log.warn("No alternative instances available for LOAN-SERVICE, using the last used instance");
-                if (lastUrlService != null) {
-                    return lastUrlService;
+                if (lastUrl != null) {
+                    return lastUrl;
                 } else {
                     throw new ServiceUnavailableException("LOAN-SERVICE: No alternative instances available and no previously used instance available");
                 }
@@ -65,14 +82,20 @@ public class LoanServiceClient {
             Collections.shuffle(instances);
             InstanceInfo instance = instances.get(0);
             String eurekaUrl = instance.getHomePageUrl() + "services";
-            log.info("New Retrieved Banking Operations Service URL: {}", eurekaUrl);
-            lastUrlService = eurekaUrl;
+            log.info("New Retrieved Loan Service URL: {}", eurekaUrl);
+            lastUrlService.set(eurekaUrl);
 
-            return lastUrlService;
+            return eurekaUrl;
         } catch (Exception e) {
-            log.error("Failed to retrieve Banking Operations Service URL: {}", e.getMessage(), e);
-            throw new ServiceUnavailableException("Failed to retrieve Banking Operations Service URL: " + e.getMessage());
+            log.error("Failed to retrieve Loan Service URL: {}", e.getMessage(), e);
+            throw new ServiceUnavailableException("Failed to retrieve Loan Service URL: " + e.getMessage());
         }
+    }
+
+    private List<InstanceInfo> deepCopyInstanceInfoList(List<InstanceInfo> instances) {
+        return instances.stream()
+                .map(InstanceInfo::new) // Usa il costruttore di copia
+                .collect(Collectors.toList());
     }
 
     public LoanServiceDefaultClient getLoanServiceClient() throws ServiceUnavailableException {

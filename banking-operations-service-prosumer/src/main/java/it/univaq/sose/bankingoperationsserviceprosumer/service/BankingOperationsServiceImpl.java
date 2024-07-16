@@ -93,7 +93,6 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
                 BankAccountResponse bankAccountResponse = bankAccountClient.getBankAccountDetails(account.getId());
                 log.info("Bank-Account-Service Response for Bank Account Details: {}", bankAccountResponse);
 
-                bankAccountClient = bankAccountService.getBankAccountService();
                 List<TransactionResponse> transactionResponseList = bankAccountClient.getBankAccountTransactions(account.getId());
                 log.info("Bank-Account-Service Response for Bank Account Transactions: {}", transactionResponseList);
 
