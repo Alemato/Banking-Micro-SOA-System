@@ -29,9 +29,9 @@ public class AccountManagerImpl implements AccountManager {
     @Override
     @Transactional(readOnly = true)
     public String getJwtToken(UserCredentials userCredentials) throws AuthenticationException {
-        Account account = accountRepository.findByUsername(userCredentials.getUsername()).orElseThrow(() -> new AuthenticationException("Username o Password errata. Riprovare."));
+        Account account = accountRepository.findByUsername(userCredentials.getUsername()).orElseThrow(() -> new AuthenticationException("Incorrect username or password. Please try again."));
         if (!passwordService.checkPassword(userCredentials.getPassword(), account.getPassword())) {
-            throw new AuthenticationException("Username o Password errata. Riprovare.");
+            throw new AuthenticationException("Incorrect username or password. Please try again.");
         }
         return JWTGenerator.createJwtToken(account.getUsername(), account.getId(), account.getRole());
     }
