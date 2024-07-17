@@ -84,7 +84,7 @@ public class TransactionServiceImpl implements TransactionService {
                 it.univaq.sose.bankaccountservice.webservice.BalanceUpdateRequest balanceUpdateRequest = new it.univaq.sose.bankaccountservice.webservice.BalanceUpdateRequest();
                 balanceUpdateRequest.setBankAccountId(request.getBankAccountId());
                 balanceUpdateRequest.setAmount(request.getAmount());
-                balanceUpdateRequest.setDescription("Balance update");
+                balanceUpdateRequest.setDescription(request.getDescription());
                 TransactionResponse transactionResponse = bankAccountServiceClient.getBankAccountService().removeMoney(balanceUpdateRequest);
 
                 log.info("Bank-Account-Service Response for Remove Money: {}", transactionResponse);
