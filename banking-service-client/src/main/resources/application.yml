@@ -10,9 +10,9 @@ spring:
     interactive:
       enabled: true
 ---
-#logging:
-#  level:
-#    root: OFF
+logging:
+  pattern:
+    console:
 ---
 gateway:
   base: host.docker.internal

@@ -1,5 +1,7 @@
 package it.univaq.sose.bankingserviceclient.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.shell.component.view.control.Spinner;
@@ -73,5 +75,23 @@ public class GatewayUtil {
             Thread.sleep(spinner.getInterval());
         }
         return responseFuture.get();
+    }
+
+    public String extractErrorMessage(String errorDetails) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode rootNode = mapper.readTree(errorDetails);
+            return rootNode.path("error").asText();
+        } catch (Exception e) {
+            return "Unknown error";
+        }
+    }
+
+    public String formatSuccessMessage(String message) {
+        return "\n\n************ SUCCESS ***********\n" + message + "\n*******************************\n";
+    }
+
+    public String formatErrorMessage(String message) {
+        return "\n\n************* ERROR ***********\n" + message + "\n********************************\n";
     }
 }

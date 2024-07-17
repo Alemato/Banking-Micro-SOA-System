@@ -15,6 +15,8 @@ import it.univaq.sose.bankingserviceclient.util.GatewayUtil;
 import it.univaq.sose.bankingserviceclient.util.InputReader;
 import it.univaq.sose.bankingserviceclient.util.TableFormatter;
 import it.univaq.sose.financialreportserviceprosumer.model.FinancialReportResponse;
+import it.univaq.sose.transactionserviceprosumer.model.BalanceUpdateRequest;
+import it.univaq.sose.transactionserviceprosumer.model.ExecuteTransactionResponse;
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
@@ -28,10 +30,10 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellMethodAvailability;
 
 import javax.ws.rs.core.MediaType;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-
-;
 
 @Slf4j
 @ShellComponent
@@ -47,69 +49,87 @@ public class AccountCommands {
         this.gatewayUtil = gatewayUtil;
     }
 
-    @ShellMethod("Login to the banking system")
+    @ShellMethod(key = "login", value = "Login to the banking system")
     public String login() {
         String username = InputReader.singleReadInput("Enter your username: ");
         String password = InputReader.singleReadInput("Enter your password: ");
 
-        boolean loginSuccess = executeLogin(username, password);
+        try {
+            executeLogin(username, password);
+        } catch (BankingClientException e) {
+            return gatewayUtil.formatErrorMessage(e.getMessage());
+        }
         AccountDetails accountDetails = accountSession.getAccountDetails();
-
         try {
             executeFinancialReport(accountDetails);
-        } catch (InterruptedException e) {
-            System.out.println("error: " + e.getMessage());
+        } catch (BankingClientException e) {
+            return gatewayUtil.formatErrorMessage(e.getMessage());
         }
+
         accountDetails = accountSession.getAccountDetails();
-        System.out.println(loginSuccess ? formatSuccessMessage("Login successful. Welcome " + accountDetails.getUsername() + "!") : formatErrorMessage("Login failed, please retry!"));
+        System.out.println(gatewayUtil.formatSuccessMessage("Login successful. Welcome " + accountDetails.getUsername() + "!"));
         return TableFormatter.formatObjectDetails(accountDetails, "Account");
     }
 
-    @ShellMethod(key = "open-bank-account", value = "Get account details")
+    @ShellMethod(key = "open-bank-account", value = "Open Bank Account")
     public String createBankAccount() throws InterruptedException {
         OpenAccountDTO newAccount = executeOpenAccountResponse();
-        executeLogin(newAccount.getUsername(), newAccount.getPassword());
+
+        try {
+            executeLogin(newAccount.getUsername(), newAccount.getPassword());
+        } catch (BankingClientException e) {
+            return gatewayUtil.formatErrorMessage(e.getMessage());
+        }
         AccountDetails accountDetails = accountSession.getAccountDetails();
         return TableFormatter.formatObjectDetails(accountDetails, "Account Creato");
     }
 
-    @ShellMethod("Show Financial Report")
+    @ShellMethod(key = "financial-report", value = "Show Financial Report")
     @ShellMethodAvailability("isAuthenticated")
     public String financialReport() {
         AccountDetails accountDetails = accountSession.getAccountDetails();
         FinancialReportResponse financialReport;
         try {
             financialReport = executeFinancialReport(accountDetails);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (BankingClientException e) {
+            return gatewayUtil.formatErrorMessage(e.getMessage());
         }
         return TableFormatter.formatObjectDetails(financialReport, "Financial Report");
     }
 
-    @ShellMethod("Show Bank Account Report")
+    @ShellMethod(key = "bank-account-report", value = "Show Bank Account Report")
     @ShellMethodAvailability("isAuthenticated")
     public String bankAccountReport() {
         AccountDetails accountDetails = accountSession.getAccountDetails();
         ReportBankAccountResponse reportBankAccountResponse;
         try {
             reportBankAccountResponse = executeBankAccountReport(accountDetails);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        } catch (BankingClientException e) {
+            return gatewayUtil.formatErrorMessage(e.getMessage());
         }
-        accountDetails = accountSession.getAccountDetails();
-        System.out.println(TableFormatter.formatObjectDetails(accountDetails, "Account"));
+
+        System.out.println(TableFormatter.formatObjectDetails(accountSession.getAccountDetails(), "Account"));
         return TableFormatter.formatObjectDetails(reportBankAccountResponse.getTransactions(), "Transactions");
     }
 
-    private String formatSuccessMessage(String message) {
-        return "\n************ SUCCESS ***********\n" + message + "\n*******************************\n";
+    @ShellMethodAvailability("isAuthenticated")
+    @ShellMethod(key = "withdrawal", value = "Show Bank Account Report")
+    public String withdrawal() {
+        AccountDetails accountDetails = accountSession.getAccountDetails();
+
+        ExecuteTransactionResponse executeTransactionResponse;
+        try {
+            executeTransactionResponse = executeWithdrawal(accountDetails);
+        } catch (BankingClientException e) {
+            return gatewayUtil.formatErrorMessage(e.getMessage());
+        }
+        if (executeTransactionResponse != null) {
+            return TableFormatter.formatObjectDetails(executeTransactionResponse, "Withdrawal");
+        }
+        return "";
     }
 
-    private String formatErrorMessage(String message) {
-        return "\n************* ERROR ***********\n" + message + "\n********************************\n";
-    }
-
-    private Boolean executeLogin(String username, String password) {
+    private Boolean executeLogin(String username, String password) throws BankingClientException {
         UserCredentials credentials = new UserCredentials();
         credentials.setUsername(username);
         credentials.setPassword(password);
@@ -127,16 +147,14 @@ public class AccountCommands {
                 log.info("Login successful. Token: {}", tokenResponse.getToken());
                 return true;
             } else {
-                log.error("Login failed: {}", response.getStatusInfo().getReasonPhrase());
-                return false;
+                throw new BankingClientException(gatewayUtil.extractErrorMessage(response.readEntity(String.class)));
             }
         } catch (Exception e) {
-            log.error("Error during login: {}", e.getMessage());
-            return false;
+            throw new BankingClientException(e.getMessage());
         }
     }
 
-    private FinancialReportResponse executeFinancialReport(AccountDetails accountDetails) throws InterruptedException {
+    private FinancialReportResponse executeFinancialReport(AccountDetails accountDetails) throws BankingClientException {
         try (Client client = ClientBuilder.newClient().register(JacksonJsonProvider.class)) {
             String uri = gatewayUtil.getFinancialReportServiceUrl() + "/" + accountDetails.getId();
             String token = jwtTokenProvider.getToken();
@@ -145,30 +163,21 @@ public class AccountCommands {
                     .header("Authorization", "Bearer " + token);
 
             Future<Response> futureResponse = requestBuilder.async().get();
-
-            //while (!futureResponse.isDone()) {
-
-            //}
-
             Response response = gatewayUtil.getAsyncResponseNotBlockingPolling(futureResponse);
-//            Response response = futureResponse.get();
-            log.error("response executeFinancialReport: {}", response);
 
             if (response.getStatusInfo().getFamily().equals(Response.Status.Family.SUCCESSFUL)) {
                 FinancialReportResponse financialReportResponse = response.readEntity(FinancialReportResponse.class);
                 accountSession.updateAccountDetailsFromFinancialReport(financialReportResponse);
                 return financialReportResponse;
             } else {
-                log.error("Error response: {}", response.getStatusInfo().getReasonPhrase());
-                throw new RuntimeException("Error fetching financial report: ");
+                throw new BankingClientException(gatewayUtil.extractErrorMessage(response.readEntity(String.class)));
             }
-        } catch (Exception e) {
-            log.error("Error fetching financial report", e);
-            throw new InterruptedException("Error fetching bank account report: " + e.getMessage());
+        } catch (InterruptedException | ExecutionException e) {
+            throw new BankingClientException(e.getMessage());
         }
     }
 
-    private ReportBankAccountResponse executeBankAccountReport(AccountDetails accountDetails) throws InterruptedException {
+    private ReportBankAccountResponse executeBankAccountReport(AccountDetails accountDetails) throws BankingClientException {
         try (Client client = ClientBuilder.newClient().register(JacksonJsonProvider.class)) {
             String uri = gatewayUtil.getBankingOperationServiceUrl() + "/report-bank-account-by-account/" + accountDetails.getId();
             String token = jwtTokenProvider.getToken();
@@ -178,52 +187,21 @@ public class AccountCommands {
 
             Future<Response> futureResponse = requestBuilder.async().get();
 
-            Response response = futureResponse.get();
-            log.error("response executeBankAccountReport: {}", response);
+            Response response = gatewayUtil.getAsyncResponseNotBlockingPolling(futureResponse);
 
             if (response.getStatusInfo().getFamily().equals(Response.Status.Family.SUCCESSFUL)) {
                 ReportBankAccountResponse reportBankAccountResponse = response.readEntity(ReportBankAccountResponse.class);
                 accountSession.updateAccountDetailsFromReportBankAccount(reportBankAccountResponse);
                 return reportBankAccountResponse;
             } else {
-                log.error("Error response: {}", response.getStatusInfo().getReasonPhrase());
-                throw new RuntimeException("Error fetching bank account report: ");
+                throw new BankingClientException(gatewayUtil.extractErrorMessage(response.readEntity(String.class)));
             }
-        } catch (Exception e) {
-            log.error("Error fetching financial report", e);
-            throw new InterruptedException("Error fetching bank account report: " + e.getMessage());
+        } catch (InterruptedException | ExecutionException e) {
+            throw new BankingClientException(e.getMessage());
         }
     }
 
-    private void executeRequestAtmCard(AccountDetails accountDetails) {
-        try (Client client = ClientBuilder.newClient().register(JacksonJsonProvider.class)) {
-            String uri = gatewayUtil.getBankingOperationServiceUrl() + "/atm-card/" + accountDetails.getId();
-            String token = jwtTokenProvider.getToken();
-
-            Invocation.Builder requestBuilder = client.target(uri).request()
-                    .header("Authorization", "Bearer " + token)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .header("Content-Type", MediaType.APPLICATION_JSON);
-
-            Future<Response> futureResponse = requestBuilder.async().post(Entity.entity("", MediaType.APPLICATION_JSON));
-
-            Response response = futureResponse.get();
-            log.error("response executeRequestAtmCard : {}", response);
-
-            if (response.getStatusInfo().getFamily().equals(Response.Status.Family.SUCCESSFUL)) {
-                CreateBancomatResponse createBancomatResponse = response.readEntity(CreateBancomatResponse.class);
-                log.error("createBancomatResponse: {}", createBancomatResponse);
-                accountSession.updateAccountDetailsFromCreateBancomat(createBancomatResponse);
-            } else {
-                executeGetAtmCard(accountDetails);
-                log.error("Error response: {}", response.getStatusInfo().getReasonPhrase());
-            }
-        } catch (Exception e) {
-            log.error("Error fetching bancomat", e);
-        }
-    }
-
-    private void executeGetAtmCard(AccountDetails accountDetails) throws InterruptedException {
+    private void executeGetAtmCard(AccountDetails accountDetails) throws BankingClientException {
         try (Client client = ClientBuilder.newClient().register(JacksonJsonProvider.class)) {
             String uri = gatewayUtil.getBankingOperationServiceUrl() + "/atm-card/" + accountDetails.getId();
             String token = jwtTokenProvider.getToken();
@@ -233,18 +211,17 @@ public class AccountCommands {
 
             Future<Response> futureResponse = requestBuilder.async().get();
 
-            Response response = futureResponse.get();
+            Response response = gatewayUtil.getAsyncResponseNotBlockingPolling(futureResponse);
             log.error("response executeGetAtmCard: {}", response.getStatus());
 
             if (response.getStatusInfo().getFamily().equals(Response.Status.Family.SUCCESSFUL)) {
                 CreateBancomatResponse createBancomatResponse = response.readEntity(CreateBancomatResponse.class);
                 accountSession.updateAccountDetailsFromCreateBancomat(createBancomatResponse);
             } else {
-                log.error("Error response: {}", response.getStatusInfo().getReasonPhrase());
+                throw new BankingClientException(gatewayUtil.extractErrorMessage(response.readEntity(String.class)));
             }
-        } catch (Exception e) {
-            log.error("Error fetching financial report", e);
-            throw new InterruptedException("Error fetching bank account report: " + e.getMessage());
+        } catch (InterruptedException | ExecutionException e) {
+            throw new BankingClientException(e.getMessage());
         }
     }
 
@@ -284,7 +261,41 @@ public class AccountCommands {
             log.error("Error fetching account", e);
             throw new InterruptedException("Error fetching account: " + e.getMessage());
         }
+    }
 
+
+    private ExecuteTransactionResponse executeWithdrawal(AccountDetails accountDetails) throws BankingClientException {
+
+        BigDecimal amount = BigDecimal.valueOf(Long.parseLong(InputReader.singleReadInput("Enter amount: ")));
+        String descriprion = InputReader.singleReadInput("Enter description: ");
+
+        BalanceUpdateRequest balanceUpdateRequest = new BalanceUpdateRequest()
+                .bankAccountId(accountDetails.getBankAccount().getId())
+                .amount(amount)
+                .description(descriprion);
+
+        try (Client client = ClientBuilder.newClient().register(JacksonJsonProvider.class)) {
+            String uri = gatewayUtil.getTransactionServiceUrl() + "/withdraw-money";
+
+            String token = jwtTokenProvider.getToken();
+
+            Invocation.Builder requestBuilder = client.target(uri).request()
+                    .header("Authorization", "Bearer " + token)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .header("Content-Type", MediaType.APPLICATION_JSON);
+
+            Future<Response> futureResponse = requestBuilder.async().post(Entity.entity(balanceUpdateRequest, MediaType.APPLICATION_JSON));
+
+            Response response = gatewayUtil.getAsyncResponseNotBlockingPolling(futureResponse);
+
+            if (response.getStatusInfo().getFamily().equals(Response.Status.Family.SUCCESSFUL)) {
+                return response.readEntity(ExecuteTransactionResponse.class);
+            } else {
+                throw new BankingClientException(gatewayUtil.extractErrorMessage(response.readEntity(String.class)));
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            throw new BankingClientException(e.getMessage());
+        }
     }
 
 
