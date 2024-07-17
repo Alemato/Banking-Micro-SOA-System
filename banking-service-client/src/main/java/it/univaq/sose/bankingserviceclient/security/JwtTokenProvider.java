@@ -16,6 +16,10 @@ public class JwtTokenProvider {
         this.token = token;
     }
 
+    public synchronized void clearToken() {
+        this.token = null;
+    }
+
     public JwtClaims decodeToken() {
         if (token == null || token.isEmpty()) {
             throw new IllegalArgumentException("Token is null or empty");

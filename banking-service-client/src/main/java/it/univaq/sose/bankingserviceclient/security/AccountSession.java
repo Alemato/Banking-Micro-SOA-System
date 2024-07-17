@@ -32,6 +32,11 @@ public class AccountSession {
         return accountDetails;
     }
 
+    public void resetAccountSession() {
+        accountDetails = new AccountDetails();
+        isLoggedIn = false;
+    }
+
     public void updateAccountDetailsFromJwt(JwtClaims claims) {
         if (accountDetails == null) {
             accountDetails = new AccountDetails();

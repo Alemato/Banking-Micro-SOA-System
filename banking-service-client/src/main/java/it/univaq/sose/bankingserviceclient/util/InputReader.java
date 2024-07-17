@@ -15,6 +15,11 @@ public class InputReader {
         return scanner.nextLine();
     }
 
+    public static String singleReadInputCustom(Terminal terminal, String prompt) {
+        TerminalUtil.printOnTerminal(terminal, prompt);
+        return scanner.nextLine();
+    }
+
     public static <T> T multipleReadInputs(Terminal terminal, Class<T> clazz) {
         T instance;
         try {

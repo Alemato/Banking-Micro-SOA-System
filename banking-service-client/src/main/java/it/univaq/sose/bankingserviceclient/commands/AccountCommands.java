@@ -32,6 +32,7 @@ import org.springframework.shell.standard.ShellMethodAvailability;
 import javax.ws.rs.core.MediaType;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -50,6 +51,7 @@ public class AccountCommands extends AbstractShellComponent {
     }
 
     @ShellMethod(key = "login", value = "Login to the banking system")
+    @ShellMethodAvailability("isNotAuthenticated")
     public String login() {
         String username = InputReader.singleReadInput(getTerminal(), "Enter your username: ");
         String password = InputReader.singleReadInput(getTerminal(), "Enter your password: ");
@@ -73,7 +75,27 @@ public class AccountCommands extends AbstractShellComponent {
         return TableFormatter.formatObjectDetails(getTerminal(), accountDetails, "Account");
     }
 
+    @ShellMethod(key = "logout", value = "Logout from the banking system")
+    @ShellMethodAvailability("isAuthenticated")
+    public String logout() {
+        String key = InputReader.singleReadInputCustom(getTerminal(), "Are you sure you want to logout? (Y/n)");
+
+        while (true) {
+            if (Objects.equals(key, "n")) {
+                return "\n****************************\nGood decision, stay with us!\n****************************\n";
+            } else if (Objects.equals(key, "Y")) {
+                accountSession.resetAccountSession();
+                jwtTokenProvider.clearToken();
+                return "\n**********************\nGoodbye, see you soon!\n**********************\n";
+            } else {
+                key = InputReader.singleReadInputCustom(getTerminal(), "Command not recognised, try again: (Y/n)");
+            }
+        }
+    }
+
+
     @ShellMethod(key = "open-bank-account", value = "Open Bank Account")
+    @ShellMethodAvailability("isNotAuthenticated")
     public String createBankAccount() throws InterruptedException {
         OpenAccountDTO newAccount = null;
         try {
@@ -279,5 +301,11 @@ public class AccountCommands extends AbstractShellComponent {
         return accountSession.isLoggedIn()
                 ? Availability.available()
                 : Availability.unavailable("You are not logged in");
+    }
+
+    private Availability isNotAuthenticated() {
+        return !accountSession.isLoggedIn()
+                ? Availability.available()
+                : Availability.unavailable("You are logged in");
     }
 }
