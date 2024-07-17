@@ -7,13 +7,18 @@ import it.univaq.sose.bankingoperationsserviceprosumer.model.OpenAccountRequest;
 import it.univaq.sose.bankingoperationsserviceprosumer.model.OpenAccountResponse;
 import it.univaq.sose.bankingoperationsserviceprosumer.model.ReportBankAccountResponse;
 import it.univaq.sose.bankingserviceclient.model.AccountDetails;
+import it.univaq.sose.bankingserviceclient.model.Loan;
 import it.univaq.sose.bankingserviceclient.model.OpenAccountDTO;
+import it.univaq.sose.bankingserviceclient.model.dto.OpenLoanRequestDTO;
 import it.univaq.sose.bankingserviceclient.security.AccountSession;
 import it.univaq.sose.bankingserviceclient.security.JwtTokenProvider;
 import it.univaq.sose.bankingserviceclient.util.GatewayUtil;
 import it.univaq.sose.bankingserviceclient.util.InputReader;
 import it.univaq.sose.bankingserviceclient.util.TableFormatter;
+import it.univaq.sose.bankingserviceclient.util.TerminalUtil;
 import it.univaq.sose.financialreportserviceprosumer.model.FinancialReportResponse;
+import it.univaq.sose.loanserviceprosumer.model.LoanDto;
+import it.univaq.sose.loanserviceprosumer.model.OpenLoanRequest;
 import it.univaq.sose.transactionserviceprosumer.model.BalanceUpdateRequest;
 import it.univaq.sose.transactionserviceprosumer.model.ExecuteTransactionResponse;
 import jakarta.ws.rs.client.Client;
@@ -24,6 +29,8 @@ import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.springframework.shell.Availability;
+import org.springframework.shell.component.SingleItemSelector;
+import org.springframework.shell.component.support.SelectorItem;
 import org.springframework.shell.standard.AbstractShellComponent;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
@@ -31,27 +38,29 @@ import org.springframework.shell.standard.ShellMethodAvailability;
 
 import javax.ws.rs.core.MediaType;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 @Slf4j
 @ShellComponent
-public class AccountCommands extends AbstractShellComponent {
+public class BankingCommands extends AbstractShellComponent {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final AccountSession accountSession;
     private final GatewayUtil gatewayUtil;
 
-    public AccountCommands(JwtTokenProvider jwtTokenProvider, AccountSession accountSession, GatewayUtil gatewayUtil) {
+    public BankingCommands(JwtTokenProvider jwtTokenProvider, AccountSession accountSession, GatewayUtil gatewayUtil) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.accountSession = accountSession;
         this.gatewayUtil = gatewayUtil;
     }
 
-    @ShellMethod(key = "login", value = "Login to the banking system")
     @ShellMethodAvailability("isNotAuthenticated")
+    @ShellMethod(key = "login", value = "Login to the banking system", group = "AUTHENTICATION OPERATIONS")
     public String login() {
         String username = InputReader.singleReadInput(getTerminal(), "Enter your username: ");
         String password = InputReader.singleReadInput(getTerminal(), "Enter your password: ");
@@ -69,14 +78,12 @@ public class AccountCommands extends AbstractShellComponent {
         }
 
         accountDetails = accountSession.getAccountDetails();
-        int width = getTerminal().getWidth();
-        String msg;
-        System.out.println(gatewayUtil.formatSuccessMessage("Login successful. Welcome " + accountDetails.getUsername() + "!"));
+        TerminalUtil.printlnOnTerminal(getTerminal(), gatewayUtil.formatSuccessMessage("Login successful. Welcome " + accountDetails.getUsername() + "!"));
         return TableFormatter.formatObjectDetails(getTerminal(), accountDetails, "Account");
     }
 
-    @ShellMethod(key = "logout", value = "Logout from the banking system")
     @ShellMethodAvailability("isAuthenticated")
+    @ShellMethod(key = "logout", value = "Logout from the banking system", group = "AUTHENTICATION OPERATIONS")
     public String logout() {
         String key = InputReader.singleReadInputCustom(getTerminal(), "Are you sure you want to logout? (Y/n)");
 
@@ -94,8 +101,8 @@ public class AccountCommands extends AbstractShellComponent {
     }
 
 
-    @ShellMethod(key = "open-bank-account", value = "Open Bank Account")
     @ShellMethodAvailability("isNotAuthenticated")
+    @ShellMethod(key = "open-bank-account", value = "Open Bank Account", group = "BANKING OPERATIONS")
     public String createBankAccount() throws InterruptedException {
         OpenAccountDTO newAccount = null;
         try {
@@ -110,11 +117,11 @@ public class AccountCommands extends AbstractShellComponent {
             return gatewayUtil.formatErrorMessage(e.getMessage());
         }
         AccountDetails accountDetails = accountSession.getAccountDetails();
-        return TableFormatter.formatObjectDetails(getTerminal(), accountDetails, "Account Creato");
+        return TableFormatter.formatObjectDetails(getTerminal(), accountDetails, "Account Created");
     }
 
-    @ShellMethod(key = "financial-report", value = "Show Financial Report")
     @ShellMethodAvailability("isAuthenticated")
+    @ShellMethod(key = "financial-report", value = "Show Financial Report", group = "REPORT OPERATIONS")
     public String financialReport() {
         AccountDetails accountDetails = accountSession.getAccountDetails();
         FinancialReportResponse financialReport;
@@ -126,8 +133,8 @@ public class AccountCommands extends AbstractShellComponent {
         return TableFormatter.formatObjectDetails(getTerminal(), financialReport, "Financial Report");
     }
 
-    @ShellMethod(key = "bank-account-report", value = "Show Bank Account Report")
     @ShellMethodAvailability("isAuthenticated")
+    @ShellMethod(key = "bank-account-report", value = "Show Bank Account Report", group = "REPORT OPERATIONS")
     public String bankAccountReport() {
         AccountDetails accountDetails = accountSession.getAccountDetails();
         ReportBankAccountResponse reportBankAccountResponse;
@@ -137,12 +144,12 @@ public class AccountCommands extends AbstractShellComponent {
             return gatewayUtil.formatErrorMessage(e.getMessage());
         }
 
-        System.out.println(TableFormatter.formatObjectDetails(getTerminal(), accountSession.getAccountDetails(), "Account"));
+        TerminalUtil.printlnOnTerminal(getTerminal(), TableFormatter.formatObjectDetails(getTerminal(), accountSession.getAccountDetails(), "Account"));
         return TableFormatter.formatObjectDetails(getTerminal(), reportBankAccountResponse.getTransactions(), "Transactions");
     }
 
     @ShellMethodAvailability("isAuthenticated")
-    @ShellMethod(key = "withdrawal", value = "Show Bank Account Report")
+    @ShellMethod(key = "withdrawal", value = "Withdrawal Operation", group = "BANKING OPERATIONS")
     public String withdrawal() {
         AccountDetails accountDetails = accountSession.getAccountDetails();
 
@@ -156,6 +163,30 @@ public class AccountCommands extends AbstractShellComponent {
             return TableFormatter.formatObjectDetails(getTerminal(), executeTransactionResponse, "Withdrawal");
         }
         return "";
+    }
+
+    @ShellMethodAvailability("isAuthenticated")
+    @ShellMethod(key = "open-loan", value = "Open Loan", group = "LOAN OPERATION")
+    public String openLoan() {
+        AccountDetails accountDetails = accountSession.getAccountDetails();
+        try {
+            executeOpenLoan(accountDetails);
+        } catch (BankingClientException e) {
+            return gatewayUtil.formatErrorMessage(e.getMessage());
+        }
+        return TableFormatter.formatObjectDetails(getTerminal(), accountDetails.getLoans(), "Loans");
+    }
+
+    @ShellMethodAvailability("isAuthenticatedAndLoanOpenedExisting")
+    @ShellMethod(key = "close-loan", value = "Close Loan", group = "LOAN OPERATION")
+    public String closeLoan() {
+        AccountDetails accountDetails = accountSession.getAccountDetails();
+        try {
+            executeCloseLoan(accountDetails.getLoans());
+        } catch (BankingClientException e) {
+            return gatewayUtil.formatErrorMessage(e.getMessage());
+        }
+        return TableFormatter.formatObjectDetails(getTerminal(), accountDetails.getLoans(), "Loans");
     }
 
     private Boolean executeLogin(String username, String password) throws BankingClientException {
@@ -296,6 +327,74 @@ public class AccountCommands extends AbstractShellComponent {
         }
     }
 
+    private void executeOpenLoan(AccountDetails accountDetails) throws BankingClientException {
+        try (Client client = ClientBuilder.newClient().register(JacksonJsonProvider.class)) {
+            String uri = gatewayUtil.getLoanServiceUrl();
+            String token = jwtTokenProvider.getToken();
+            Invocation.Builder requestBuilder = client.target(uri).request()
+                    .header("Authorization", "Bearer " + token)
+                    .accept(jakarta.ws.rs.core.MediaType.APPLICATION_JSON)
+                    .header("Content-Type", jakarta.ws.rs.core.MediaType.APPLICATION_JSON);
+
+            OpenLoanRequestDTO openLoanDto = InputReader.multipleReadInputs(getTerminal(), OpenLoanRequestDTO.class);
+            OpenLoanRequest request = new OpenLoanRequest().amount(openLoanDto.getAmount()).interestRate(5.0).termInYears(openLoanDto.getTermInYears()).borrowerName(openLoanDto.getBorrowerName()).idBankAccount(accountDetails.getBankAccount().getId()).idAccount(accountDetails.getId());
+
+            Future<Response> futureResponse = requestBuilder.async().post(Entity.entity(request, jakarta.ws.rs.core.MediaType.APPLICATION_JSON));
+
+            Response response = gatewayUtil.getAsyncResponseNotBlockingPolling(futureResponse);
+
+            log.info("response: {}", response);
+            if (response.getStatusInfo().getFamily().equals(Response.Status.Family.SUCCESSFUL)) {
+                LoanDto loanResponse = response.readEntity(LoanDto.class);
+                accountSession.updateAccountDetailsFromLoan(loanResponse);
+            } else {
+                throw new BankingClientException(gatewayUtil.extractErrorMessage(response.readEntity(String.class)));
+            }
+        } catch (ExecutionException | InterruptedException e) {
+            throw new BankingClientException(e.getMessage());
+        }
+    }
+
+    private void executeCloseLoan(List<Loan> loans) throws BankingClientException {
+        List<Loan> existingLoan = loans.stream()
+                .filter(l -> l.getLoanStatus().equals("APPROVED")).toList();
+        List<SelectorItem<String>> items = new ArrayList<>();
+
+        for (Loan loan : existingLoan) {
+            items.add(SelectorItem.of(loan.getId() + " - " + loan.getBorrowerName() + " - " + loan.getAmount(), loan.getId().toString()));
+        }
+
+        SingleItemSelector<String, SelectorItem<String>> component = new SingleItemSelector<>(getTerminal(),
+                items, "Choose the loan you wish to repay: ", null);
+        component.setResourceLoader(getResourceLoader());
+        component.setTemplateExecutor(getTemplateExecutor());
+        SingleItemSelector.SingleItemSelectorContext<String, SelectorItem<String>> context = component
+                .run(SingleItemSelector.SingleItemSelectorContext.empty());
+        String result = context.getResultItem().flatMap(si -> Optional.ofNullable(si.getItem())).get();
+        Loan lo = existingLoan.stream().filter(l -> l.getId().toString().equals(result)).findFirst().orElseThrow(() -> new BankingClientException("Selection is Invalid!"));
+        try (Client client = ClientBuilder.newClient().register(JacksonJsonProvider.class)) {
+            String uri = gatewayUtil.getLoanServiceUrl() + "/close-loan/" + result;
+            String token = jwtTokenProvider.getToken();
+            Invocation.Builder requestBuilder = client.target(uri).request()
+                    .header("Authorization", "Bearer " + token)
+                    .accept(jakarta.ws.rs.core.MediaType.APPLICATION_JSON)
+                    .header("Content-Type", jakarta.ws.rs.core.MediaType.APPLICATION_JSON);
+            Future<Response> futureResponse = requestBuilder.async().put(Entity.entity("", jakarta.ws.rs.core.MediaType.APPLICATION_JSON));
+            Response response = gatewayUtil.getAsyncResponseNotBlockingPolling(futureResponse);
+
+            log.info("response: {}", response);
+            if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+                lo.setLoanStatus("CLOSED");
+                LoanDto loanResponce = new LoanDto().id(lo.getId()).termInYears(lo.getTermInYears()).amount(lo.getAmount()).interestRate(lo.getInterestRate()).borrowerName(lo.getBorrowerName()).loanStatus(LoanDto.LoanStatusEnum.valueOf(lo.getLoanStatus()));
+                accountSession.updateAccountDetailsFromLoan(loanResponce);
+            } else {
+                throw new BankingClientException(gatewayUtil.extractErrorMessage(response.readEntity(String.class)));
+            }
+        } catch (ExecutionException | InterruptedException e) {
+            throw new BankingClientException(e.getMessage());
+        }
+    }
+
 
     private Availability isAuthenticated() {
         return accountSession.isLoggedIn()
@@ -307,5 +406,11 @@ public class AccountCommands extends AbstractShellComponent {
         return !accountSession.isLoggedIn()
                 ? Availability.available()
                 : Availability.unavailable("You are logged in");
+    }
+
+    private Availability isAuthenticatedAndLoanOpenedExisting() {
+        return accountSession.isLoggedIn() && accountSession.getAccountDetails().getLoans().stream().anyMatch(l -> l.getLoanStatus().equals("APPROVED"))
+                ? Availability.available()
+                : Availability.unavailable("You are not logged in Or you are not Loan in Open Status");
     }
 }

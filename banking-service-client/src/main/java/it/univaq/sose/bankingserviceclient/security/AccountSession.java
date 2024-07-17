@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class AccountSession {
@@ -55,7 +56,7 @@ public class AccountSession {
 
         accountDetails.setBankAccount(
                 new BankAccount(
-                        1L,
+                        financialReportResponse.getBankAccount().getId(),
                         financialReportResponse.getBankAccount().getIban(),
                         financialReportResponse.getBankAccount().getBalance()));
         accountDetails.setBancomat(
@@ -72,7 +73,8 @@ public class AccountSession {
                             ld.getAmount(),
                             ld.getInterestRate(),
                             ld.getTermInYears(),
-                            ld.getBorrowerName()));
+                            ld.getBorrowerName(),
+                            ld.getLoanStatus()));
         }
         accountDetails.setLoans(loans);
     }
@@ -119,7 +121,20 @@ public class AccountSession {
     }
 
     public void updateAccountDetailsFromLoan(it.univaq.sose.loanserviceprosumer.model.LoanDto loan) {
-        accountDetails.addLoan(new Loan(loan.getId(), loan.getAmount(), loan.getInterestRate(), loan.getTermInYears(), loan.getBorrowerName()));
+        Optional<Loan> existingLoan = accountDetails.getLoans().stream()
+                .filter(l -> l.getId().equals(loan.getId()))
+                .findFirst();
+
+        if (existingLoan.isPresent()) {
+            Loan loanToUpdate = existingLoan.get();
+            loanToUpdate.setAmount(loan.getAmount());
+            loanToUpdate.setInterestRate(loan.getInterestRate());
+            loanToUpdate.setTermInYears(loan.getTermInYears());
+            loanToUpdate.setBorrowerName(loan.getBorrowerName());
+            loanToUpdate.setLoanStatus(loan.getLoanStatus());
+        } else {
+            accountDetails.addLoan(new Loan(loan.getId(), loan.getAmount(), loan.getInterestRate(), loan.getTermInYears(), loan.getBorrowerName(), loan.getLoanStatus()));
+        }
     }
 
     public void updateAccountDetailsFromCreateBancomat(CreateBancomatResponse createBancomatResponse) {

@@ -10,8 +10,11 @@
                                  |___/
 
 
- ${spring.application.name} ${version}
- Powered by Spring Boot ${spring-boot.version}
- RUN HELP
+    ***************************************************
+    *           ${spring.application.name}                *
+    *           Version: ${application.version}               *
+    *           Powered by Spring Boot ${spring-boot.version}          *
+    ***************************************************
 
+    PLEASE RUN help
 

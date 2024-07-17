@@ -8,10 +8,14 @@ public class TerminalUtil {
         throw new IllegalStateException("Utility class for Terminal");
     }
 
-    public static void printOnTerminal(Terminal terminal, String message) {
+    public static void printlnOnTerminal(Terminal terminal, String message) {
         int width = terminal.getWidth();
         String msg = String.format("%-" + width + "s", message);
         terminal.writer().write(msg + System.lineSeparator());
         terminal.writer().flush();
+    }
+
+    public static void printOnTerminal(Terminal terminal, String message) {
+        System.out.print(message);
     }
 }

@@ -49,7 +49,7 @@ public class InputReader {
                 }
                 // Aggiungi altre conversioni di tipi se necessario
             } catch (IllegalAccessException e) {
-                TerminalUtil.printOnTerminal(terminal, "Failed to set field: " + field.getName());
+                TerminalUtil.printlnOnTerminal(terminal, "Failed to set field: " + field.getName());
             }
         }
 

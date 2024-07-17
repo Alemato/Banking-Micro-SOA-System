@@ -16,11 +16,14 @@ public class Loan {
 
     private String borrowerName;
 
-    public Loan(Long id, BigDecimal amount, Double interestRate, Integer termInYears, String borrowerName) {
+    private String loanStatus;
+
+    public Loan(Long id, BigDecimal amount, Double interestRate, Integer termInYears, String borrowerName, String loanStatus) {
         this.id = id;
         this.amount = amount;
         this.interestRate = interestRate;
         this.termInYears = termInYears;
         this.borrowerName = borrowerName;
+        this.loanStatus = loanStatus;
     }
 }

@@ -15,7 +15,7 @@ public class TableFormatter {
     }
 
     public static String formatObjectDetails(Terminal terminal, Object obj, String title) {
-        TerminalUtil.printOnTerminal(terminal, "\n" + title);
+        TerminalUtil.printlnOnTerminal(terminal, "\n" + title);
 
         if (obj instanceof Collection<?> collection) {
             if (collection.isEmpty()) {
