@@ -79,7 +79,7 @@ components:
     BancomatResponse:
       required:
         - cvv
-        - dataScadenza
+        - expiryDate
         - number
       type: object
       properties:
@@ -90,7 +90,7 @@ components:
           type: string
         cvv:
           type: string
-        dataScadenza:
+        expiryDate:
           type: string
         accountId:
           type: integer

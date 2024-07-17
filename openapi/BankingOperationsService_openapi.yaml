@@ -10,7 +10,7 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 0.0.1-SNAPSHOT
 servers:
-  - url: http://169.254.88.143:9083/services
+  - url: http://192.168.178.37:9083/services
 paths:
   /api/bank/atm-card/{accountId}:
     get:
@@ -338,6 +338,11 @@ components:
     OpenAccountResponse:
       required:
         - balance
+        - bancomatCvv
+        - bancomatExpiryDate
+        - bancomatId
+        - bancomatNumber
+        - bankAccountId
         - email
         - iban
         - id
@@ -360,10 +365,22 @@ components:
           type: string
         phone:
           type: string
+        bankAccountId:
+          type: integer
+          format: int64
         iban:
           type: string
         balance:
           type: number
+        bancomatId:
+          type: integer
+          format: int64
+        bancomatNumber:
+          type: string
+        bancomatCvv:
+          type: string
+        bancomatExpiryDate:
+          type: string
       xml:
         name: OpenAccountResponse
     OpenAccountRequest:

@@ -26,12 +26,12 @@ import java.util.List;
 public class BankingOperationsServiceImpl implements BankingOperationsService {
     private final AccountServiceClient accountServiceClient;
     private final BankAccountServiceClient bankAccountService;
-    private final BancomatServiceClient bancomatService;
+    private final BancomatServiceClient bancomatServiceClient;
 
     public BankingOperationsServiceImpl(AccountServiceClient accountServiceClient, BankAccountServiceClient bankAccountService, BancomatServiceClient bancomatServiceClient) {
         this.accountServiceClient = accountServiceClient;
         this.bankAccountService = bankAccountService;
-        this.bancomatService = bancomatServiceClient;
+        this.bancomatServiceClient = bancomatServiceClient;
     }
 
     @Override
@@ -74,6 +74,14 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
             } catch (ServiceUnavailableException e) {
                 /* Trigger ExceptionMapper */
                 asyncResponse.resume(e);
+                Thread.currentThread().interrupt();
+            } catch (it.univaq.sose.bancomatservice.webservice.NotFoundException_Exception e) {
+                Response response = Response.status(Response.Status.NOT_FOUND).entity(new ErrorResponse(e.getMessage())).build();
+                asyncResponse.resume(response);
+                Thread.currentThread().interrupt();
+            } catch (BancomatAlreadyExistingException_Exception e) {
+                Response response = Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getMessage())).build();
+                asyncResponse.resume(response);
                 Thread.currentThread().interrupt();
             }
         }).start();
@@ -125,12 +133,12 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
                 bancomatRequest.setAccountId(accountId);
                 bancomatRequest.setBankAccountId(bankAccountResponse.getId());
 
-                BancomatResponse bancomatResponse = bancomatService.getBancomatService().createBancomat(bancomatRequest);
+                BancomatResponse bancomatResponse = bancomatServiceClient.getBancomatService().createBancomat(bancomatRequest);
                 log.info("Bancomat-Service Response for Create Bancomat: {}", bancomatResponse);
 
                 CreateBancomatResponse createBancomatResponse = new CreateBancomatResponse(
                         bancomatResponse.getId(), bancomatResponse.getNumber(),
-                        bancomatResponse.getCvv(), bancomatResponse.getDataScadenza()
+                        bancomatResponse.getCvv(), bancomatResponse.getExpiryDate()
                 );
 
                 Response response = Response.status(Response.Status.CREATED).entity(createBancomatResponse).build();
@@ -165,13 +173,13 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
                 Thread.sleep(1000); // sleep 1s
                 GetBancomatDetails request = new GetBancomatDetails();
                 request.setAccountId(accountId);
-                GetBancomatDetailsResponse getBancomatDetailsResponse = bancomatService.getBancomatService().getBancomatDetails(request);
+                GetBancomatDetailsResponse getBancomatDetailsResponse = bancomatServiceClient.getBancomatService().getBancomatDetails(request);
                 BancomatResponse bancomatResponse = getBancomatDetailsResponse.getGetBancomatDetailsResponse();
                 log.info("Bancomat-Service Response for Get Bancomat Details: {}", bancomatResponse);
 
                 CreateBancomatResponse createBancomatResponse = new CreateBancomatResponse(
                         bancomatResponse.getId(), bancomatResponse.getNumber(),
-                        bancomatResponse.getCvv(), bancomatResponse.getDataScadenza()
+                        bancomatResponse.getCvv(), bancomatResponse.getExpiryDate()
                 );
 
                 Response response = Response.status(Response.Status.CREATED).entity(createBancomatResponse).build();
@@ -227,14 +235,21 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
     }
 
 
-    private OpenAccountResponse getOpenAccountResponse(OpenAccountRequest openAccountRequest, long idAccount) throws BankAccountAlradyExistException_Exception, AccountServiceException, ServiceUnavailableException {
+    private OpenAccountResponse getOpenAccountResponse(OpenAccountRequest openAccountRequest, long idAccount) throws BankAccountAlradyExistException_Exception, AccountServiceException, ServiceUnavailableException, it.univaq.sose.bancomatservice.webservice.NotFoundException_Exception, BancomatAlreadyExistingException_Exception {
         BankAccountRequest bankAccountRequest = new BankAccountRequest();
         bankAccountRequest.setAccountId(idAccount);
         bankAccountRequest.setBalance(openAccountRequest.getBalance());
         BankAccountService bankAccountClient = bankAccountService.getBankAccountService();
+        BancomatService bancomatService = bancomatServiceClient.getBancomatService();
 
         BankAccountResponse bankAccountResponse = bankAccountClient.createBankAccount(bankAccountRequest);
         log.info("Bank-Account-Service Response for Create Bank Account: {}", bankAccountResponse);
+
+        BancomatRequest bancomatRequest = new BancomatRequest();
+        bancomatRequest.setAccountId(bankAccountResponse.getAccountId());
+        bancomatRequest.setBankAccountId(bankAccountResponse.getId());
+
+        BancomatResponse bancomatResponse = bancomatService.createBancomat(bancomatRequest);
 
         AccountServiceDefaultClient client = accountServiceClient.getAccountService();
         try {
@@ -242,11 +257,11 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
         } catch (Exception e) {
             throw new AccountServiceException("Error for Account Service (Add Bank Account)");
         }
-        return getOpenAccountResponse(idAccount, bankAccountResponse);
-
+        return getOpenAccountResponse(idAccount, bankAccountResponse, bancomatResponse);
     }
 
-    private OpenAccountResponse getOpenAccountResponse(long idAccount, BankAccountResponse bankAccountResponse) throws AccountServiceException {
+
+    private OpenAccountResponse getOpenAccountResponse(long idAccount, BankAccountResponse bankAccountResponse, BancomatResponse bancomatResponse) throws AccountServiceException {
         try {
             AccountServiceDefaultClient client = accountServiceClient.getAccountService();
             AccountResponse account = client.getAccount1(idAccount);
@@ -258,8 +273,15 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
             openAccountResponse.setUsername(account.getUsername());
             openAccountResponse.setPhone(account.getPhone());
             openAccountResponse.setEmail(account.getEmail());
+
+            openAccountResponse.setBankAccountId(bankAccountResponse.getId());
             openAccountResponse.setIban(bankAccountResponse.getIban());
             openAccountResponse.setBalance(bankAccountResponse.getBalance());
+
+            openAccountResponse.setBancomatId(bancomatResponse.getId());
+            openAccountResponse.setBancomatNumber(bancomatResponse.getNumber());
+            openAccountResponse.setBancomatCvv(bancomatResponse.getCvv());
+            openAccountResponse.setBancomatExpiryDate(bancomatResponse.getExpiryDate());
             return openAccountResponse;
         } catch (Exception e) {
             throw new AccountServiceException("Error for Account Service (Get Account)");

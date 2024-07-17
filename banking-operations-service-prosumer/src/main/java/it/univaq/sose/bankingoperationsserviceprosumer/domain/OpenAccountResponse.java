@@ -25,7 +25,17 @@ public class OpenAccountResponse {
     @XmlElement(required = true)
     private String phone;
     @XmlElement(required = true)
+    private long bankAccountId;
+    @XmlElement(required = true)
     private String iban;
     @XmlElement(required = true)
     private BigDecimal balance;
+    @XmlElement(required = true)
+    private long bancomatId;
+    @XmlElement(required = true)
+    private String bancomatNumber;
+    @XmlElement(required = true)
+    private String bancomatCvv;
+    @XmlElement(required = true)
+    private String bancomatExpiryDate;
 }

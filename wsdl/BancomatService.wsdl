@@ -4,128 +4,131 @@
                   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
                   name="BancomatService" targetNamespace="http://webservice.bancomatservice.sose.univaq.it/">
   <wsdl:types>
-    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://webservice.bancomatservice.sose.univaq.it/"
-               attributeFormDefault="unqualified" elementFormDefault="unqualified"
-               targetNamespace="http://webservice.bancomatservice.sose.univaq.it/" version="1.0">
-      <xs:element name="createBancomat" type="tns:createBancomat"/>
-      <xs:element name="createBancomatResponse" type="tns:createBancomatResponse"/>
-      <xs:element name="executeTransaction" type="tns:executeTransaction"/>
-      <xs:element name="executeTransactionResponse" type="tns:executeTransactionResponse"/>
-      <xs:element name="getBancomatDetails" type="tns:getBancomatDetails"/>
-      <xs:element name="getBancomatDetailsByNumber" type="tns:getBancomatDetailsByNumber"/>
-      <xs:element name="getBancomatDetailsByNumberResponse" type="tns:getBancomatDetailsByNumberResponse"/>
-      <xs:element name="getBancomatTransactions" type="tns:getBancomatTransactions"/>
-      <xs:complexType name="createBancomat">
-        <xs:sequence>
-          <xs:element name="bancomatRequest" type="tns:BancomatRequest"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="BancomatRequest">
-        <xs:sequence>
-          <xs:element name="accountId" type="xs:long"/>
-          <xs:element name="bankAccountId" type="xs:long"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="createBancomatResponse">
-        <xs:sequence>
-          <xs:element form="qualified" minOccurs="0" name="CreateBancomatResponse" type="tns:BancomatResponse"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="BancomatResponse">
-        <xs:sequence>
-          <xs:element name="id" type="xs:long"/>
-          <xs:element name="number" type="xs:string"/>
-          <xs:element name="cvv" type="xs:string"/>
-          <xs:element name="dataScadenza" type="xs:string"/>
-          <xs:element name="accountId" type="xs:long"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="executeTransaction">
-        <xs:sequence>
-          <xs:element name="transactionRequest" type="tns:TransactionRequest"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="TransactionRequest">
-        <xs:sequence>
-          <xs:element name="number" type="xs:string"/>
-          <xs:element name="amount" type="xs:decimal"/>
-          <xs:element name="description" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="executeTransactionResponse">
-        <xs:sequence>
-          <xs:element form="qualified" minOccurs="0" name="ExecuteTransactionResponse"
-                      type="tns:BancomatTransactionResponse"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="BancomatTransactionResponse">
-        <xs:sequence>
-          <xs:element name="id" type="xs:long"/>
-          <xs:element name="transactionCode" type="xs:string"/>
-          <xs:element name="amount" type="xs:decimal"/>
-          <xs:element name="description" type="xs:string"/>
-          <xs:element name="date" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="getBancomatDetailsByNumber">
-        <xs:sequence>
-          <xs:element name="number" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="getBancomatDetailsByNumberResponse">
-        <xs:sequence>
-          <xs:element form="qualified" minOccurs="0" name="GetBancomatDetailsByNumberResponse"
-                      type="tns:BancomatResponse"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="getBancomatDetails">
-        <xs:sequence>
-          <xs:element name="accountId" type="xs:long"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="getBancomatDetailsResponse">
-        <xs:sequence>
-          <xs:element form="qualified" minOccurs="0" name="GetBancomatDetailsResponse" type="tns:BancomatResponse"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="getBancomatTransactions">
-        <xs:sequence>
-          <xs:element name="accountId" type="xs:long"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:complexType name="getBancomatTransactionsResponse">
-        <xs:sequence>
-          <xs:element form="qualified" maxOccurs="unbounded" minOccurs="0" name="GetBancomatTransactionsResponse"
-                      type="tns:BancomatTransactionResponse"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:element name="BancomatAlreadyExistingException" type="tns:BancomatAlreadyExistingException"/>
-      <xs:complexType name="BancomatAlreadyExistingException">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="message" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:element name="NotFoundException" type="tns:NotFoundException"/>
-      <xs:complexType name="NotFoundException">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="message" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:element name="ExpiredBancomatException" type="tns:ExpiredBancomatException"/>
-      <xs:complexType name="ExpiredBancomatException">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="message" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:element name="getBancomatDetailsResponse" nillable="true" type="tns:getBancomatDetailsResponse"/>
-      <xs:element name="BancomatException" type="tns:BancomatException"/>
-      <xs:complexType name="BancomatException">
-        <xs:sequence>
-          <xs:element minOccurs="0" name="message" type="xs:string"/>
-        </xs:sequence>
-      </xs:complexType>
-      <xs:element name="getBancomatTransactionsResponse" nillable="true" type="tns:getBancomatTransactionsResponse"/>
-    </xs:schema>
+      <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 xmlns:tns="http://webservice.bancomatservice.sose.univaq.it/" attributeFormDefault="unqualified"
+                 elementFormDefault="unqualified" targetNamespace="http://webservice.bancomatservice.sose.univaq.it/"
+                 version="1.0">
+          <xs:element name="createBancomat" type="tns:createBancomat"/>
+          <xs:element name="createBancomatResponse" type="tns:createBancomatResponse"/>
+          <xs:element name="executeTransaction" type="tns:executeTransaction"/>
+          <xs:element name="executeTransactionResponse" type="tns:executeTransactionResponse"/>
+          <xs:element name="getBancomatDetails" type="tns:getBancomatDetails"/>
+          <xs:element name="getBancomatDetailsByNumber" type="tns:getBancomatDetailsByNumber"/>
+          <xs:element name="getBancomatDetailsByNumberResponse" type="tns:getBancomatDetailsByNumberResponse"/>
+          <xs:element name="getBancomatTransactions" type="tns:getBancomatTransactions"/>
+          <xs:complexType name="createBancomat">
+              <xs:sequence>
+                  <xs:element name="bancomatRequest" type="tns:BancomatRequest"/>
+              </xs:sequence>
+          </xs:complexType>
+          <xs:complexType name="BancomatRequest">
+              <xs:sequence>
+                  <xs:element name="accountId" type="xs:long"/>
+                  <xs:element name="bankAccountId" type="xs:long"/>
+              </xs:sequence>
+          </xs:complexType>
+          <xs:complexType name="createBancomatResponse">
+              <xs:sequence>
+                  <xs:element form="qualified" minOccurs="0" name="CreateBancomatResponse" type="tns:BancomatResponse"/>
+              </xs:sequence>
+          </xs:complexType>
+          <xs:complexType name="BancomatResponse">
+              <xs:sequence>
+                  <xs:element name="id" type="xs:long"/>
+                  <xs:element name="number" type="xs:string"/>
+                  <xs:element name="cvv" type="xs:string"/>
+                  <xs:element name="expiryDate" type="xs:string"/>
+                  <xs:element name="accountId" type="xs:long"/>
+              </xs:sequence>
+          </xs:complexType>
+          <xs:complexType name="executeTransaction">
+              <xs:sequence>
+                  <xs:element name="transactionRequest" type="tns:TransactionRequest"/>
+              </xs:sequence>
+          </xs:complexType>
+          <xs:complexType name="TransactionRequest">
+              <xs:sequence>
+                  <xs:element name="number" type="xs:string"/>
+                  <xs:element name="amount" type="xs:decimal"/>
+                  <xs:element name="description" type="xs:string"/>
+              </xs:sequence>
+          </xs:complexType>
+          <xs:complexType name="executeTransactionResponse">
+              <xs:sequence>
+                  <xs:element form="qualified" minOccurs="0" name="ExecuteTransactionResponse"
+                              type="tns:BancomatTransactionResponse"/>
+              </xs:sequence>
+          </xs:complexType>
+          <xs:complexType name="BancomatTransactionResponse">
+              <xs:sequence>
+                  <xs:element name="id" type="xs:long"/>
+                  <xs:element name="transactionCode" type="xs:string"/>
+                  <xs:element name="amount" type="xs:decimal"/>
+                  <xs:element name="description" type="xs:string"/>
+                  <xs:element name="date" type="xs:string"/>
+              </xs:sequence>
+          </xs:complexType>
+          <xs:complexType name="getBancomatDetailsByNumber">
+              <xs:sequence>
+                  <xs:element name="number" type="xs:string"/>
+              </xs:sequence>
+          </xs:complexType>
+          <xs:complexType name="getBancomatDetailsByNumberResponse">
+              <xs:sequence>
+                  <xs:element form="qualified" minOccurs="0" name="GetBancomatDetailsByNumberResponse"
+                              type="tns:BancomatResponse"/>
+              </xs:sequence>
+          </xs:complexType>
+          <xs:complexType name="getBancomatDetails">
+              <xs:sequence>
+                  <xs:element name="accountId" type="xs:long"/>
+              </xs:sequence>
+          </xs:complexType>
+          <xs:complexType name="getBancomatDetailsResponse">
+              <xs:sequence>
+                  <xs:element form="qualified" minOccurs="0" name="GetBancomatDetailsResponse"
+                              type="tns:BancomatResponse"/>
+              </xs:sequence>
+          </xs:complexType>
+          <xs:complexType name="getBancomatTransactions">
+              <xs:sequence>
+                  <xs:element name="accountId" type="xs:long"/>
+              </xs:sequence>
+          </xs:complexType>
+          <xs:complexType name="getBancomatTransactionsResponse">
+              <xs:sequence>
+                  <xs:element form="qualified" maxOccurs="unbounded" minOccurs="0"
+                              name="GetBancomatTransactionsResponse" type="tns:BancomatTransactionResponse"/>
+              </xs:sequence>
+          </xs:complexType>
+          <xs:element name="BancomatAlreadyExistingException" type="tns:BancomatAlreadyExistingException"/>
+          <xs:complexType name="BancomatAlreadyExistingException">
+              <xs:sequence>
+                  <xs:element minOccurs="0" name="message" type="xs:string"/>
+              </xs:sequence>
+          </xs:complexType>
+          <xs:element name="NotFoundException" type="tns:NotFoundException"/>
+          <xs:complexType name="NotFoundException">
+              <xs:sequence>
+                  <xs:element minOccurs="0" name="message" type="xs:string"/>
+              </xs:sequence>
+          </xs:complexType>
+          <xs:element name="ExpiredBancomatException" type="tns:ExpiredBancomatException"/>
+          <xs:complexType name="ExpiredBancomatException">
+              <xs:sequence>
+                  <xs:element minOccurs="0" name="message" type="xs:string"/>
+              </xs:sequence>
+          </xs:complexType>
+          <xs:element name="getBancomatDetailsResponse" nillable="true" type="tns:getBancomatDetailsResponse"/>
+          <xs:element name="BancomatException" type="tns:BancomatException"/>
+          <xs:complexType name="BancomatException">
+              <xs:sequence>
+                  <xs:element minOccurs="0" name="message" type="xs:string"/>
+              </xs:sequence>
+          </xs:complexType>
+          <xs:element name="getBancomatTransactionsResponse" nillable="true"
+                      type="tns:getBancomatTransactionsResponse"/>
+      </xs:schema>
   </wsdl:types>
   <wsdl:message name="getBancomatDetailsResponse">
     <wsdl:part element="tns:getBancomatDetailsResponse" name="parameters">

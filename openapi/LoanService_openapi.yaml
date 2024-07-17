@@ -10,7 +10,7 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 0.0.1-SNAPSHOT
 servers:
-  - url: http://169.254.88.143:9085/services
+  - url: http://192.168.178.37:9085/services
 paths:
   /api/loan/close-loan/{idLoan}:
     put:

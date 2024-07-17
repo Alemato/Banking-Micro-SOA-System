@@ -12,7 +12,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "BancomatResponse", propOrder = {"id", "number", "cvv", "dataScadenza", "accountId"})
+@XmlType(name = "BancomatResponse", propOrder = {"id", "number", "cvv", "expiryDate", "accountId"})
 public class BancomatResponse {
 
     @XmlElement(required = true)
@@ -25,7 +25,7 @@ public class BancomatResponse {
     private String cvv;
 
     @XmlElement(required = true)
-    private String dataScadenza;
+    private String expiryDate;
 
     @XmlElement(required = true)
     private Long accountId;
@@ -33,11 +33,11 @@ public class BancomatResponse {
     public BancomatResponse() {
     }
 
-    public BancomatResponse(Long id, String number, String cvv, String dataScadenza, Long accountId) {
+    public BancomatResponse(Long id, String number, String cvv, String expiryDate, Long accountId) {
         this.id = id;
         this.number = number;
         this.cvv = cvv;
-        this.dataScadenza = dataScadenza;
+        this.expiryDate = expiryDate;
         this.accountId = accountId;
     }
 }
