@@ -36,6 +36,7 @@ public class AccountSession {
         if (accountDetails == null) {
             accountDetails = new AccountDetails();
         }
+        this.isLoggedIn = true;
         accountDetails.setId(Long.parseLong(claims.getClaim("identifier").toString()));
         accountDetails.setUsername(claims.getSubject());
         accountDetails.setRole(claims.getClaim("role").toString());
@@ -57,7 +58,7 @@ public class AccountSession {
                         financialReportResponse.getBancomat().getId(),
                         financialReportResponse.getBancomat().getNumber(),
                         financialReportResponse.getBancomat().getCvv(),
-                        financialReportResponse.getBancomat().getDataScadenza()));
+                        financialReportResponse.getBancomat().getExpiryDate()));
         List<Loan> loans = new ArrayList<>();
         for (LoanDto ld : financialReportResponse.getLoans()) {
             loans.add(
@@ -87,6 +88,9 @@ public class AccountSession {
     }
 
     public void updateAccountDetailsFromOpenBankAccount(OpenAccountResponse openAccountResponse) {
+        if (accountDetails == null) {
+            accountDetails = new AccountDetails();
+        }
         accountDetails.setId(openAccountResponse.getId());
         accountDetails.setName(openAccountResponse.getName());
         accountDetails.setSurname(openAccountResponse.getSurname());
@@ -99,6 +103,14 @@ public class AccountSession {
                         openAccountResponse.getId(),
                         openAccountResponse.getIban(),
                         openAccountResponse.getBalance()));
+
+        accountDetails.setBancomat(
+                new Bancomat(
+                        openAccountResponse.getBancomatId(),
+                        openAccountResponse.getBancomatNumber(),
+                        openAccountResponse.getBancomatCvv(),
+                        openAccountResponse.getBancomatExpiryDate()));
+
     }
 
     public void updateAccountDetailsFromLoan(it.univaq.sose.loanserviceprosumer.model.LoanDto loan) {

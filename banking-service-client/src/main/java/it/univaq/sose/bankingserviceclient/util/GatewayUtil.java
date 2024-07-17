@@ -1,7 +1,12 @@
 package it.univaq.sose.bankingserviceclient.util;
 
+import jakarta.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.shell.component.view.control.Spinner;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 @Component
 public class GatewayUtil {
@@ -49,5 +54,24 @@ public class GatewayUtil {
 
     public String getTransactionServiceUrl() {
         return String.format("http://%s:%d%s", baseUrl, port, transactionPath);
+    }
+
+    public Response getAsyncResponseNotBlockingPolling(Future<Response> responseFuture) throws InterruptedException, ExecutionException {
+        Spinner spinner = Spinner.of(Spinner.DOTS12, 100);
+
+        int i = 0;
+        int firstLap = 10;
+        boolean secondRound = false;
+
+        while (!responseFuture.isDone()) {
+            i++;
+            String message = secondRound ? "Hang tight, it won't be long now! ;)" : "";
+            System.out.print("\r" + spinner.getFrames()[i % spinner.getFrames().length] + " Please wait... We are working for you! " + " " + message);
+            if (i >= firstLap) {
+                secondRound = true;
+            }
+            Thread.sleep(spinner.getInterval());
+        }
+        return responseFuture.get();
     }
 }
