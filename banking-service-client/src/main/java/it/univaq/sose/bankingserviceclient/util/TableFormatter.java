@@ -1,6 +1,7 @@
 package it.univaq.sose.bankingserviceclient.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jline.terminal.Terminal;
 import org.springframework.shell.table.*;
 
 import java.lang.reflect.Field;
@@ -13,8 +14,8 @@ public class TableFormatter {
         throw new IllegalStateException("Utility class");
     }
 
-    public static String formatObjectDetails(Object obj, String title) {
-        System.out.println("\n" + title);
+    public static String formatObjectDetails(Terminal terminal, Object obj, String title) {
+        TerminalUtil.printOnTerminal(terminal, "\n" + title);
 
         if (obj instanceof Collection<?> collection) {
             if (collection.isEmpty()) {

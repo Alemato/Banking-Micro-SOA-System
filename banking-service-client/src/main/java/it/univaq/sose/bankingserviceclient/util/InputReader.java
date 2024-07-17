@@ -1,5 +1,7 @@
 package it.univaq.sose.bankingserviceclient.util;
 
+import org.jline.terminal.Terminal;
+
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.Scanner;
@@ -8,12 +10,12 @@ public class InputReader {
 
     private static final Scanner scanner = new Scanner(System.in);
 
-    public static String singleReadInput(String prompt) {
-        System.out.print("Enter the " + prompt);
+    public static String singleReadInput(Terminal terminal, String prompt) {
+        TerminalUtil.printOnTerminal(terminal, "Enter the " + prompt);
         return scanner.nextLine();
     }
 
-    public static <T> T multipleReadInputs(Class<T> clazz) {
+    public static <T> T multipleReadInputs(Terminal terminal, Class<T> clazz) {
         T instance;
         try {
             instance = clazz.getDeclaredConstructor().newInstance();
@@ -24,7 +26,7 @@ public class InputReader {
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             field.setAccessible(true);
-            System.out.print("Enter the " + field.getName() + ": ");
+            TerminalUtil.printOnTerminal(terminal, "Enter the " + field.getName() + ": ");
             String input = scanner.nextLine();
             try {
                 if (field.getType().equals(String.class)) {
@@ -42,7 +44,7 @@ public class InputReader {
                 }
                 // Aggiungi altre conversioni di tipi se necessario
             } catch (IllegalAccessException e) {
-                System.out.println("Failed to set field: " + field.getName());
+                TerminalUtil.printOnTerminal(terminal, "Failed to set field: " + field.getName());
             }
         }
 

@@ -50,7 +50,7 @@ public class AccountSession {
 
         accountDetails.setBankAccount(
                 new BankAccount(
-                        financialReportResponse.getBankAccount().getId(),
+                        1L,
                         financialReportResponse.getBankAccount().getIban(),
                         financialReportResponse.getBankAccount().getBalance()));
         accountDetails.setBancomat(

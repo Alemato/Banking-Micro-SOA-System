@@ -24,6 +24,7 @@ import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.springframework.shell.Availability;
+import org.springframework.shell.standard.AbstractShellComponent;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellMethodAvailability;
@@ -36,7 +37,7 @@ import java.util.concurrent.Future;
 
 @Slf4j
 @ShellComponent
-public class AccountCommands {
+public class AccountCommands extends AbstractShellComponent {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final AccountSession accountSession;
@@ -50,8 +51,8 @@ public class AccountCommands {
 
     @ShellMethod(key = "login", value = "Login to the banking system")
     public String login() {
-        String username = InputReader.singleReadInput("Enter your username: ");
-        String password = InputReader.singleReadInput("Enter your password: ");
+        String username = InputReader.singleReadInput(getTerminal(), "Enter your username: ");
+        String password = InputReader.singleReadInput(getTerminal(), "Enter your password: ");
 
         try {
             executeLogin(username, password);
@@ -66,8 +67,10 @@ public class AccountCommands {
         }
 
         accountDetails = accountSession.getAccountDetails();
+        int width = getTerminal().getWidth();
+        String msg;
         System.out.println(gatewayUtil.formatSuccessMessage("Login successful. Welcome " + accountDetails.getUsername() + "!"));
-        return TableFormatter.formatObjectDetails(accountDetails, "Account");
+        return TableFormatter.formatObjectDetails(getTerminal(), accountDetails, "Account");
     }
 
     @ShellMethod(key = "open-bank-account", value = "Open Bank Account")
@@ -85,7 +88,7 @@ public class AccountCommands {
             return gatewayUtil.formatErrorMessage(e.getMessage());
         }
         AccountDetails accountDetails = accountSession.getAccountDetails();
-        return TableFormatter.formatObjectDetails(accountDetails, "Account Creato");
+        return TableFormatter.formatObjectDetails(getTerminal(), accountDetails, "Account Creato");
     }
 
     @ShellMethod(key = "financial-report", value = "Show Financial Report")
@@ -98,7 +101,7 @@ public class AccountCommands {
         } catch (BankingClientException e) {
             return gatewayUtil.formatErrorMessage(e.getMessage());
         }
-        return TableFormatter.formatObjectDetails(financialReport, "Financial Report");
+        return TableFormatter.formatObjectDetails(getTerminal(), financialReport, "Financial Report");
     }
 
     @ShellMethod(key = "bank-account-report", value = "Show Bank Account Report")
@@ -112,8 +115,8 @@ public class AccountCommands {
             return gatewayUtil.formatErrorMessage(e.getMessage());
         }
 
-        System.out.println(TableFormatter.formatObjectDetails(accountSession.getAccountDetails(), "Account"));
-        return TableFormatter.formatObjectDetails(reportBankAccountResponse.getTransactions(), "Transactions");
+        System.out.println(TableFormatter.formatObjectDetails(getTerminal(), accountSession.getAccountDetails(), "Account"));
+        return TableFormatter.formatObjectDetails(getTerminal(), reportBankAccountResponse.getTransactions(), "Transactions");
     }
 
     @ShellMethodAvailability("isAuthenticated")
@@ -128,7 +131,7 @@ public class AccountCommands {
             return gatewayUtil.formatErrorMessage(e.getMessage());
         }
         if (executeTransactionResponse != null) {
-            return TableFormatter.formatObjectDetails(executeTransactionResponse, "Withdrawal");
+            return TableFormatter.formatObjectDetails(getTerminal(), executeTransactionResponse, "Withdrawal");
         }
         return "";
     }
@@ -206,7 +209,7 @@ public class AccountCommands {
     }
 
     private OpenAccountDTO executeOpenAccountResponse() throws BankingClientException {
-        OpenAccountDTO newAccount = InputReader.multipleReadInputs(OpenAccountDTO.class);
+        OpenAccountDTO newAccount = InputReader.multipleReadInputs(getTerminal(), OpenAccountDTO.class);
         OpenAccountRequest openAccountRequest = new OpenAccountRequest();
         openAccountRequest.setName(openAccountRequest.getName());
         openAccountRequest.setSurname(openAccountRequest.getSurname());
@@ -239,13 +242,13 @@ public class AccountCommands {
 
     private ExecuteTransactionResponse executeWithdrawal(AccountDetails accountDetails) throws BankingClientException {
 
-        BigDecimal amount = BigDecimal.valueOf(Long.parseLong(InputReader.singleReadInput("Enter amount: ")));
-        String descriprion = InputReader.singleReadInput("Enter description: ");
+        BigDecimal amount = BigDecimal.valueOf(Long.parseLong(InputReader.singleReadInput(getTerminal(), "Enter amount: ")));
+        String description = InputReader.singleReadInput(getTerminal(), "Enter description: ");
 
         BalanceUpdateRequest balanceUpdateRequest = new BalanceUpdateRequest()
                 .bankAccountId(accountDetails.getBankAccount().getId())
                 .amount(amount)
-                .description(descriprion);
+                .description(description);
 
         try (Client client = ClientBuilder.newClient().register(JacksonJsonProvider.class)) {
             String uri = gatewayUtil.getTransactionServiceUrl() + "/withdraw-money";
