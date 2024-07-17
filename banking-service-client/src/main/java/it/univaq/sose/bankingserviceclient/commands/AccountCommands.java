@@ -3,7 +3,6 @@ package it.univaq.sose.bankingserviceclient.commands;
 import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 import it.univaq.sose.accountservice.model.TokenResponse;
 import it.univaq.sose.accountservice.model.UserCredentials;
-import it.univaq.sose.bankingoperationsserviceprosumer.model.CreateBancomatResponse;
 import it.univaq.sose.bankingoperationsserviceprosumer.model.OpenAccountRequest;
 import it.univaq.sose.bankingoperationsserviceprosumer.model.OpenAccountResponse;
 import it.univaq.sose.bankingoperationsserviceprosumer.model.ReportBankAccountResponse;
@@ -73,7 +72,12 @@ public class AccountCommands {
 
     @ShellMethod(key = "open-bank-account", value = "Open Bank Account")
     public String createBankAccount() throws InterruptedException {
-        OpenAccountDTO newAccount = executeOpenAccountResponse();
+        OpenAccountDTO newAccount = null;
+        try {
+            newAccount = executeOpenAccountResponse();
+        } catch (BankingClientException e) {
+            throw new RuntimeException(e);
+        }
 
         try {
             executeLogin(newAccount.getUsername(), newAccount.getPassword());
@@ -201,31 +205,7 @@ public class AccountCommands {
         }
     }
 
-    private void executeGetAtmCard(AccountDetails accountDetails) throws BankingClientException {
-        try (Client client = ClientBuilder.newClient().register(JacksonJsonProvider.class)) {
-            String uri = gatewayUtil.getBankingOperationServiceUrl() + "/atm-card/" + accountDetails.getId();
-            String token = jwtTokenProvider.getToken();
-
-            Invocation.Builder requestBuilder = client.target(uri).request()
-                    .header("Authorization", "Bearer " + token);
-
-            Future<Response> futureResponse = requestBuilder.async().get();
-
-            Response response = gatewayUtil.getAsyncResponseNotBlockingPolling(futureResponse);
-            log.error("response executeGetAtmCard: {}", response.getStatus());
-
-            if (response.getStatusInfo().getFamily().equals(Response.Status.Family.SUCCESSFUL)) {
-                CreateBancomatResponse createBancomatResponse = response.readEntity(CreateBancomatResponse.class);
-                accountSession.updateAccountDetailsFromCreateBancomat(createBancomatResponse);
-            } else {
-                throw new BankingClientException(gatewayUtil.extractErrorMessage(response.readEntity(String.class)));
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            throw new BankingClientException(e.getMessage());
-        }
-    }
-
-    private OpenAccountDTO executeOpenAccountResponse() throws InterruptedException {
+    private OpenAccountDTO executeOpenAccountResponse() throws BankingClientException {
         OpenAccountDTO newAccount = InputReader.multipleReadInputs(OpenAccountDTO.class);
         OpenAccountRequest openAccountRequest = new OpenAccountRequest();
         openAccountRequest.setName(openAccountRequest.getName());
@@ -243,26 +223,19 @@ public class AccountCommands {
                     .header("Content-Type", MediaType.APPLICATION_JSON);
 
             Future<Response> futureResponse = requestBuilder.async().post(Entity.entity(newAccount, MediaType.APPLICATION_JSON));
-            log.error("futureResponse: {}", futureResponse);
-
             Response response = gatewayUtil.getAsyncResponseNotBlockingPolling(futureResponse);
-//            Response response = futureResponse.get();
-            log.error("response: {}", response);
 
             if (response.getStatusInfo().getFamily().equals(Response.Status.Family.SUCCESSFUL)) {
                 OpenAccountResponse openAccountResponse = response.readEntity(OpenAccountResponse.class);
-                log.error("openAccountResponse: {}", openAccountResponse);
                 accountSession.updateAccountDetailsFromOpenBankAccount(openAccountResponse);
             } else {
-                log.error("Error response: {}", response.getStatusInfo().getReasonPhrase());
+                throw new BankingClientException(gatewayUtil.extractErrorMessage(response.readEntity(String.class)));
             }
             return newAccount;
-        } catch (Exception e) {
-            log.error("Error fetching account", e);
-            throw new InterruptedException("Error fetching account: " + e.getMessage());
+        } catch (InterruptedException | ExecutionException e) {
+            throw new BankingClientException(e.getMessage());
         }
     }
-
 
     private ExecuteTransactionResponse executeWithdrawal(AccountDetails accountDetails) throws BankingClientException {
 
