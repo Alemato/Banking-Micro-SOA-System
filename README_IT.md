@@ -153,7 +153,7 @@ In questo scenario possiamo vedere tutti gli utenti del sistema che possono eseg
         - `CheckBankAccountTranser`
         - `GetBankAccountTransaction`
         - `GetBankAccountDetails`
-        -
+
 4. **Bancomat Service**
     - Tipo: SOAP Service Provider
     - Responsabilità: Gestire le operazioni relative alla gestione dei bancomat e delle relative transazioni. Ha una
@@ -224,3 +224,81 @@ In questo scenario possiamo vedere tutti gli utenti del sistema che possono eseg
 - Il load balancing è definito secondo una logica di *“Iterazione casuale non ripetitiva”*.
 - I servizi sono progettati per essere modulari e possono essere aggiornati o sostituiti indipendentemente senza
   influenzare l'intero sistema.
+
+## Sequence Diagrams
+
+### Open Bank Account
+
+![open_bank_account_seq.svg](docs/open_bank_account_seq.svg)
+
+In questa operazione l'utente customer esegue l'apertura del suo conto corrente registrandosi sistema bancario. la prima
+richiesta viene fatta al servizio Banking Operation Service Prosumer il quale esegue a sua volta prima la richiesta di
+creazione dell'account sul servizio Account Service Provider, poi la creazione del conto sul servizio BankAccount
+Service Provider, subito dopo viene aggiornato l'account sul servizio Account Service Provider inserendo l'id del conto
+appena creato e infine viene eseguita la creazione del bancomat sul relativo servizio (Bancomat Service Provider). Al
+termine delle operazioni viene restituita la risposta di creazione al client.
+
+### Login
+
+![Login_seq.svg](docs/Login_seq.svg)
+
+Durante questa operazione, l'utente registrato effettua l'autenticazione al sistema.
+L'utente invia le proprie credenziali al sistema, che le inoltra al servizio di gestione degli account (Account
+Service).
+Quest'ultimo verificherà le credenziali e genererà un token JWT.
+Al termine del processo, verrà inviata una risposta contenente il token generato.
+
+### Financial Report
+
+![GetFinancialReportByIdAccount_seq.svg](docs/GetFinancialReportByIdAccount_seq.svg)
+
+Durante questa operazione, l'utente richiede il report finanziario completo al sistema. L'utente invia la richiesta al
+sistema, che la inoltra al servizio di gestione dei report finanziari (Financial Report Service Prosumer). Quest'ultimo
+invierà quattro richieste parallele:
+
+1. GetBancomatDetails al servizio Bancomat Service (tipo SOAP)
+2. GetBancomatTransactions al servizio Bancomat Service (tipo SOAP)
+3. GetReportBankAccountFromIdAccount al servizio Banking Operations Service Prosumer (tipo REST)
+4. GetAllLoanByIdAccount al servizio Loan Service Prosumer (tipo REST)
+
+(L'operazione GetReportBankAccountFromIdAccount verrà descritta in seguito.)
+
+Al termine del processo, le quattro risposte verranno combinate per generare il report finanziario completo.
+
+### Bank Account Report
+
+![GetReportBankAccountFromIdAccount_seq.svg](docs/GetReportBankAccountFromIdAccount_seq.svg)
+
+Durante questa operazione, l'utente richiede il report cel conto corrente al sistema. L'utente invia la richiesta al
+sistema, che la inoltra al servizio di gestione delle operazioni bancarie (Banking Operation Service Prosumer) che a sua
+volta esegue due chiamate prima al servizio di gestione dell'account per avere le informazioni dell'Account e poi al
+servizio di gestione del conto bancario per avere le informazioni del Bank Account.
+
+Al termine del processo, le informazioni verranno combinate per generare il report del conto bancario.
+
+### Withdraw Money
+
+![withdraw_money_seq.svg](docs/withdraw_money_seq.svg)
+
+Operazione di prelievo denaro dal conto corrente viene eseguita dall'utente customer. Attraverso il servizio Transaction
+Service Prosumer viene inoltrata una richiesta al servizio Bank Account per verificare se sul conto corrente c'è
+sufficiente denaro e viene sottratto al bilancio dello stesso. Immediatamente dopo viene creata una transazione del
+prelievo e viene restituita al client.
+
+### Open Loan
+
+![open_loan_seq.svg](docs/open_loan_seq.svg)
+
+L'apertura di un Prestito eseguita dall'utente customer coinvolge il servizio Loan Service Prosumer e il BankAccount
+Service Provider. In prima battuta viene creato un loan e poi viene aggiunto il corrispettivo denaro nel conto corrente
+dell'utente richiedente sul BankAccount Service Provider. In ultimo, prima di ritornare la risposta, viene anche salvata
+la transazione di apertura del loan sul conto dell'utente.
+
+### Close Loan
+
+![close_loan_seq.svg](docs/close_loan_seq.svg)
+
+L'operazione di chiusura di un prestito, eseguita da un utente consumer, prevede l'estinzione del prestito stesso
+tramite la sottrazione del corrispettivo valore in denaro dal conto corrente dell'utente sul BankAccount Service
+Provider. Viene controllato il bilancio del conto e sottratta la somma. Infine viene aggiornato lo stato del prestito
+prima di ritornare la risposta

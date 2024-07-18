@@ -219,3 +219,75 @@ In this scenario, we can see all the system users who can perform the actions de
 - Services follow SOA/Microservices paradigms with REST or SOAP interfaces, ensuring interoperability and scalability.
 - Load balancing is defined according to a logic of *“Non-repetitive random iteration”*.
 - Services are designed to be modular and can be updated or replaced independently without affecting the entire system.
+
+## Sequence Diagrams
+
+### Open Bank Account
+
+![open_bank_account_seq.svg](docs/open_bank_account_seq.svg)
+
+In this operation, the customer user opens their current account by registering with the banking system. The first
+request is made to the Banking Operation Service Prosumer, which in turn first requests the creation of the account on
+the Account Service Provider, then creates the account on the BankAccount Service Provider. After that, the account is
+updated on the Account Service Provider by inserting the ID of the newly created account, and finally, the ATM card is
+created on the Bancomat Service Provider. At the end of the operations, the creation response is returned to the client.
+
+### Login
+
+![Login_seq.svg](docs/Login_seq.svg)
+
+During this operation, the registered user authenticates with the system. The user sends their credentials to the
+system, which forwards them to the Account Service. The Account Service verifies the credentials and generates a JWT
+token. At the end of the process, a response containing the generated token is sent back.
+
+### Financial Report
+
+![GetFinancialReportByIdAccount_seq.svg](docs/GetFinancialReportByIdAccount_seq.svg)
+
+During this operation, the user requests the complete financial report from the system. The user sends the request to
+the system, which forwards it to the Financial Report Service Prosumer. This service will send four parallel requests:
+
+1. `GetBancomatDetails` to the Bancomat Service (SOAP)
+2. `GetBancomatTransactions` to the Bancomat Service (SOAP)
+3. `GetReportBankAccountFromIdAccount` to the Banking Operations Service Prosumer (REST)
+4. `GetAllLoanByIdAccount` to the Loan Service Prosumer (REST)
+
+(The `GetReportBankAccountFromIdAccount` operation will be described later.)
+
+At the end of the process, the four responses are combined to generate the complete financial report.
+
+### Bank Account Report
+
+![GetReportBankAccountFromIdAccount_seq.svg](docs/GetReportBankAccountFromIdAccount_seq.svg)
+
+During this operation, the user requests the current account report from the system. The user sends the request to the
+system, which forwards it to the Banking Operation Service Prosumer. This service makes two calls: first to the Account
+Service to get the account information, and then to the Bank Account Service to get the bank account information.
+
+At the end of the process, the information is combined to generate the bank account report.
+
+### Withdraw Money
+
+![withdraw_money_seq.svg](docs/withdraw_money_seq.svg)
+
+The operation of withdrawing money from the current account is executed by the customer user. Through the Transaction
+Service Prosumer, a request is forwarded to the Bank Account Service to verify if there is enough money in the current
+account, and the amount is subtracted from the balance. Immediately after, a withdrawal transaction is created and
+returned to the client.
+
+### Open Loan
+
+![open_loan_seq.svg](docs/open_loan_seq.svg)
+
+The opening of a loan by the customer user involves the Loan Service Prosumer and the BankAccount Service Provider.
+Initially, a loan is created, and then the corresponding amount of money is added to the user's current account on the
+BankAccount Service Provider. Lastly, before returning the response, the loan opening transaction is also saved on the
+user's account.
+
+### Close Loan
+
+![close_loan_seq.svg](docs/close_loan_seq.svg)
+
+The operation of closing a loan, executed by a customer user, involves the extinction of the loan by subtracting the
+corresponding amount of money from the user's current account on the BankAccount Service Provider. The account balance
+is checked and the amount is subtracted. Finally, the status of the loan is updated before returning the response.

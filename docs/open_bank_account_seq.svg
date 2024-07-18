@@ -1,0 +1,294 @@
+<svg xmlns="http://www.w3.org/2000/svg" contentStyleType="text/css"
+     height="669px" preserveAspectRatio="none" style="width:1413px;height:669px;background:#FFFFFF;" version="1.1"
+     viewBox="0 0 1413 669" width="1413px" zoomAndPan="magnify">
+    <defs/>
+    <g>
+        <text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing"
+              text-decoration="underline" textLength="302.3945" x="470.7024" y="27.9951">Banking Operation Service
+            Prosumer :
+        </text>
+        <text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing"
+              textLength="168.1777" x="777.9709" y="27.9951">CreateBankAccount()
+        </text>
+        <rect fill="#FFFFFF" height="458.125" style="stroke:#181818;stroke-width:1.0;" width="10" x="88.3511"
+              y="114.5938"/>
+        <rect fill="#FFFFFF" height="436.9922" style="stroke:#181818;stroke-width:1.0;" width="10" x="270.7402"
+              y="135.7266"/>
+        <rect fill="#FFFFFF" height="378.7266" style="stroke:#181818;stroke-width:1.0;" width="10" x="491.3794"
+              y="164.8594"/>
+        <rect fill="#FFFFFF" height="87.3984" style="stroke:#181818;stroke-width:1.0;" width="10" x="736.6313"
+              y="193.9922"/>
+        <rect fill="#FFFFFF" height="29.1328" style="stroke:#181818;stroke-width:1.0;" width="10" x="736.6313"
+              y="485.3203"/>
+        <rect fill="#FFFFFF" height="87.3984" style="stroke:#181818;stroke-width:1.0;" width="10" x="933.5669"
+              y="310.5234"/>
+        <rect fill="#FFFFFF" height="29.1328" style="stroke:#181818;stroke-width:1.0;" width="10" x="1131.4595"
+              y="427.0547"/>
+        <rect fill="#FFFFFF" height="29.1328" style="stroke:#181818;stroke-width:1.0;" width="10" x="1266.293"
+              y="223.125"/>
+        <rect fill="#FFFFFF" height="29.1328" style="stroke:#181818;stroke-width:1.0;" width="10" x="1357.5156"
+              y="339.6563"/>
+        <line style="stroke:#181818;stroke-width:0.5;stroke-dasharray:5.0,5.0;" x1="93" x2="93" y1="104.5938"
+              y2="590.7188"/>
+        <line style="stroke:#181818;stroke-width:0.5;stroke-dasharray:5.0,5.0;" x1="275.3638" x2="275.3638"
+              y1="104.5938" y2="590.7188"/>
+        <line style="stroke:#181818;stroke-width:0.5;stroke-dasharray:5.0,5.0;" x1="496.1167" x2="496.1167"
+              y1="104.5938" y2="590.7188"/>
+        <line style="stroke:#181818;stroke-width:0.5;stroke-dasharray:5.0,5.0;" x1="740.6421" x2="740.6421"
+              y1="104.5938" y2="590.7188"/>
+        <line style="stroke:#181818;stroke-width:0.5;stroke-dasharray:5.0,5.0;" x1="937.6206" x2="937.6206"
+              y1="104.5938" y2="590.7188"/>
+        <line style="stroke:#181818;stroke-width:0.5;stroke-dasharray:5.0,5.0;" x1="1135.5132" x2="1135.5132"
+              y1="104.5938" y2="590.7188"/>
+        <line style="stroke:#181818;stroke-width:0.5;stroke-dasharray:5.0,5.0;" x1="1270.4058" x2="1270.4058"
+              y1="104.5938" y2="590.7188"/>
+        <line style="stroke:#181818;stroke-width:0.5;stroke-dasharray:5.0,5.0;" x1="1362.1802" x2="1362.1802"
+              y1="104.5938" y2="590.7188"/>
+        <rect fill="#E2E2F0" height="46.5938" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;"
+              width="176.7021" x="5" y="57"/>
+        <text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing"
+              textLength="57.6611" x="64.5205" y="76.9951">&#171;Client&#187;
+        </text>
+        <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="162.7021" x="12"
+              y="93.292">:Banking Service Client
+        </text>
+        <rect fill="#E2E2F0" height="46.5938" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;"
+              width="176.7021" x="5" y="589.7188"/>
+        <text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing"
+              textLength="57.6611" x="64.5205" y="609.7139">&#171;Client&#187;
+        </text>
+        <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="162.7021" x="12"
+              y="626.0107">:Banking Service Client
+        </text>
+        <rect fill="#E2E2F0" height="46.5938" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;"
+              width="136.7529" x="207.3638" y="57"/>
+        <text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing"
+              textLength="68.8721" x="241.3042" y="76.9951">&#171;Service&#187;
+        </text>
+        <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="122.7529"
+              x="214.3638" y="93.292">:Gateway Service
+        </text>
+        <rect fill="#E2E2F0" height="46.5938" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;"
+              width="136.7529" x="207.3638" y="589.7188"/>
+        <text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing"
+              textLength="68.8721" x="241.3042" y="609.7139">&#171;Service&#187;
+        </text>
+        <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="122.7529"
+              x="214.3638" y="626.0107">:Gateway Service
+        </text>
+        <rect fill="#E2E2F0" height="46.5938" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;"
+              width="284.5254" x="354.1167" y="57"/>
+        <text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing"
+              textLength="180.7217" x="406.0186" y="76.9951">&#171;REST Service Prosumer&#187;
+        </text>
+        <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="270.5254"
+              x="361.1167" y="93.292">:Banking Operations Service Prosumer
+        </text>
+        <rect fill="#E2E2F0" height="46.5938" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;"
+              width="284.5254" x="354.1167" y="589.7188"/>
+        <text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing"
+              textLength="180.7217" x="406.0186" y="609.7139">&#171;REST Service Prosumer&#187;
+        </text>
+        <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="270.5254"
+              x="361.1167" y="626.0107">:Banking Operations Service Prosumer
+        </text>
+        <rect fill="#E2E2F0" height="46.5938" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;"
+              width="185.9785" x="648.6421" y="57"/>
+        <text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing"
+              textLength="171.9785" x="655.6421" y="76.9951">&#171;REST Service Provider&#187;
+        </text>
+        <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="117.6807"
+              x="682.791" y="93.292">:Account Service
+        </text>
+        <rect fill="#E2E2F0" height="46.5938" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;"
+              width="185.9785" x="648.6421" y="589.7188"/>
+        <text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing"
+              textLength="171.9785" x="655.6421" y="609.7139">&#171;REST Service Provider&#187;
+        </text>
+        <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="117.6807"
+              x="682.791" y="626.0107">:Account Service
+        </text>
+        <rect fill="#E2E2F0" height="46.5938" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;"
+              width="187.8926" x="844.6206" y="57"/>
+        <text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing"
+              textLength="173.8926" x="851.6206" y="76.9951">&#171;SOAP Service Provider&#187;
+        </text>
+        <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="157.2949"
+              x="859.9194" y="93.292">:Bank Account Service
+        </text>
+        <rect fill="#E2E2F0" height="46.5938" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;"
+              width="187.8926" x="844.6206" y="589.7188"/>
+        <text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing"
+              textLength="173.8926" x="851.6206" y="609.7139">&#171;SOAP Service Provider&#187;
+        </text>
+        <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="157.2949"
+              x="859.9194" y="626.0107">:Bank Account Service
+        </text>
+        <rect fill="#E2E2F0" height="46.5938" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;"
+              width="187.8926" x="1042.5132" y="57"/>
+        <text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing"
+              textLength="173.8926" x="1049.5132" y="76.9951">&#171;SOAP Service Provider&#187;
+        </text>
+        <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="149.3857"
+              x="1061.7666" y="93.292">:Banancomat Service
+        </text>
+        <rect fill="#E2E2F0" height="46.5938" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;"
+              width="187.8926" x="1042.5132" y="589.7188"/>
+        <text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing"
+              textLength="173.8926" x="1049.5132" y="609.7139">&#171;SOAP Service Provider&#187;
+        </text>
+        <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="149.3857"
+              x="1061.7666" y="626.0107">:Banancomat Service
+        </text>
+        <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="55.7744"
+              x="1240.4058" y="101.292">account
+        </text>
+        <path d="M1253.293,52.2969 C1253.293,42.2969 1271.293,42.2969 1271.293,42.2969 C1271.293,42.2969 1289.293,42.2969 1289.293,52.2969 L1289.293,78.2969 C1289.293,88.2969 1271.293,88.2969 1271.293,88.2969 C1271.293,88.2969 1253.293,88.2969 1253.293,78.2969 L1253.293,52.2969 "
+              fill="#E2E2F0" style="stroke:#181818;stroke-width:1.5;"/>
+        <path d="M1253.293,52.2969 C1253.293,62.2969 1271.293,62.2969 1271.293,62.2969 C1271.293,62.2969 1289.293,62.2969 1289.293,52.2969 "
+              fill="none" style="stroke:#181818;stroke-width:1.5;"/>
+        <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="55.7744"
+              x="1240.4058" y="602.7139">account
+        </text>
+        <path d="M1253.293,616.0156 C1253.293,606.0156 1271.293,606.0156 1271.293,606.0156 C1271.293,606.0156 1289.293,606.0156 1289.293,616.0156 L1289.293,642.0156 C1289.293,652.0156 1271.293,652.0156 1271.293,652.0156 C1271.293,652.0156 1253.293,652.0156 1253.293,642.0156 L1253.293,616.0156 "
+              fill="#E2E2F0" style="stroke:#181818;stroke-width:1.5;"/>
+        <path d="M1253.293,616.0156 C1253.293,626.0156 1271.293,626.0156 1271.293,626.0156 C1271.293,626.0156 1289.293,626.0156 1289.293,616.0156 "
+              fill="none" style="stroke:#181818;stroke-width:1.5;"/>
+        <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="94.6709"
+              x="1312.1802" y="101.292">bank account
+        </text>
+        <path d="M1344.5156,52.2969 C1344.5156,42.2969 1362.5156,42.2969 1362.5156,42.2969 C1362.5156,42.2969 1380.5156,42.2969 1380.5156,52.2969 L1380.5156,78.2969 C1380.5156,88.2969 1362.5156,88.2969 1362.5156,88.2969 C1362.5156,88.2969 1344.5156,88.2969 1344.5156,78.2969 L1344.5156,52.2969 "
+              fill="#E2E2F0" style="stroke:#181818;stroke-width:1.5;"/>
+        <path d="M1344.5156,52.2969 C1344.5156,62.2969 1362.5156,62.2969 1362.5156,62.2969 C1362.5156,62.2969 1380.5156,62.2969 1380.5156,52.2969 "
+              fill="none" style="stroke:#181818;stroke-width:1.5;"/>
+        <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="94.6709"
+              x="1312.1802" y="602.7139">bank account
+        </text>
+        <path d="M1344.5156,616.0156 C1344.5156,606.0156 1362.5156,606.0156 1362.5156,606.0156 C1362.5156,606.0156 1380.5156,606.0156 1380.5156,616.0156 L1380.5156,642.0156 C1380.5156,652.0156 1362.5156,652.0156 1362.5156,652.0156 C1362.5156,652.0156 1344.5156,652.0156 1344.5156,642.0156 L1344.5156,616.0156 "
+              fill="#E2E2F0" style="stroke:#181818;stroke-width:1.5;"/>
+        <path d="M1344.5156,616.0156 C1344.5156,626.0156 1362.5156,626.0156 1362.5156,626.0156 C1362.5156,626.0156 1380.5156,626.0156 1380.5156,616.0156 "
+              fill="none" style="stroke:#181818;stroke-width:1.5;"/>
+        <rect fill="#FFFFFF" height="458.125" style="stroke:#181818;stroke-width:1.0;" width="10" x="88.3511"
+              y="114.5938"/>
+        <rect fill="#FFFFFF" height="436.9922" style="stroke:#181818;stroke-width:1.0;" width="10" x="270.7402"
+              y="135.7266"/>
+        <rect fill="#FFFFFF" height="378.7266" style="stroke:#181818;stroke-width:1.0;" width="10" x="491.3794"
+              y="164.8594"/>
+        <rect fill="#FFFFFF" height="87.3984" style="stroke:#181818;stroke-width:1.0;" width="10" x="736.6313"
+              y="193.9922"/>
+        <rect fill="#FFFFFF" height="29.1328" style="stroke:#181818;stroke-width:1.0;" width="10" x="736.6313"
+              y="485.3203"/>
+        <rect fill="#FFFFFF" height="87.3984" style="stroke:#181818;stroke-width:1.0;" width="10" x="933.5669"
+              y="310.5234"/>
+        <rect fill="#FFFFFF" height="29.1328" style="stroke:#181818;stroke-width:1.0;" width="10" x="1131.4595"
+              y="427.0547"/>
+        <rect fill="#FFFFFF" height="29.1328" style="stroke:#181818;stroke-width:1.0;" width="10" x="1266.293"
+              y="223.125"/>
+        <rect fill="#FFFFFF" height="29.1328" style="stroke:#181818;stroke-width:1.0;" width="10" x="1357.5156"
+              y="339.6563"/>
+        <polygon fill="#181818" points="258.7402,131.7266,268.7402,135.7266,258.7402,139.7266,262.7402,135.7266"
+                 style="stroke:#181818;stroke-width:1.0;"/>
+        <line style="stroke:#181818;stroke-width:1.0;" x1="98.3511" x2="264.7402" y1="135.7266" y2="135.7266"/>
+        <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="137.0649"
+              x="105.3511" y="130.6606">createBankAccount()
+        </text>
+        <polygon fill="#181818" points="479.3794,160.8594,489.3794,164.8594,479.3794,168.8594,483.3794,164.8594"
+                 style="stroke:#181818;stroke-width:1.0;"/>
+        <line style="stroke:#181818;stroke-width:1.0;" x1="280.7402" x2="485.3794" y1="164.8594" y2="164.8594"/>
+        <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="95.3037"
+              x="287.7402" y="159.7935">openAccount()
+        </text>
+        <polygon fill="#181818" points="724.6313,189.9922,734.6313,193.9922,724.6313,197.9922,728.6313,193.9922"
+                 style="stroke:#181818;stroke-width:1.0;"/>
+        <line style="stroke:#181818;stroke-width:1.0;" x1="501.3794" x2="730.6313" y1="193.9922" y2="193.9922"/>
+        <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="158.4502"
+              x="508.3794" y="188.9263">openAccountCustomer()
+        </text>
+        <polygon fill="#181818" points="1254.293,219.125,1264.293,223.125,1254.293,227.125,1258.293,223.125"
+                 style="stroke:#181818;stroke-width:1.0;"/>
+        <line style="stroke:#181818;stroke-width:1.0;" x1="746.6313" x2="1260.293" y1="223.125" y2="223.125"/>
+        <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="172.6436"
+              x="753.6313" y="218.0591">CREATE customer account
+        </text>
+        <polygon fill="#181818" points="757.6313,248.2578,747.6313,252.2578,757.6313,256.2578,753.6313,252.2578"
+                 style="stroke:#181818;stroke-width:1.0;"/>
+        <line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="751.6313" x2="1270.293"
+              y1="252.2578" y2="252.2578"/>
+        <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="106.6533"
+              x="763.6313" y="247.1919">Account created
+        </text>
+        <polygon fill="#181818" points="512.3794,277.3906,502.3794,281.3906,512.3794,285.3906,508.3794,281.3906"
+                 style="stroke:#181818;stroke-width:1.0;"/>
+        <line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="506.3794" x2="740.6313"
+              y1="281.3906" y2="281.3906"/>
+        <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="119.9961"
+              x="518.3794" y="276.3247">Customer Account
+        </text>
+        <polygon fill="#181818" points="921.5669,306.5234,931.5669,310.5234,921.5669,314.5234,925.5669,310.5234"
+                 style="stroke:#181818;stroke-width:1.0;"/>
+        <line style="stroke:#181818;stroke-width:1.0;" x1="501.3794" x2="927.5669" y1="310.5234" y2="310.5234"/>
+        <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="137.0649"
+              x="508.3794" y="305.4575">createBankAccount()
+        </text>
+        <polygon fill="#181818" points="1345.5156,335.6563,1355.5156,339.6563,1345.5156,343.6563,1349.5156,339.6563"
+                 style="stroke:#181818;stroke-width:1.0;"/>
+        <line style="stroke:#181818;stroke-width:1.0;" x1="943.5669" x2="1351.5156" y1="339.6563" y2="339.6563"/>
+        <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="143.4126"
+              x="950.5669" y="334.5903">CREATE bank account
+        </text>
+        <polygon fill="#181818" points="954.5669,364.7891,944.5669,368.7891,954.5669,372.7891,950.5669,368.7891"
+                 style="stroke:#181818;stroke-width:1.0;"/>
+        <line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="948.5669" x2="1361.5156"
+              y1="368.7891" y2="368.7891"/>
+        <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="143.438"
+              x="960.5669" y="363.7231">Bank Account created
+        </text>
+        <polygon fill="#181818" points="512.3794,393.9219,502.3794,397.9219,512.3794,401.9219,508.3794,397.9219"
+                 style="stroke:#181818;stroke-width:1.0;"/>
+        <line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="506.3794" x2="937.5669"
+              y1="397.9219" y2="397.9219"/>
+        <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="89.502"
+              x="518.3794" y="392.856">Bank Account
+        </text>
+        <polygon fill="#181818" points="1119.4595,423.0547,1129.4595,427.0547,1119.4595,431.0547,1123.4595,427.0547"
+                 style="stroke:#181818;stroke-width:1.0;"/>
+        <line style="stroke:#181818;stroke-width:1.0;" x1="501.3794" x2="1125.4595" y1="427.0547" y2="427.0547"/>
+        <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="117.6475"
+              x="508.3794" y="421.9888">createBancomat()
+        </text>
+        <polygon fill="#181818" points="512.3794,452.1875,502.3794,456.1875,512.3794,460.1875,508.3794,456.1875"
+                 style="stroke:#181818;stroke-width:1.0;"/>
+        <line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="506.3794" x2="1135.4595"
+              y1="456.1875" y2="456.1875"/>
+        <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="128.9717"
+              x="518.3794" y="451.1216">BancomatResponse
+        </text>
+        <polygon fill="#181818" points="724.6313,481.3203,734.6313,485.3203,724.6313,489.3203,728.6313,485.3203"
+                 style="stroke:#181818;stroke-width:1.0;"/>
+        <line style="stroke:#181818;stroke-width:1.0;" x1="501.3794" x2="730.6313" y1="485.3203" y2="485.3203"/>
+        <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="119.9834"
+              x="508.3794" y="480.2544">addBankAccount()
+        </text>
+        <polygon fill="#181818" points="512.3794,510.4531,502.3794,514.4531,512.3794,518.4531,508.3794,514.4531"
+                 style="stroke:#181818;stroke-width:1.0;"/>
+        <line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="506.3794" x2="740.6313"
+              y1="514.4531" y2="514.4531"/>
+        <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="63.0195"
+              x="518.3794" y="509.3872">Response
+        </text>
+        <polygon fill="#181818" points="291.7402,539.5859,281.7402,543.5859,291.7402,547.5859,287.7402,543.5859"
+                 style="stroke:#181818;stroke-width:1.0;"/>
+        <line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="285.7402" x2="495.3794"
+              y1="543.5859" y2="543.5859"/>
+        <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="148.3892"
+              x="297.7402" y="538.52">BankAccountResponse
+        </text>
+        <polygon fill="#181818" points="104.3511,568.7188,94.3511,572.7188,104.3511,576.7188,100.3511,572.7188"
+                 style="stroke:#181818;stroke-width:1.0;"/>
+        <line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="98.3511" x2="274.7402" y1="572.7188"
+              y2="572.7188"/>
+        <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="148.3892"
+              x="110.3511" y="567.6528">BankAccountResponse
+        </text><!--SRC=[ZL9BYy8m4BxtLmoUTf7-0P62MsIFYdelqsGeOJK9oTJ5Vx_f8zeNYyVEzynC_O_I5XtUm3CvClomT3HUiJ8QsDWaOSLNWgBuGXsu5HmiEMpXCxcx4WH7Ptnz8mURee3S4J8rv9qGfjRyyPaa8O6LK1OrmseJdQ8-lohIl0Bq862xxJwpRABw3hQ_-8Ygbbu5Ulyzuy_w-bdXrgFqDhYSzkVB39zvzayQTS05zLt91NNJ29OioiRZVDWTt_90BSmD9mx_64XaBD4JhB3BRXMon05IDjN6SC0J5ApkOUyW4f5crNgz0R5mtohDmXORr5ZIhtaOfXbEvddjsOJb1XpJBDHeyFoqtrts87eiLaaSSUtqSsbTk8pZQ1NnBh1pNEfPje6ZnE73e-teJfF88TR7ZTBQquIe5xsTdCZRy0VIO2KevRXTBtbI1uazwHr8qkjeVm00]-->
+    </g>
+</svg>
