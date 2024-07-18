@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="us-ascii" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" contentStyleType="text/css"
+     height="461px" preserveAspectRatio="none" style="width:810px;height:461px;background:#FFFFFF;" version="1.1"
+     viewBox="0 0 810 461" width="810px" zoomAndPan="magnify">
+    <defs/>
+    <g>
+        <text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing"
+              text-decoration="underline" textLength="140" x="305" y="27.9951">Account Service :
+        </text>
+        <text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing"
+              textLength="55" x="450" y="27.9951">Login()
+        </text>
+        <rect fill="#FFFFFF" height="251.0625" style="stroke:#181818;stroke-width:1.0;" width="10" x="86" y="114.5938"/>
+        <rect fill="#FFFFFF" height="229.9297" style="stroke:#181818;stroke-width:1.0;" width="10" x="248"
+              y="135.7266"/>
+        <rect fill="#FFFFFF" height="171.6641" style="stroke:#181818;stroke-width:1.0;" width="10" x="464"
+              y="164.8594"/>
+        <rect fill="#FFFFFF" height="40.1328" style="stroke:#181818;stroke-width:1.0;" width="10" x="469" y="260.2578"/>
+        <rect fill="#FFFFFF" height="29.1328" style="stroke:#181818;stroke-width:1.0;" width="10" x="770" y="193.9922"/>
+        <line style="stroke:#181818;stroke-width:0.5;stroke-dasharray:5.0,5.0;" x1="91" x2="91" y1="104.5938"
+              y2="383.6563"/>
+        <line style="stroke:#181818;stroke-width:0.5;stroke-dasharray:5.0,5.0;" x1="253" x2="253" y1="104.5938"
+              y2="383.6563"/>
+        <line style="stroke:#181818;stroke-width:0.5;stroke-dasharray:5.0,5.0;" x1="468.5" x2="468.5" y1="104.5938"
+              y2="383.6563"/>
+        <line style="stroke:#181818;stroke-width:0.5;stroke-dasharray:5.0,5.0;" x1="775" x2="775" y1="104.5938"
+              y2="383.6563"/>
+        <rect fill="#E2E2F0" height="46.5938" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="172"
+              x="5" y="57"/>
+        <text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing"
+              textLength="57" x="62.5" y="76.9951">&#171;Client&#187;
+        </text>
+        <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="158" x="12"
+              y="93.292">:Banking Service Client
+        </text>
+        <rect fill="#E2E2F0" height="46.5938" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="172"
+              x="5" y="382.6563"/>
+        <text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing"
+              textLength="57" x="62.5" y="402.6514">&#171;Client&#187;
+        </text>
+        <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="158" x="12"
+              y="418.9482">:Banking Service Client
+        </text>
+        <rect fill="#E2E2F0" height="46.5938" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="132"
+              x="187" y="57"/>
+        <text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing"
+              textLength="68" x="219" y="76.9951">&#171;Service&#187;
+        </text>
+        <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="118" x="194"
+              y="93.292">:Gateway Service
+        </text>
+        <rect fill="#E2E2F0" height="46.5938" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="132"
+              x="187" y="382.6563"/>
+        <text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing"
+              textLength="68" x="219" y="402.6514">&#171;Service&#187;
+        </text>
+        <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="118" x="194"
+              y="418.9482">:Gateway Service
+        </text>
+        <rect fill="#E2E2F0" height="46.5938" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="183"
+              x="377.5" y="57"/>
+        <text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing"
+              textLength="169" x="384.5" y="76.9951">&#171;REST Service Provider&#187;
+        </text>
+        <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="116" x="411"
+              y="93.292">:Account Service
+        </text>
+        <rect fill="#E2E2F0" height="46.5938" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="183"
+              x="377.5" y="382.6563"/>
+        <text fill="#000000" font-family="sans-serif" font-size="14" font-style="italic" lengthAdjust="spacing"
+              textLength="169" x="384.5" y="402.6514">&#171;REST Service Provider&#187;
+        </text>
+        <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="116" x="411"
+              y="418.9482">:Account Service
+        </text>
+        <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="56" x="744"
+              y="101.292">account
+        </text>
+        <path d="M757,52.2969 C757,42.2969 775,42.2969 775,42.2969 C775,42.2969 793,42.2969 793,52.2969 L793,78.2969 C793,88.2969 775,88.2969 775,88.2969 C775,88.2969 757,88.2969 757,78.2969 L757,52.2969 "
+              fill="#E2E2F0" style="stroke:#181818;stroke-width:1.5;"/>
+        <path d="M757,52.2969 C757,62.2969 775,62.2969 775,62.2969 C775,62.2969 793,62.2969 793,52.2969 " fill="none"
+              style="stroke:#181818;stroke-width:1.5;"/>
+        <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="56" x="744"
+              y="395.6514">account
+        </text>
+        <path d="M757,408.9531 C757,398.9531 775,398.9531 775,398.9531 C775,398.9531 793,398.9531 793,408.9531 L793,434.9531 C793,444.9531 775,444.9531 775,444.9531 C775,444.9531 757,444.9531 757,434.9531 L757,408.9531 "
+              fill="#E2E2F0" style="stroke:#181818;stroke-width:1.5;"/>
+        <path d="M757,408.9531 C757,418.9531 775,418.9531 775,418.9531 C775,418.9531 793,418.9531 793,408.9531 "
+              fill="none" style="stroke:#181818;stroke-width:1.5;"/>
+        <rect fill="#FFFFFF" height="251.0625" style="stroke:#181818;stroke-width:1.0;" width="10" x="86" y="114.5938"/>
+        <rect fill="#FFFFFF" height="229.9297" style="stroke:#181818;stroke-width:1.0;" width="10" x="248"
+              y="135.7266"/>
+        <rect fill="#FFFFFF" height="171.6641" style="stroke:#181818;stroke-width:1.0;" width="10" x="464"
+              y="164.8594"/>
+        <rect fill="#FFFFFF" height="40.1328" style="stroke:#181818;stroke-width:1.0;" width="10" x="469" y="260.2578"/>
+        <rect fill="#FFFFFF" height="29.1328" style="stroke:#181818;stroke-width:1.0;" width="10" x="770" y="193.9922"/>
+        <polygon fill="#181818" points="236,131.7266,246,135.7266,236,139.7266,240,135.7266"
+                 style="stroke:#181818;stroke-width:1.0;"/>
+        <line style="stroke:#181818;stroke-width:1.0;" x1="96" x2="242" y1="135.7266" y2="135.7266"/>
+        <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="40" x="103"
+              y="130.6606">login()
+        </text>
+        <polygon fill="#181818" points="452,160.8594,462,164.8594,452,168.8594,456,164.8594"
+                 style="stroke:#181818;stroke-width:1.0;"/>
+        <line style="stroke:#181818;stroke-width:1.0;" x1="258" x2="458" y1="164.8594" y2="164.8594"/>
+        <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="40" x="265"
+              y="159.7935">login()
+        </text>
+        <polygon fill="#181818" points="758,189.9922,768,193.9922,758,197.9922,762,193.9922"
+                 style="stroke:#181818;stroke-width:1.0;"/>
+        <line style="stroke:#181818;stroke-width:1.0;" x1="474" x2="764" y1="193.9922" y2="193.9922"/>
+        <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="182" x="481"
+              y="188.9263">get Account form Username
+        </text>
+        <polygon fill="#181818" points="485,219.125,475,223.125,485,227.125,481,223.125"
+                 style="stroke:#181818;stroke-width:1.0;"/>
+        <line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="479" x2="774" y1="223.125"
+              y2="223.125"/>
+        <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="115" x="491"
+              y="218.0591">response Account
+        </text>
+        <line style="stroke:#181818;stroke-width:1.0;" x1="474" x2="521" y1="247.2578" y2="247.2578"/>
+        <line style="stroke:#181818;stroke-width:1.0;" x1="521" x2="521" y1="247.2578" y2="260.2578"/>
+        <line style="stroke:#181818;stroke-width:1.0;" x1="480" x2="521" y1="260.2578" y2="260.2578"/>
+        <polygon fill="#181818" points="490,256.2578,480,260.2578,490,264.2578,486,260.2578"
+                 style="stroke:#181818;stroke-width:1.0;"/>
+        <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="282" x="486"
+              y="242.1919">check Account credentials and generate JWT
+        </text>
+        <line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="479" x2="521" y1="299.3906"
+              y2="299.3906"/>
+        <line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="521" x2="521" y1="299.3906"
+              y2="312.3906"/>
+        <line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="474" x2="521" y1="312.3906"
+              y2="312.3906"/>
+        <polygon fill="#181818" points="484,308.3906,474,312.3906,484,316.3906,480,312.3906"
+                 style="stroke:#181818;stroke-width:1.0;"/>
+        <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="61" x="486"
+              y="294.3247">JWT token
+        </text>
+        <polygon fill="#181818" points="269,332.5234,259,336.5234,269,340.5234,265,336.5234"
+                 style="stroke:#181818;stroke-width:1.0;"/>
+        <line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="263" x2="468" y1="336.5234"
+              y2="336.5234"/>
+        <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="182" x="275"
+              y="331.4575">Response containing the JWT
+        </text>
+        <polygon fill="#181818" points="102,361.6563,92,365.6563,102,369.6563,98,365.6563"
+                 style="stroke:#181818;stroke-width:1.0;"/>
+        <line style="stroke:#181818;stroke-width:1.0;stroke-dasharray:2.0,2.0;" x1="96" x2="252" y1="365.6563"
+              y2="365.6563"/>
+        <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="62" x="108"
+              y="360.5903">Response
+        </text><!--SRC=[PP3FQiCm38VlVWgHqqR92vHYsCOOb1rAsx5ZK6mj5KtbOAiTVVivQTADx6QPx_lfJpgoT1Zn14afKj1hHvkGM3a8QEYCKTQMeAgUd0jdKTXHlB0ZM5OLl8U6vU7Hc1oXxBZ331JBPvGSszpHbvP9j01Cu62rkfNMmanxGwLll4xQm3UP7sjhP_niee77p6zVT_jxxqqC5_OKi-rHiSP4KE3D70nV6uDE-PAxWpEkjCrYiOHsNAqfBVwjiRI-xZyQKfWc-0hn11-9ek29J2GzHu58gGkIsurKhmvHxa3kU7TT99_FmTZcwSNdNA7OpxB-tCEKrRyr74ccZ-qKxe8eilJdriCW_KECfzy5Vm00]-->
+    </g>
+</svg>
