@@ -19,22 +19,18 @@ Il progetto in questione rispecchia tutti i requisiti richiesti e descritti dal 
 Gli obiettivi principali del sistema **Banking Micro SOA System** sono:
 
 - **Gestione Efficiente degli Utenti**: Garantire un processo sicuro e semplice di gestione degli account e
-  autenticazione
-  degli utenti.
+  autenticazione degli utenti.
 - **Gestione delle Operazioni sul Conto**: Abilitare l'apertura di conti e bancomat, oltre alla generazione di report
   dettagliati sullo stato dei conti.
 - **Gestione Completa dei Conti Correnti**: Permettere operazioni di aggiunta e rimozione di denaro, nonché la
-  registrazione
-  di tutte le transazioni.
+  registrazione di tutte le transazioni.
 - **Gestione Avanzata dei Bancomat**: Consentire la creazione di bancomat e la registrazione delle transazioni
-  effettuate
-  tramite questi dispositivi.
+  effettuate tramite questi dispositivi.
 - **Gestione dei Prestiti**: Consente l'apertura e l'estinzione dei prestiti con tracciamento preciso delle transazioni
   correlate.
 - **Esecuzione delle Transazioni**: Supportare varie operazioni come bonifici, prelievi, depositi e pagamenti bancomat.
 - **Generazione di Report**: Fornire un report finanziario complessivo di tutte le operazioni, offrendo una visione
-  chiara e
-  integrata delle attività finanziarie.
+  chiara e integrata delle attività finanziarie.
 
 ## Funzionamento del Sistema
 
@@ -78,26 +74,22 @@ responsabile di un particolare aspetto della gestione bancaria:
 L'adozione di un'architettura SOA e microservizi per il Banking Micro SOA System è motivata da diversi vantaggi chiave:
 
 - **Manutenibilità**: La divisione del sistema in microservizi indipendenti rende più semplice la gestione,
-  l'aggiornamento e
-  la correzione di errori. Ogni servizio può essere sviluppato, distribuito e mantenuto separatamente, riducendo il
-  rischio di impatti negativi sul sistema complessivo.
+  l'aggiornamento e la correzione di errori. Ogni servizio può essere sviluppato, distribuito e mantenuto separatamente,
+  riducendo il rischio di impatti negativi sul sistema complessivo.
 
 - **Scalabilità**: La possibilità di istanziare più nodi del sistema permette di scalare facilmente le risorse in base
-  alla
-  domanda. In un ambiente bancario con un alto volume di transazioni, questa flessibilità è cruciale per garantire
+  alla domanda. In un ambiente bancario con un alto volume di transazioni, questa flessibilità è cruciale per garantire
   prestazioni ottimali e continuità del servizio.
 
 - **Affidabilità**: L'architettura basata su microservizi isola i guasti, impedendo che un problema in un singolo
-  componente
-  comprometta l'intero sistema. Questo approccio aumenta significativamente l'affidabilità e la resilienza del sistema
-  bancario.
+  componente comprometta l'intero sistema. Questo approccio aumenta significativamente l'affidabilità e la resilienza
+  del sistema bancario.
 
 - **Flessibilità**: L'uso di SOA e microservizi facilita l'integrazione con altri sistemi e l'implementazione di nuove
   funzionalità senza dover riscrivere l'intero codice base, accelerando i tempi di sviluppo e distribuzione.
 
 Il sistema **Banking Micro SOA System** rappresenta quindi una soluzione all'avanguardia per la gestione bancaria,
-capace di
-rispondere alle sfide moderne con efficienza e robustezza.
+capace di rispondere alle sfide moderne con efficienza e robustezza.
 
 ## Use Case Diagram
 
@@ -126,3 +118,109 @@ In questo scenario possiamo vedere tutti gli utenti del sistema che possono eseg
         2. Report Transazioni sul Conto Corrente
         3. Report Transazioni con Bancomat
         4. Report Prestiti
+
+## Component Diagram
+
+![SympleBankingSystem-component_it.svg](docs%2FSympleBankingSystem-component_it.svg)
+
+### Componenti
+
+1. **Banking Mini SOA System**
+    - Rappresenta il sistema principale che include tutti i sottosistemi e i servizi.
+
+2. **Account Service**
+    - Tipo: REST Service Provider
+    - Responsabilità: Gestire le operazioni relative agli account come l'autenticazione, la creazione e l'aggiunta di
+      account. Ha una gestione della persistenza dei dati utilizzando un database per salvare le informazioni relative
+      agli account.
+    - Operazioni:
+        - `OpenAccount (Custometr/Banker/Admin)`
+        - `Login`
+        - `AddBankAccount`
+        - `GetAccount`
+        - `CheckTokenResponse`
+
+3. **Bank Account Service Provider**
+    - Tipo: SOAP Service Provider
+    - Responsabilità: gestione dei conti correnti, aggiunta e rimozione denaro e salvataggio transazioni. Tiene traccia
+      di tutte le informazioni dei conti bancari e le relative transazioni. su un database.
+    - Operazioni:
+        - `CreateBankAccount`
+        - `AddMoney`
+        - `RemoveMopney`
+        - `BancomatPay`
+        - `ExecuteTransfer`
+        - `CheckBankAccountTranser`
+        - `GetBankAccountTransaction`
+        - `GetBankAccountDetails`
+        -
+4. **Bancomat Service**
+    - Tipo: SOAP Service Provider
+    - Responsabilità: Gestire le operazioni relative alla gestione dei bancomat e delle relative transazioni. Ha una
+      gestione della persistenza dei dati utilizzando un database per salvare le informazioni dei bancomat e le relative
+      transazioni.
+    - Operazioni:
+        - `CreateBancomat`
+        - `GetBancomatDetails`
+        - `GetBancomatDetailsByNumber`
+        - `ExecuteTransaction`
+        - `GetBancomatTransaction`
+
+5. **Banking Operations Service Prosumer**
+    - Tipo: REST Service Prosumer
+    - Responsabilità: Gestire le operazioni bancarie di apertura conto
+    - Operazioni:
+        - `OpenAccount`
+        - `GetReportBankAccountFromIdAccount`
+        - `RequestAtmCard`
+        - `GetAtmCard`
+
+6. **Loan Service Provider**
+    - Tipo: REST Service Provider
+    - Responsabilità: Gestire le operazioni relative ai prestiti come la creazione e l'estinzione oltre tenere traccia
+      di uno storico dei prestiti dell'utente.
+    - Operazioni:
+        - `OpenLoan`
+        - `CloseLoanByIdLoan`
+        - `GetLoanByIdLoan`
+        - `GetAllLoanByIdAccount`
+        - `GetAllLoanByIdBankAccount`
+
+7. **Transaction Service Prosumer**
+    - Tipo: REST Service Prosumer
+    - Responsabilità: Gestire le transazioni finanziarie come depositi, prelievi, bonifici e pagamenti con il bancomat.
+    - Operazioni:
+        - `DepositMoney`
+        - `WithdrawMoney`
+        - `ExecuteTransfer`
+        - `ExecuteAtmPayment`
+
+8. **Financial Report Service Provider**
+    - Tipo: REST Service Provider
+    - Responsabilità: Generare e fornire report finanziari completi di tutta la posizione bancaria dell'account.
+    - Operazioni:
+        - `GetFinancialReportByIdAccount`
+
+9. **Gateway Service**
+    - Tipo: Gateway
+    - Responsabilità: Fornire un punto di ingresso unificato per i servizi del sistema bancario.
+    - Operazioni:
+        - `HandleRequests`
+
+10. **Discovery Service**
+    - Tipo: Discovery
+    - Responsabilità: Gestire la scoperta e l'integrazione dei servizi all'interno del sistema.
+
+11. **Banking Service Client**
+    - Tipo: Client Spring Shell
+    - Responsabilità: Interfacciarsi con i vari servizi del sistema bancario attraverso il gateway per eseguire
+      operazioni richieste dagli utenti.
+
+### Note aggiuntive
+
+- Il **Banking Service Client** comunica con il **Gateway Service** per tutte le operazioni.
+- Il **Gateway Service** instrada le richieste ai rispettivi provider/Prosumer.
+- I servizi seguono i paradigmi SOA/Microservizi con interfacce REST o SOAP, garantendo interoperabilità e scalabilità.
+- Il load balancing è definito secondo una logica di *“Iterazione casuale non ripetitiva”*.
+- I servizi sono progettati per essere modulari e possono essere aggiornati o sostituiti indipendentemente senza
+  influenzare l'intero sistema.
