@@ -118,7 +118,7 @@ In this scenario, we can see all the system users who can perform the actions de
 
 ## Component Diagram
 
-![SympleBankingSystem-component_EN.svg](docs%2FSympleBankingSystem-component_EN.svg)
+![SympleBankingSystem-component_EN.svg](docs/SympleBankingSystem-component_EN.svg)
 
 ### Components
 

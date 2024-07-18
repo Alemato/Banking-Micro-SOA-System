@@ -121,7 +121,7 @@ In questo scenario possiamo vedere tutti gli utenti del sistema che possono eseg
 
 ## Component Diagram
 
-![SympleBankingSystem-component_it.svg](docs%2FSympleBankingSystem-component_it.svg)
+![SympleBankingSystem-component_it.svg](docs/SympleBankingSystem-component_it.svg)
 
 ### Componenti
 
