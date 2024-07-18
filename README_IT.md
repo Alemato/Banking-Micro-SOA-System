@@ -1,12 +1,13 @@
 # Banking Micro-SOA System
 
-The 'Banking Micro-SOA System' is a modern banking system that implements a service-oriented architecture (SOA) using
-microservices with REST and SOAP technologies.
+Il “Sistema micro-SOA bancario” è un moderno sistema bancario che implementa un'architettura orientata ai servizi (SOA)
+utilizzando microservizi con tecnologie REST e SOAP.
 
-This project demonstrates how to build a scalable and modular application capable of handling common banking operations,
-exploiting software engineering best practices and state-of-the-art tools.
+Questo progetto dimostra come costruire un'applicazione scalabile e modulare in grado di gestire le comuni operazioni
+bancarie,
+sfruttando le migliori pratiche di ingegneria del software e gli strumenti più avanzati.
 
-It uses Apache CXF, Spring Boot, Docker and Maven.
+Utilizza Apache CXF, Spring Boot, Docker e Maven.
 
 ## Requisiti di Esame
 
@@ -100,27 +101,28 @@ rispondere alle sfide moderne con efficienza e robustezza.
 
 ## Use Case Diagram
 
-![Use Case Diagram_en](https://www.plantuml.com/plantuml/png/ZLRBRjim4BphAnRkEO4bIxOS10PS5UsXDHB4pWSmCYCJbaY3f1e4HV-zr8CsAP52RrxEpExESYduWl8pAZ3Czfz2uWfU1UPY1aXql-1FW7B9ECooMaXMOTvYUQsFlo9wxW_VplfmUwm8RS_O9VWR11pd4j6Yn1sVq09s9ESCzazRw0hFuF5nNx-9DjXiL5s0Mk0S2INwnOe-tsiMmfUV9tGc9hxDSrPJ2Jj4bPSAKzcJ8mTP6m6joZX6aZ1TO65bRfpucB79x0RXeoQkThzXYKZPJpjRsarohco0rzdAwSmMFLqmLRFk5QdjwzZSmlUQ7WL81WDfBrcRaXTSiTytqJjdbKSMpcrTpdXRxS0H5Mf5r5ZKPb2VEfpoPELumHV6hxh8CdZOZOSMBbpBevWPe--agBbvPM4yP3sZJpDPudRPCCqkDNqvJ3TXPGNs-YFgC9CwpBHK-zx3zOYGbKpK7Ej7CXyHh6wYSBZdZKrLf1kNS3mxrxjxHbmIL89EqDM07vXYQ-wHzG0FJFwF9dQzhnTS424x8dmGUHfk721wREvBPqbqs-gRrNmyxkyttLCh2SKF7oSYST34tNcpJHQW3deajH0Zrm8Ur8UEqBoiZtYpCP3OYoHUP3b0ZERIaKWZQoyIplrGw8UYSHUtIOnjtR1a0bjEO2j7mLI3OtjNB9fFOE4uQQJd73ckxOh53k72Sq46D1gRYJaSgZhUdF54pjYNqy2SvXEziYEPHb8l4iR3VEsVYRkx5WGhZAnePLCNTfZQoYW8ybe7IV0F)
+![Use Case Diagram_it](https://www.plantuml.com/plantuml/png/ZLRTRjiW6BttKw3ikbMCxSIjgaYPf-rYcnejpGDGmXmK6oB0cjPfxpxyGmesUBc9p7VE-Vv1kI1yHYK1Y_rlgKWD3f88kG18zb_WJuImuW8iYaOgNXFHORWnve-8dGVZwzaOjyUQiix6Bz7VA184AyJAYlHyoahmdMB1mVvv2_h02_3qj6zUPNVOR7HS01f9C99Qz8sNWxz34OCFNq_eJ6ty2v6ASaR05cFUC3LGeOTQ28BUR2vm2ZiKoJpxlRH3aSvJhTOSYipcVY9AeRAYetnNtfeApXJNlq8GfiX0NNjAsrw8K8r0VaNkKCkIwhW8VERiI06g_9e7M_E3rhmlS5uKBnqLAQbKOcZDYq1CTjyKo2Ra87OTNBXGDogXjuDw49ZNoBGvJdnxmTbFMZOcqR746VKEbQWcRNpCsOIQtLQ-JxhwJ-4-pHfuQzw9zajHGyld5cOWSqDsvbwSQ2CzBBZqP3iA2sDlSiywy51IUqcGe6Q247glDoEcXKESjWjQni4EYJUAggi-kLNumfKbIyD3CzUvRRwxTM2o9p0pwUjNhts0xkyt_MsjA2EFlqvKaQWzz_Ps4nr06mOaTn3RMG8UzLj96QwQ8zbiB2GD8baGMOqGAxjy8ZB8Gn29bs4e3aDmd8NJYsbTxrWsWwrciBKlOcxGQO5N32vdiDZZ5PfMGy_ahbWwdGDC0ZEoe4ddR6pjyPc6VQOpFjEGJmkRLjzTY65h9pA3v44aJiV-khyaTtST29mZT4vhbvgunznLmYZ2ZJbaUcR_0000)
 
-[Uses_cases_EN.svg](/docs/Uses_cases_EN.svg)
+[Uses_cases_it.svg](/docs/Uses_cases_it.svg)
 
-In this scenario, we can see all the system users who can perform the actions described previously:
+In questo scenario possiamo vedere tutti gli utenti del sistema che possono eseguire le azioni descritte in precedenza:
 
-1. **Login:** Authenticate and issue the JWT.
-2. **Account Management:** Create an account of the correct user type, view account details.
-3. **Current Account Management:** Create a current account, add and remove funds from an account, manage bank
-   transactions, and generate the current account report.
-4. **ATM Management:** Configure an ATM, record transactions made with the ATM, generate the ATM report.
-5. **Loan Management:** Open and close a loan, generate the loan report.
-6. **Account Registration with Current Account and ATM:** Includes creating a customer account, opening a current
-   account, and configuring an ATM.
-7. **Banking Operations Management:**
-    1. **Generate a Partial Report** that includes:
-        1. Account Details
-        2. Current Account Transaction Report
-        3. ATM Transaction Report
-    2. **Generate a Total Report** that includes:
-        1. Account Details
-        2. Current Account Transaction Report
-        3. ATM Transaction Report
-        4. Loan Report
+1. **Login:** Effettuare l'autenticazione e rilasciare il JWT.
+2. **Gestione Account:** Creazione di un account della corretta tipologia utente, visualizzazione dettagli account.
+3. **Gestione Conto Corrente:** Creazione conto corrente, aggiunta e rimozione fondi su un conto, gestione delle
+   transazioni bancarie e generazione del report del conto corrente.
+4. **Gestione Bancomat:** Configurazione di un bancomat, registrazione delle transazioni effettuate con il bancomat,
+   generazione report del bancomat.
+5. **Gestione Prestiti:** Apertura ed estinzione di un prestito, generazione del report sui prestiti.
+6. **Registrazione Account con Conto Corrente e Bancomat:** Include la creazione di un account cliente, l'apertura di un
+   conto corrente e la configurazione di un bancomat.
+7. **Gestione Operazioni Bancarie:**
+    1. **Generazione di un Report Parziale** che include:
+        1. Dettagli Account
+        2. Report Transazioni sul Conto Corrente
+        3. Report Transazioni con Bancomat
+    2. **Generazione di un Report Totale** che include:
+        1. Dettagli Account
+        2. Report Transazioni sul Conto Corrente
+        3. Report Transazioni con Bancomat
+        4. Report Prestiti
