@@ -610,3 +610,266 @@ public class AccountResponse implements Serializable {
 
 This code ensures that dates are properly handled during serialization and deserialization, adhering to the ISO-8601
 standard.
+
+## Integration of Apache CXF Metrics with Spring Boot Actuator
+
+In this project, we use Spring Boot Actuator to generate application metrics.
+
+To manage and create Apache CXF metrics, you need to add the `cxf-rt-features-metrics` dependency.
+
+Insert the following dependencies into the `pom.xml` file:
+
+```xml
+
+<dependencies>
+    <!-- ...  -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-features-metrics</artifactId>
+        <version>4.0.4</version>
+    </dependency>
+    <dependency>
+        <groupId>io.micrometer</groupId>
+        <artifactId>micrometer-core</artifactId>
+    </dependency>
+    <!-- ...  -->
+</dependencies>
+```
+
+#### Metrics Configuration for a SOAP Application
+
+To enable metrics in a SOAP application, insert an instance of `MetricsFeature` in the constructor of the `Endpoint`:
+
+```java
+
+@Configuration
+public class ApacheCXFConfig {
+
+    private final Bus bus;
+    private final BancomatService bancomatService;
+    private final MetricsProvider metricsProvider;
+
+    public ApacheCXFConfig(Bus bus, BancomatService bancomatService, MetricsProvider metricsProvider) {
+        this.bus = bus;
+        this.bancomatService = bancomatService;
+        this.metricsProvider = metricsProvider;
+    }
+
+    @Bean
+    public LoggingFeature loggingFeature() {
+        LoggingFeature loggingFeature = new LoggingFeature();
+        loggingFeature.setPrettyLogging(true);
+        return loggingFeature;
+    }
+
+    @Bean
+    public Endpoint endpoint() {
+        EndpointImpl endpoint = new EndpointImpl(bus, bancomatService, null, null, new MetricsFeature[]{
+                new MetricsFeature(metricsProvider)
+        });
+        endpoint.publish("/BancomatService");
+        return endpoint;
+    }
+}
+```
+
+#### Metrics Configuration for a REST Application
+
+For a REST application, you need to add the metrics provider package to the component-scan package list:
+
+```yaml
+cxf:
+  path: /services
+  servlet.init:
+    service-list-path: /info
+  jaxrs:
+    component-scan: true
+    classes-scan-packages: org.apache.cxf.metrics, it.univaq.sose.accountservice.configuration, it.univaq.sose.accountservice.service
+```
+
+#### Spring Boot Actuator Configuration
+
+Configure Spring Boot Actuator with the following parameters:
+
+```yaml
+management:
+  endpoints.web.exposure.include: health,info
+  info.env.enabled: true
+
+info.application:
+  name: account-service
+  description: Account Service for Banking Micro-SOA System
+  version: 0.0.1-SNAPSHOT
+```
+
+These configurations allow the integration of Apache CXF metrics with Spring Boot Actuator, providing full visibility
+into the application's performance.
+
+## Spring Cloud Discovery Eureka
+
+In this project, we use **Spring Cloud Discovery Eureka** as a discovery service for the entire system.
+
+#### Creating the Eureka Server
+
+To integrate Spring Cloud Discovery Eureka, you need to create a server as a separate Spring Boot application.
+
+##### Configuration of the Server `pom.xml`
+
+Below is the `pom.xml` file for the Eureka server:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.3.1</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>it.univaq.sose</groupId>
+    <artifactId>discovery-service</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>discovery-service</name>
+    <description>Discovery Service</description>
+
+    <properties>
+        <java.version>17</java.version>
+        <spring-cloud.version>2023.0.2</spring-cloud.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+```
+
+#### Eureka Server Configuration
+
+The standard configuration of Eureka involves multiple redundant nodes to ensure the reliability of the discovery
+service. However, to adapt Eureka to the specific needs of our system, we will modify some settings:
+
+```yaml
+eureka:
+  instance:
+    hostname: ${EUREKA_HOSTNAME:localhost}
+  server:
+    enable-self-preservation: false
+    expected-client-renewal-interval-seconds: 15
+    eviction-interval-timer-in-ms: 2000
+    renewal-threshold-update-interval-ms: 2000
+    renewal-percent-threshold: 0.5
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+```
+
+#### Integrating the Eureka Client in Modules
+
+To use the created discovery service, we need to add the following dependency in the `pom.xml` of our modules:
+
+```xml
+
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+    </dependency>
+</dependencies>
+
+<dependencyManagement>
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>2023.0.2</version>
+        <type>pom</type>
+        <scope>import</scope>
+    </dependency>
+</dependencies>
+</dependencyManagement>
+```
+
+#### Eureka Client Configuration
+
+To increase the responsiveness of Eureka, we configure the client as follows:
+
+```yaml
+eureka:
+  client:
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://${EUREKA_HOST:host.docker.internal}:${EUREKA_SERVER_PORT:8761}/eureka/
+  instance:
+    lease-expiration-duration-in-seconds: 11
+    lease-renewal-interval-in-seconds: 5
+    prefer-ip-address: true
+    statusPageUrlPath: /services/info
+    healthCheckUrlPath: /actuator/health
+    metadataMap:
+      servletPath: ${cxf.path}
+```
+
+##### Client Configuration Details
+
+1. **registerWithEureka: true**
+    - Indicates that the client should register with the Eureka server, allowing the server to route requests to it.
+2. **serviceUrl.defaultZone**
+    - Specifies the URL of the Eureka server with which the client should register. Uses environment variables to
+      determine the Eureka server host and port.
+3. **lease-expiration-duration-in-seconds: 11**
+    - Specifies the duration of the lease. After 11 seconds without renewal, the lease expires, and the Eureka server
+      can remove the instance.
+4. **lease-renewal-interval-in-seconds: 5**
+    - Indicates the frequency with which the client sends a heartbeat signal to the Eureka server to renew the lease,
+      useful for development or debugging.
+5. **prefer-ip-address: true**
+    - Configures the instance to prefer the IP address during registration and communication with the Eureka server,
+      resolving container name resolution issues.
+6. **statusPageUrlPath: /services/info**
+    - Specifies the URL path for the instance's status page, which contains the list of services implemented by Apache
+      CXF.
+7. **healthCheckUrlPath: /actuator/health**
+    - Indicates the URL path for the instance's health check.
+8. **metadataMap.servletPath: ${cxf.path}**
+    - Defines a metadata map that includes the servletPath, whose value is the root of Apache CXF.
