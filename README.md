@@ -291,3 +291,322 @@ user's account.
 The operation of closing a loan, executed by a customer user, involves the extinction of the loan by subtracting the
 corresponding amount of money from the user's current account on the BankAccount Service Provider. The account balance
 is checked and the amount is subtracted. Finally, the status of the loan is updated before returning the response.
+
+---
+
+# Implementation
+
+For each module of the project, Spring Boot 3.3.1 and Apache CXF 4.0.4 were chosen.
+
+In compliance with exam requirements, no technologies other than those explained and adopted in class were used.
+
+The project is divided into the following Maven modules:
+
+1. **account-service**: Provider. Responsible for authentication and user management operations. This service was
+   implemented in REST using Apache CXF (JAX-RS) and Spring Boot, registering via Netflix Eureka.
+
+2. **bank-account-services**: Provider. Responsible for operations related to current accounts. This service was
+   implemented in SOAP using Apache CXF (JAX-WS) and Spring Boot, registering via Netflix Eureka.
+
+3. **bancomat-service**: Provider. Responsible for operations related to ATMs. This service was implemented in SOAP
+   using Apache CXF (JAX-WS) and Spring Boot, registering via Netflix Eureka.
+
+4. **banking-operations-service-prosumer**: Prosumer. Responsible for banking operations such as opening accounts. This
+   service was implemented in REST using Apache CXF (JAX-RS) and Spring Boot, registering via Netflix Eureka. All
+   operations are provided asynchronously. REST and SOAP clients that implement load balancing to the producer service
+   were developed.
+
+5. **loan-service-prosumer**: Prosumer. Responsible for loan operations. This service was implemented in REST using
+   Apache CXF (JAX-RS) and Spring Boot, registering via Netflix Eureka. All operations are provided asynchronously. A
+   REST client that implements load balancing to the producer service was developed.
+
+6. **transaction-service-prosumer**: Prosumer. Responsible for managing financial transactions such as deposits,
+   withdrawals, transfers, and ATM payments. This service was implemented in REST using Apache CXF (JAX-RS) and Spring
+   Boot, registering via Netflix Eureka. All operations are provided asynchronously. REST and SOAP clients that
+   implement load balancing to the producer service were developed.
+
+7. **financial-report-service-prosumer**: Prosumer. Responsible for generating and providing comprehensive financial
+   reports of the account's banking position. This service was implemented in REST using Apache CXF (JAX-RS) and Spring
+   Boot, registering via Netflix Eureka. All operations are provided asynchronously. REST and SOAP clients that
+   implement load balancing to the producer service were developed.
+
+8. **gateway-service**: Gateway. Responsible for providing a single unified entry point for our system's services. This
+   service was implemented with Spring Cloud Reactive Gateway and uses Netflix Eureka.
+
+9. **discovery-service**: Discovery. Responsible for managing service discovery and integration within the system. This
+   service was implemented with Spring Cloud Discovery Eureka.
+
+10. **banking-service-client**: Client. This is the example client that interfaces with the Gateway to perform banking
+    operations. This client was developed with Spring Shell and Apache CXF (REST client).
+
+## Integrating Spring Boot and Apache CXF
+
+To integrate Apache CXF into a Spring Boot application, you need to add one of the following dependencies in
+the `pom.xml`:
+
+```xml
+
+<dependencies>
+    <!-- ...  -->
+    <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-spring-boot-starter-jaxws</artifactId>
+        <version>4.0.4</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-spring-boot-starter-jaxrs</artifactId>
+        <version>4.0.4</version>
+    </dependency>
+    <!-- ...  -->
+</dependencies>
+```
+
+- **cxf-spring-boot-starter-jaxws**: Configures and runs Apache CXF in a Spring application, integrating the necessary
+  dependencies for running Apache CXF in SOAP mode (JAX-WS).
+
+- **cxf-spring-boot-starter-jaxrs**: Configures and runs Apache CXF in a Spring application, integrating the necessary
+  dependencies for running Apache CXF in REST mode (JAX-RS).
+
+**Note**: If you want to implement a Spring Boot application that uses Apache CXF in both SOAP and REST modes, you only
+need to include one of the dependencies, along with the client dependency for Apache CXF in the other mode. For example,
+if you include only the `cxf-spring-boot-starter-jaxws` dependency (for SOAP), you just need to add the missing library
+dependency `cxf-rt-rs-client` for the REST client in the `pom.xml`.
+
+### Configuring Apache CXF for Proper Execution
+
+To create a SOAP application, you need to manually configure Apache CXF. Here is the necessary Java code:
+
+```java
+
+@Configuration
+public class ApacheCXFConfig {
+
+    private final Bus bus;
+    private final BankAccountService bankAccountService;
+    private final MetricsProvider metricsProvider;
+
+    public ApacheCXFConfig(Bus bus, BankAccountService bankAccountService, MetricsProvider metricsProvider) {
+        this.bus = bus;
+        this.bankAccountService = bankAccountService;
+        this.metricsProvider = metricsProvider;
+    }
+
+    @Bean
+    public Endpoint endpoint() {
+        EndpointImpl endpoint = new EndpointImpl(bus, bankAccountService, null, null, new MetricsFeature[]{
+                new MetricsFeature(metricsProvider)
+        });
+        endpoint.publish("/BankAccountService");
+        return endpoint;
+    }
+
+}
+```
+
+As seen in the code, you need to manually create a Java Bean that provides the proper initialization of an **Apache CXF
+Endpoint**. Through dependency injection, Spring will inject: the `Bus` from Apache CXF, `BankAccountService` which is
+the interface defining the SOAP services, and `MetricsProvider` which is the metrics provider (we will discuss this
+further later).
+
+To create a REST application, you can use Spring's component-scan to find all the classes needed by Apache CXF and
+Spring to properly configure the service. The configuration of Apache CXF can be done using the following YAML commands:
+
+```yaml
+cxf:
+  path: /services
+  servlet.init:
+    service-list-path: /info
+  jaxrs:
+    component-scan: true
+    classes-scan-packages: it.univaq.sose.accountservice.configuration, it.univaq.sose.accountservice.service
+```
+
+As seen, under the `cxf.jaxrs` key, there are settings for the component-scan. You need to add to this key every package
+that contains Apache CXF code (endpoints and various configurations). This way, Apache CXF will check the package for
+configurations or endpoints.
+
+In the YAML file, there are also the `cxf.path` and `cxf.servlet.init.service-list-path` keys, if set:
+
+- **cxf.path**: Identifies the path of the servlet used by Apache CXF within the application.
+- **cxf.servlet.init.service-list-path**: Identifies the path where Apache CXF will publish the list of managed
+  services.
+
+## Integration of Apache CXF Service Description OpenApi in Spring Boot
+
+To integrate Apache CXF's Service Description OpenApi into Spring Boot, add the following dependencies to
+your `pom.xml`:
+
+```xml
+
+<dependencies>
+    <!-- ... -->
+    <dependency>
+        <groupId>org.webjars</groupId>
+        <artifactId>swagger-ui</artifactId>
+        <version>5.17.14</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-rs-service-description</artifactId>
+        <version>4.0.4</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-rs-service-description-openapi-v3</artifactId>
+        <version>4.0.4</version>
+    </dependency>
+    <!-- ... -->
+</dependencies>
+```
+
+After adding the dependencies, create a Java Bean to provide a properly configured instance of `OpenApiFeature`:
+
+```java
+
+@Configuration
+public class ApacheCXFConfig {
+    @Value("${cxf.path}")
+    private String cxfPath;
+
+    @Bean
+    public OpenApiFeature createOpenApiFeature() {
+        final OpenApiFeature openApiFeature = new OpenApiFeature();
+        openApiFeature.setPrettyPrint(true);
+        openApiFeature.setTitle("Account Service for Banking Micro-SOA System");
+        openApiFeature.setContactName("The Banking Micro-SOA System team");
+        openApiFeature.setDescription("This is Account Service for Banking Micro-SOA System. Uses Apache CXF and Spring Boot on JAX-RS.");
+        openApiFeature.setVersion("0.0.1-SNAPSHOT");
+        openApiFeature.setSwaggerUiConfig(
+                new SwaggerUiConfig()
+                        .url(cxfPath + "/openapi.json").queryConfigEnabled(false));
+        return openApiFeature;
+    }
+
+    // ...
+}
+```
+
+Now you can use OpenApi annotations within your REST service interfaces.
+
+## Integration of Apache CXF Logging in Spring Boot
+
+To integrate Apache CXF Logging functionality in Spring Boot, add the following dependency to your `pom.xml`:
+
+```xml
+
+<dependency>
+    <groupId>org.apache.cxf</groupId>
+    <artifactId>cxf-rt-features-logging</artifactId>
+    <version>4.0.4</version>
+</dependency>
+```
+
+After adding the dependency, create a Java Bean to provide a properly configured instance of `LoggingFeature`:
+
+```java
+
+@Configuration
+public class ApacheCXFConfig {
+    // ...
+
+    @Bean
+    public LoggingFeature loggingFeature() {
+        LoggingFeature loggingFeature = new LoggingFeature();
+        loggingFeature.setPrettyLogging(true);
+        return loggingFeature;
+    }
+}
+```
+
+## Modifications to Jackson JSON Provider for Apache CXF in Spring Boot
+
+To properly handle dates during serialization and deserialization with the Jackson provider, add the following
+dependencies:
+
+```xml
+
+<dependencies>
+    <!-- ...  -->
+    <dependency>
+        <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
+        <artifactId>jackson-jakarta-rs-json-provider</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.fasterxml.jackson.datatype</groupId>
+        <artifactId>jackson-datatype-jsr310</artifactId>
+    </dependency>
+    <!-- ...  -->
+</dependencies>
+```
+
+To properly configure the Jackson Provider, including support for the new Java 8 date and time classes and setting date
+serialization to a readable format instead of timestamps, create a Java Bean configured as follows:
+
+```java
+
+@Configuration
+public class ApacheCXFConfig {
+    // ...
+    @Bean
+    public JacksonJsonProvider jsonProvider() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return new JacksonJsonProvider(objectMapper);
+    }
+}
+```
+
+This will enable support for the ISO-8601 standard.
+
+An adapter is also provided to manually handle dates:
+
+```java
+public class LocalDateTimeAdapter extends XmlAdapter<String, LocalDateTime> {
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+
+    @Override
+    public LocalDateTime unmarshal(String v) {
+        return LocalDateTime.parse(v, DATE_FORMATTER);
+    }
+
+    @Override
+    public String marshal(LocalDateTime v) {
+        return v != null ? DATE_FORMATTER.format(v) : null;
+    }
+}
+```
+
+Example usage of the adapter:
+
+```java
+
+@Data
+@XmlRootElement(name = "AccountResponse")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class AccountResponse implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 4592896323731902686L;
+
+    // ...
+
+    @XmlElement(required = true)
+    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
+    private LocalDateTime updateDate;
+
+    @XmlElement(required = true)
+    @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
+    private LocalDateTime createDate;
+
+    // ...
+}
+```
+
+This code ensures that dates are properly handled during serialization and deserialization, adhering to the ISO-8601
+standard.

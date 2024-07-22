@@ -158,8 +158,6 @@
                             <sourceRoot>${project.build.directory}/generated-sources/cxf</sourceRoot>
                             <wsdlOptions>
                                 <wsdlOption>
-                                    <!--<wsdl>http://localhost:9081/services/BankAccountService?wsdl</wsdl>-->
-                                    <!--<wsdl>${basedir}/src/main/resources/BankAccountService.wsdl</wsdl>-->
                                     <wsdl>${basedir}/../wsdl/BankAccountService.wsdl</wsdl>
                                 </wsdlOption>
                             </wsdlOptions>
