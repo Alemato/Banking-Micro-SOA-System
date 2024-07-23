@@ -14,6 +14,9 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * FinancialReportResponse Data Transfer Object (DTO) represents the details of a complete financial report.
+ */
 @Data
 @XmlRootElement(name = "FinancialReportResponse")
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -11,8 +11,18 @@ import jakarta.ws.rs.container.AsyncResponse;
 import jakarta.ws.rs.container.Suspended;
 import jakarta.ws.rs.core.MediaType;
 
+/**
+ * Interface for FinancialReportService providing operations for financial report management.
+ */
 @Path("/api/bank")
 public interface FinancialReportService {
+
+    /**
+     * Retrieves financial report by account ID.
+     *
+     * @param idAccount     The ID of the account.
+     * @param asyncResponse The asynchronous response.
+     */
     @Operation(
             operationId = "getLoanByIdLoan",
             description = "This endpoint allows users to retrieve loans by ID.",

@@ -14,6 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
+/**
+ * Callback class for handling asynchronous responses from the loan service.
+ */
 @Slf4j
 @Getter
 public class AllLoanCallBack implements InvocationCallback<Response> {
@@ -21,6 +24,11 @@ public class AllLoanCallBack implements InvocationCallback<Response> {
     private boolean hasError = false;
     private Throwable throwable;
 
+    /**
+     * Called when the response is successfully received.
+     *
+     * @param response The response from the loan service.
+     */
     @Override
     public void completed(Response response) {
         if (response.getStatusInfo().getFamily().equals(Response.Status.Family.SUCCESSFUL)) {
@@ -45,12 +53,22 @@ public class AllLoanCallBack implements InvocationCallback<Response> {
         }
     }
 
+    /**
+     * Called when the response fails to be received.
+     *
+     * @param throwable The exception thrown during the request.
+     */
     @Override
     public void failed(Throwable throwable) {
         log.error("AllLoan Error on Callback", throwable);
         handleException(new FinancialServiceException("AllLoan Error on Callback", throwable));
     }
 
+    /**
+     * Handles exceptions by setting the error state and rethrowing the exception.
+     *
+     * @param e The exception to be handled.
+     */
     private void handleException(FinancialServiceException e) {
         this.hasError = true;
         this.throwable = e;

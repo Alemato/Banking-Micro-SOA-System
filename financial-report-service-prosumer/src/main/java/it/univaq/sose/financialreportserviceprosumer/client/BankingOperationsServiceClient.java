@@ -19,6 +19,9 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+/**
+ * BankingOperationsServiceClient class provides methods to interact with the Banking Operations Service.
+ */
 @Slf4j
 @Service
 public class BankingOperationsServiceClient {
@@ -32,8 +35,15 @@ public class BankingOperationsServiceClient {
         this.jacksonProvider = jacksonProvider;
     }
 
+    /**
+     * Retrieves the URL of the Banking Operations Service from Eureka.
+     *
+     * @return URL of the Banking Operations Service.
+     * @throws ServiceUnavailableException if no instances are available.
+     */
     private String getUrlServiceFromEureka() throws ServiceUnavailableException {
         try {
+            // Retrieve instances from Eureka or use cached instances if unavailable
             List<InstanceInfo> instances = Optional.ofNullable(eurekaClient.getInstancesByVipAddress("BANKING-OPERATIONS-SERVICE-PROSUMER", false))
                     .filter(list -> !list.isEmpty())
                     .orElseGet(() -> {
@@ -49,13 +59,13 @@ public class BankingOperationsServiceClient {
                 throw new ServiceUnavailableException("No instances available for BANKING-OPERATIONS-SERVICE-PROSUMER");
             }
 
-            // Aggiorna la cache delle istanze con copie profonde
+            // Update the cache of instances with deep copies
             synchronized (lastInstancesCache) {
                 lastInstancesCache.clear();
                 lastInstancesCache.addAll(deepCopyInstanceInfoList(instances));
             }
 
-            // Rimuove l'ultima istanza utilizzata dalla lista
+            // Remove the last used instance from the list
             String lastUrl = lastUrlService.get();
             if (lastUrl != null) {
                 instances.removeIf(instance -> {
@@ -68,7 +78,7 @@ public class BankingOperationsServiceClient {
                 });
             }
 
-            // Se non ci sono istanze alternative disponibili, utilizza l'ultima istanza utilizzata
+            // If no alternative instances are available, use the last used instance
             if (instances.isEmpty()) {
                 log.warn("No alternative instances available for BANKING-OPERATIONS-SERVICE, using the last used instance");
                 if (lastUrl != null) {
@@ -78,7 +88,7 @@ public class BankingOperationsServiceClient {
                 }
             }
 
-            // Mescola la lista per selezionare un'istanza casuale
+            // Shuffle the list to select a random instance
             Collections.shuffle(instances);
             InstanceInfo instance = instances.get(0);
             String eurekaUrl = instance.getHomePageUrl() + "services";
@@ -92,21 +102,45 @@ public class BankingOperationsServiceClient {
         }
     }
 
+    /**
+     * Creates a deep copy of a list of InstanceInfo objects.
+     *
+     * @param instances the original list of InstanceInfo objects
+     * @return a deep copy of the list
+     */
     private List<InstanceInfo> deepCopyInstanceInfoList(List<InstanceInfo> instances) {
         return instances.stream()
                 .map(InstanceInfo::new) // Usa il costruttore di copia
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves a BankingOperationsServiceDefaultClient.
+     *
+     * @return A BankingOperationsServiceDefaultClient.
+     * @throws ServiceUnavailableException if the service is unavailable.
+     */
     public BankingOperationsServiceDefaultClient getBankingOperationsServiceClient() throws ServiceUnavailableException {
         return JAXRSClientFactory.create(getUrlServiceFromEureka(), BankingOperationsServiceDefaultClient.class, List.of(jacksonProvider));
     }
 
+    /**
+     * Retrieves a JAX-RS Client for the Banking Operations Service.
+     *
+     * @return A JAX-RS Client.
+     * @throws ServiceUnavailableException if the service is unavailable.
+     */
     public Client getClientBankingOperationsService() throws ServiceUnavailableException {
         BankingOperationsServiceDefaultClient api = JAXRSClientFactory.create(getUrlServiceFromEureka(), BankingOperationsServiceDefaultClient.class, List.of(jacksonProvider));
         return WebClient.client(api);
     }
 
+    /**
+     * Retrieves a WebClient for the Banking Operations Service.
+     *
+     * @return A WebClient.
+     * @throws ServiceUnavailableException if the service is unavailable.
+     */
     public WebClient getWebClientBankingOperationsService() throws ServiceUnavailableException {
         BankingOperationsServiceDefaultClient api = JAXRSClientFactory.create(getUrlServiceFromEureka(), BankingOperationsServiceDefaultClient.class, List.of(jacksonProvider));
         Client client = WebClient.client(api);
@@ -115,12 +149,24 @@ public class BankingOperationsServiceClient {
         return webClient;
     }
 
+    /**
+     * Retrieves the ClientConfiguration for the Banking Operations Service.
+     *
+     * @return The ClientConfiguration.
+     * @throws ServiceUnavailableException if the service is unavailable.
+     */
     public ClientConfiguration getClientConfigurationBankingOperationsService() throws ServiceUnavailableException {
         BankingOperationsServiceDefaultClient api = JAXRSClientFactory.create(getUrlServiceFromEureka(), BankingOperationsServiceDefaultClient.class, List.of(jacksonProvider));
         Client client = WebClient.client(api);
         return WebClient.getConfig(client);
     }
 
+    /**
+     * Retrieves the endpoint URL for the Banking Operations Service.
+     *
+     * @return The endpoint URL.
+     * @throws ServiceUnavailableException if the service is unavailable.
+     */
     public String getEndpoint() throws ServiceUnavailableException {
         return getUrlServiceFromEureka();
     }

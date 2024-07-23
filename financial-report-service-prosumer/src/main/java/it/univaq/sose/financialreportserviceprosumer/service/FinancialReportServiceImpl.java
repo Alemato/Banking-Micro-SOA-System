@@ -20,6 +20,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.concurrent.Future;
 
+/**
+ * Implementation of FinancialReportService providing detailed financial reports.
+ */
 @Slf4j
 @Service
 public class FinancialReportServiceImpl implements FinancialReportService {
@@ -37,9 +40,11 @@ public class FinancialReportServiceImpl implements FinancialReportService {
     public void getFinancialReportByIdAccount(long idAccount, AsyncResponse asyncResponse) {
         new Thread(() -> {
             try {
+                // Initialize callbacks for async responses
                 ReportBankAccountCallBack bankingServiceCallBack = new ReportBankAccountCallBack();
                 AllLoanCallBack loanServiceCallBack = new AllLoanCallBack();
 
+                // Prepare Bancomat service requests
                 BancomatService bancomatService = bancomatServiceClient.getBancomatService();
 
                 GetBancomatDetails requestBancomat = new GetBancomatDetails();
@@ -48,20 +53,24 @@ public class FinancialReportServiceImpl implements FinancialReportService {
                 GetBancomatTransactions requestBancomatTransactions = new GetBancomatTransactions();
                 requestBancomatTransactions.setAccountId(idAccount);
 
+                // Asynchronous calls to Bancomat service
                 Response<GetBancomatDetailsResponse> bancomatResponse = bancomatService.getBancomatDetailsAsync(requestBancomat);
                 Response<GetBancomatTransactionsResponse> bancomatTransactionsResponse = bancomatService.getBancomatTransactionsAsync(requestBancomatTransactions);
 
                 try (Client client = ClientBuilder.newClient(); Client client1 = ClientBuilder.newClient()) {
+                    // Asynchronous calls to Banking Operations and Loan services
                     Future<jakarta.ws.rs.core.Response> bankingResponse = client.target(bankingServiceClient.getEndpoint() + "/api/bank/report-bank-account-by-account/" + idAccount).request().async().get(bankingServiceCallBack);
                     Future<jakarta.ws.rs.core.Response> loanResponse = client1.target(loanServiceClient.getEndpoint() + "/api/loan/account/" + idAccount).request().async().get(loanServiceCallBack);
 
                     log.info("Response form: BANCOMAT: {}, BANCOMAT1: {}, BANKING-OPERATION: {}, LOAN: {}", bancomatResponse.isDone(), bancomatTransactionsResponse.isDone(), bankingResponse.isDone(), loanResponse.isDone());
                     Thread.sleep(600);
 
+                    // Wait for all responses to complete
                     while (!bancomatResponse.isDone() || !bancomatTransactionsResponse.isDone() || !bankingResponse.isDone() || !loanResponse.isDone()) {
                         Thread.sleep(100);
                         log.info("Response form: BANCOMAT: {}, BANCOMAT1: {}, BANKING-OPERATION: {}, LOAN: {}", bancomatResponse.isDone(), bancomatTransactionsResponse.isDone(), bankingResponse.isDone(), loanResponse.isDone());
 
+                        // Check for errors in responses
                         if (bankingServiceCallBack.isHasError()) {
                             throw (FinancialServiceException) bankingServiceCallBack.getThrowable();
                         }
@@ -70,6 +79,7 @@ public class FinancialReportServiceImpl implements FinancialReportService {
                         }
                     }
 
+                    // Retrieve responses
                     BancomatResponse bancomatReply = bancomatResponse.get().getGetBancomatDetailsResponse();
                     List<BancomatTransactionResponse> bancomatTransactionsReply = bancomatTransactionsResponse.get().getGetBancomatTransactionsResponse();
                     ReportBankAccountResponse reportBankAccountReplay = bankingServiceCallBack.getReportBankAccountResponse();
@@ -80,6 +90,7 @@ public class FinancialReportServiceImpl implements FinancialReportService {
                     log.info("RESULT ReportBankAccountResponse IS {}", reportBankAccountReplay);
                     log.info("RESULT AllLoan IS {}", allLoanReplay);
 
+                    // Create financial report response
                     FinancialReportResponse financialReportResponse = new FinancialReportResponse(reportBankAccountReplay.getAccount(), reportBankAccountReplay.getBankAccount(), reportBankAccountReplay.getTransactions(), bancomatReply, bancomatTransactionsReply, allLoanReplay);
                     jakarta.ws.rs.core.Response response = jakarta.ws.rs.core.Response.ok(financialReportResponse).build();
                     asyncResponse.resume(response);

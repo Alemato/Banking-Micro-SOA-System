@@ -19,6 +19,9 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+/**
+ * LoanServiceClient class provides methods to interact with the Loan Service.
+ */
 @Slf4j
 @Service
 public class LoanServiceClient {
@@ -32,8 +35,15 @@ public class LoanServiceClient {
         this.jacksonProvider = jacksonProvider;
     }
 
+    /**
+     * Retrieves the URL of the Loan Service from Eureka.
+     *
+     * @return URL of the Loan Service.
+     * @throws ServiceUnavailableException if no instances are available.
+     */
     private String getUrlServiceFromEureka() throws ServiceUnavailableException {
         try {
+            // Retrieve instances from Eureka or use cached instances if unavailable
             List<InstanceInfo> instances = Optional.ofNullable(eurekaClient.getInstancesByVipAddress("LOAN-SERVICE-PROSUMER", false))
                     .filter(list -> !list.isEmpty())
                     .orElseGet(() -> {
@@ -49,13 +59,13 @@ public class LoanServiceClient {
                 throw new ServiceUnavailableException("No instances available for LOAN-SERVICE-PROSUMER");
             }
 
-            // Aggiorna la cache delle istanze in modo sincronizzato
+            // Update the cache of instances synchronously
             synchronized (lastInstancesCache) {
                 lastInstancesCache.clear();
                 lastInstancesCache.addAll(deepCopyInstanceInfoList(instances));
             }
 
-            // Rimuove l'ultima istanza utilizzata dalla lista
+            // Remove the last used instance from the list
             String lastUrl = lastUrlService.get();
             if (lastUrl != null) {
                 instances.removeIf(instance -> {
@@ -68,7 +78,7 @@ public class LoanServiceClient {
                 });
             }
 
-            // Se non ci sono istanze alternative disponibili, utilizza l'ultima istanza utilizzata
+            // If no alternative instances are available, use the last used instance
             if (instances.isEmpty()) {
                 log.warn("No alternative instances available for LOAN-SERVICE, using the last used instance");
                 if (lastUrl != null) {
@@ -78,7 +88,7 @@ public class LoanServiceClient {
                 }
             }
 
-            // Mescola la lista per selezionare un'istanza casuale
+            // Shuffle the list to select a random instance
             Collections.shuffle(instances);
             InstanceInfo instance = instances.get(0);
             String eurekaUrl = instance.getHomePageUrl() + "services";
@@ -92,21 +102,45 @@ public class LoanServiceClient {
         }
     }
 
+    /**
+     * Creates a deep copy of the InstanceInfo list.
+     *
+     * @param instances The list of InstanceInfo to be copied.
+     * @return A deep copy of the InstanceInfo list.
+     */
     private List<InstanceInfo> deepCopyInstanceInfoList(List<InstanceInfo> instances) {
         return instances.stream()
                 .map(InstanceInfo::new) // Usa il costruttore di copia
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves a LoanServiceDefaultClient.
+     *
+     * @return A LoanServiceDefaultClient.
+     * @throws ServiceUnavailableException if the service is unavailable.
+     */
     public LoanServiceDefaultClient getLoanServiceClient() throws ServiceUnavailableException {
         return JAXRSClientFactory.create(getUrlServiceFromEureka(), LoanServiceDefaultClient.class, List.of(jacksonProvider));
     }
 
+    /**
+     * Retrieves a JAX-RS Client for the Loan Service.
+     *
+     * @return A JAX-RS Client.
+     * @throws ServiceUnavailableException if the service is unavailable.
+     */
     public Client getClientLoanService() throws ServiceUnavailableException {
         LoanServiceDefaultClient api = JAXRSClientFactory.create(getUrlServiceFromEureka(), LoanServiceDefaultClient.class, List.of(jacksonProvider));
         return WebClient.client(api);
     }
 
+    /**
+     * Retrieves a WebClient for the Loan Service.
+     *
+     * @return A WebClient.
+     * @throws ServiceUnavailableException if the service is unavailable.
+     */
     public WebClient getWebClientLoanService() throws ServiceUnavailableException {
         LoanServiceDefaultClient api = JAXRSClientFactory.create(getUrlServiceFromEureka(), LoanServiceDefaultClient.class, List.of(jacksonProvider));
         Client client = WebClient.client(api);
@@ -115,12 +149,24 @@ public class LoanServiceClient {
         return webClient;
     }
 
+    /**
+     * Retrieves the ClientConfiguration for the Loan Service.
+     *
+     * @return The ClientConfiguration.
+     * @throws ServiceUnavailableException if the service is unavailable.
+     */
     public ClientConfiguration getClientConfigurationLoanService() throws ServiceUnavailableException {
         LoanServiceDefaultClient api = JAXRSClientFactory.create(getUrlServiceFromEureka(), LoanServiceDefaultClient.class, List.of(jacksonProvider));
         Client client = WebClient.client(api);
         return WebClient.getConfig(client);
     }
 
+    /**
+     * Retrieves the endpoint URL for the Loan Service.
+     *
+     * @return The endpoint URL.
+     * @throws ServiceUnavailableException if the service is unavailable.
+     */
     public String getEndpoint() throws ServiceUnavailableException {
         return getUrlServiceFromEureka();
     }
