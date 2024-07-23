@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * This class manages the session for a logged-in account, including updating and resetting session details.
+ */
 @Component
 public class AccountSession {
     @Getter
@@ -29,15 +32,28 @@ public class AccountSession {
         this.isLoggedIn = true;
     }
 
+    /**
+     * Gets the account details for the current session.
+     *
+     * @return the account details
+     */
     public AccountDetails getAccountDetails() {
         return accountDetails;
     }
 
+    /**
+     * Resets the session by clearing the account details and marking the user as logged out.
+     */
     public void resetAccountSession() {
         accountDetails = new AccountDetails();
         isLoggedIn = false;
     }
 
+    /**
+     * Updates the account details from JWT claims and marks the user as logged in.
+     *
+     * @param claims the JWT claims containing account information
+     */
     public void updateAccountDetailsFromJwt(JwtClaims claims) {
         if (accountDetails == null) {
             accountDetails = new AccountDetails();
@@ -48,6 +64,11 @@ public class AccountSession {
         accountDetails.setRole(claims.getClaim("role").toString());
     }
 
+    /**
+     * Updates the account details from a financial report response.
+     *
+     * @param financialReportResponse the response containing updated financial information
+     */
     public void updateAccountDetailsFromFinancialReport(FinancialReportResponse financialReportResponse) {
         accountDetails.setName(financialReportResponse.getAccount().getName());
         accountDetails.setSurname(financialReportResponse.getAccount().getSurname());
@@ -79,6 +100,11 @@ public class AccountSession {
         accountDetails.setLoans(loans);
     }
 
+    /**
+     * Updates the account details from a bank account report response.
+     *
+     * @param reportBankAccountResponse the response containing updated bank account information
+     */
     public void updateAccountDetailsFromReportBankAccount(ReportBankAccountResponse reportBankAccountResponse) {
         accountDetails.setId(reportBankAccountResponse.getAccount().getId());
         accountDetails.setName(reportBankAccountResponse.getAccount().getName());
@@ -94,6 +120,11 @@ public class AccountSession {
                         reportBankAccountResponse.getBankAccount().getBalance()));
     }
 
+    /**
+     * Updates the account details from opening bank account response.
+     *
+     * @param openAccountResponse the response containing created bank account information
+     */
     public void updateAccountDetailsFromOpenBankAccount(OpenAccountResponse openAccountResponse) {
         if (accountDetails == null) {
             accountDetails = new AccountDetails();
@@ -120,6 +151,11 @@ public class AccountSession {
 
     }
 
+    /**
+     * Updates the account details from opened loan response.
+     *
+     * @param loan the response containing created loan information
+     */
     public void updateAccountDetailsFromLoan(it.univaq.sose.loanserviceprosumer.model.LoanDto loan) {
         Optional<Loan> existingLoan = accountDetails.getLoans().stream()
                 .filter(l -> l.getId().equals(loan.getId()))
@@ -137,6 +173,11 @@ public class AccountSession {
         }
     }
 
+    /**
+     * Updates the account details from created bancomat response.
+     *
+     * @param createBancomatResponse the response containing created bancomat information
+     */
     public void updateAccountDetailsFromCreateBancomat(CreateBancomatResponse createBancomatResponse) {
         accountDetails.setBancomat(new Bancomat(createBancomatResponse.getId(), createBancomatResponse.getNumber(), createBancomatResponse.getCvv(), createBancomatResponse.getDataScadenza()));
     }

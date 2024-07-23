@@ -7,6 +7,9 @@ import org.springframework.shell.table.*;
 import java.lang.reflect.Field;
 import java.util.Collection;
 
+/**
+ * Utility class for formatting objects and collections as tables.
+ */
 @Slf4j
 public class TableFormatter {
 
@@ -14,6 +17,14 @@ public class TableFormatter {
         throw new IllegalStateException("Utility class");
     }
 
+    /**
+     * Formats the details of an object or a collection as a table and prints it to the terminal.
+     *
+     * @param terminal the terminal to print the table
+     * @param obj      the object or collection to format
+     * @param title    the title of the table
+     * @return the formatted table as a string
+     */
     public static String formatObjectDetails(Terminal terminal, Object obj, String title) {
         TerminalUtil.printlnOnTerminal(terminal, "\n" + title);
 
@@ -27,6 +38,12 @@ public class TableFormatter {
         }
     }
 
+    /**
+     * Formats the details of a single object as a table.
+     *
+     * @param obj the object to format
+     * @return the formatted table
+     */
     private static Table formatSingleObjectDetails(Object obj) {
         Field[] fields = obj.getClass().getDeclaredFields();
         String[] headers = new String[fields.length];
@@ -46,6 +63,12 @@ public class TableFormatter {
         return buildTable(headers, values);
     }
 
+    /**
+     * Formats the details of a collection of objects as a table.
+     *
+     * @param collection the collection to format
+     * @return the formatted table
+     */
     private static Table formatCollectionDetails(Collection<?> collection) {
         Object firstObj = collection.iterator().next();
         Field[] fields = firstObj.getClass().getDeclaredFields();
@@ -78,6 +101,13 @@ public class TableFormatter {
         return tableBuilder.addFullBorder(BorderStyle.fancy_light).build();
     }
 
+    /**
+     * Builds a table with headers and values.
+     *
+     * @param headers the headers of the table
+     * @param values  the values of the table
+     * @return the built table
+     */
     private static Table buildTable(String[] headers, String[] values) {
         String[][] data = new String[2][headers.length];
         data[0] = headers;

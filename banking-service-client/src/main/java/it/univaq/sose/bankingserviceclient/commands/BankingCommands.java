@@ -45,6 +45,9 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+/**
+ * Shell component providing banking commands for the user.
+ */
 @Slf4j
 @ShellComponent
 public class BankingCommands extends AbstractShellComponent {
@@ -59,6 +62,11 @@ public class BankingCommands extends AbstractShellComponent {
         this.gatewayUtil = gatewayUtil;
     }
 
+    /**
+     * Login function.
+     *
+     * @return the availability status
+     */
     @ShellMethodAvailability("isNotAuthenticated")
     @ShellMethod(key = "login", value = "Login to the banking system", group = "AUTHENTICATION OPERATIONS")
     public String login() {
@@ -82,6 +90,12 @@ public class BankingCommands extends AbstractShellComponent {
         return TableFormatter.formatObjectDetails(getTerminal(), accountDetails, "Account");
     }
 
+
+    /**
+     * Logs out the user from the banking system.
+     *
+     * @return the logout message
+     */
     @ShellMethodAvailability("isAuthenticated")
     @ShellMethod(key = "logout", value = "Logout from the banking system", group = "AUTHENTICATION OPERATIONS")
     public String logout() {
@@ -100,7 +114,12 @@ public class BankingCommands extends AbstractShellComponent {
         }
     }
 
-
+    /**
+     * Opens a new bank account.
+     *
+     * @return the account creation details
+     * @throws InterruptedException if the operation is interrupted
+     */
     @ShellMethodAvailability("isNotAuthenticated")
     @ShellMethod(key = "open-bank-account", value = "Open Bank Account", group = "BANKING OPERATIONS")
     public String createBankAccount() throws InterruptedException {
@@ -120,6 +139,11 @@ public class BankingCommands extends AbstractShellComponent {
         return TableFormatter.formatObjectDetails(getTerminal(), accountDetails, "Account Created");
     }
 
+    /**
+     * Shows complete the financial report of the current user.
+     *
+     * @return the financial report details
+     */
     @ShellMethodAvailability("isAuthenticated")
     @ShellMethod(key = "financial-report", value = "Show Financial Report", group = "REPORT OPERATIONS")
     public String financialReport() {
@@ -133,6 +157,11 @@ public class BankingCommands extends AbstractShellComponent {
         return TableFormatter.formatObjectDetails(getTerminal(), financialReport, "Financial Report");
     }
 
+    /**
+     * Shows the bank account report of the current user.
+     *
+     * @return the bank account report details
+     */
     @ShellMethodAvailability("isAuthenticated")
     @ShellMethod(key = "bank-account-report", value = "Show Bank Account Report", group = "REPORT OPERATIONS")
     public String bankAccountReport() {
@@ -148,6 +177,11 @@ public class BankingCommands extends AbstractShellComponent {
         return TableFormatter.formatObjectDetails(getTerminal(), reportBankAccountResponse.getTransactions(), "Transactions");
     }
 
+    /**
+     * Executes a withdrawal operation.
+     *
+     * @return the withdrawal details
+     */
     @ShellMethodAvailability("isAuthenticated")
     @ShellMethod(key = "withdrawal", value = "Withdrawal Operation", group = "BANKING OPERATIONS")
     public String withdrawal() {
@@ -165,6 +199,11 @@ public class BankingCommands extends AbstractShellComponent {
         return "";
     }
 
+    /**
+     * Opens a new loan.
+     *
+     * @return the loan details
+     */
     @ShellMethodAvailability("isAuthenticated")
     @ShellMethod(key = "open-loan", value = "Open Loan", group = "LOAN OPERATION")
     public String openLoan() {
@@ -177,6 +216,11 @@ public class BankingCommands extends AbstractShellComponent {
         return TableFormatter.formatObjectDetails(getTerminal(), accountDetails.getLoans(), "Loans");
     }
 
+    /**
+     * Closes an existing loan.
+     *
+     * @return the loan closing details
+     */
     @ShellMethodAvailability("isAuthenticatedAndLoanOpenedExisting")
     @ShellMethod(key = "close-loan", value = "Close Loan", group = "LOAN OPERATION")
     public String closeLoan() {
@@ -189,6 +233,14 @@ public class BankingCommands extends AbstractShellComponent {
         return TableFormatter.formatObjectDetails(getTerminal(), accountDetails.getLoans(), "Loans");
     }
 
+    /**
+     * Executes the login process.
+     *
+     * @param username the username
+     * @param password the password
+     * @return true if login is successful, false otherwise
+     * @throws BankingClientException if an error occurs during login
+     */
     private Boolean executeLogin(String username, String password) throws BankingClientException {
         UserCredentials credentials = new UserCredentials();
         credentials.setUsername(username);
@@ -214,6 +266,13 @@ public class BankingCommands extends AbstractShellComponent {
         }
     }
 
+    /**
+     * Executes the financial report retrieval process.
+     *
+     * @param accountDetails the account details
+     * @return the financial report
+     * @throws BankingClientException if an error occurs during the retrieval process
+     */
     private FinancialReportResponse executeFinancialReport(AccountDetails accountDetails) throws BankingClientException {
         try (Client client = ClientBuilder.newClient().register(JacksonJsonProvider.class)) {
             String uri = gatewayUtil.getFinancialReportServiceUrl() + "/" + accountDetails.getId();
@@ -237,6 +296,13 @@ public class BankingCommands extends AbstractShellComponent {
         }
     }
 
+    /**
+     * Executes the bank account report retrieval process.
+     *
+     * @param accountDetails the account details
+     * @return the bank account report
+     * @throws BankingClientException if an error occurs during the retrieval process
+     */
     private ReportBankAccountResponse executeBankAccountReport(AccountDetails accountDetails) throws BankingClientException {
         try (Client client = ClientBuilder.newClient().register(JacksonJsonProvider.class)) {
             String uri = gatewayUtil.getBankingOperationServiceUrl() + "/report-bank-account-by-account/" + accountDetails.getId();
@@ -261,6 +327,12 @@ public class BankingCommands extends AbstractShellComponent {
         }
     }
 
+    /**
+     * Executes the open account process.
+     *
+     * @return the new account details
+     * @throws BankingClientException if an error occurs during the open account process
+     */
     private OpenAccountDTO executeOpenAccountResponse() throws BankingClientException {
         OpenAccountDTO newAccount = InputReader.multipleReadInputs(getTerminal(), OpenAccountDTO.class);
         OpenAccountRequest openAccountRequest = new OpenAccountRequest();
@@ -293,6 +365,13 @@ public class BankingCommands extends AbstractShellComponent {
         }
     }
 
+    /**
+     * Executes the withdrawal process.
+     *
+     * @param accountDetails the account details
+     * @return the transaction response
+     * @throws BankingClientException if an error occurs during the withdrawal process
+     */
     private ExecuteTransactionResponse executeWithdrawal(AccountDetails accountDetails) throws BankingClientException {
 
         BigDecimal amount = BigDecimal.valueOf(Long.parseLong(InputReader.singleReadInput(getTerminal(), "Enter amount: ")));
@@ -327,6 +406,12 @@ public class BankingCommands extends AbstractShellComponent {
         }
     }
 
+    /**
+     * Executes the open loan process.
+     *
+     * @param accountDetails the account details
+     * @throws BankingClientException if an error occurs during the open loan process
+     */
     private void executeOpenLoan(AccountDetails accountDetails) throws BankingClientException {
         try (Client client = ClientBuilder.newClient().register(JacksonJsonProvider.class)) {
             String uri = gatewayUtil.getLoanServiceUrl();
@@ -355,6 +440,12 @@ public class BankingCommands extends AbstractShellComponent {
         }
     }
 
+    /**
+     * Executes the close loan process.
+     *
+     * @param loans the list of existing loans
+     * @throws BankingClientException if an error occurs during the close loan process
+     */
     private void executeCloseLoan(List<Loan> loans) throws BankingClientException {
         List<Loan> existingLoan = loans.stream()
                 .filter(l -> l.getLoanStatus().equals("APPROVED")).toList();
@@ -396,18 +487,33 @@ public class BankingCommands extends AbstractShellComponent {
     }
 
 
+    /**
+     * Checks if the user is authenticated.
+     *
+     * @return the availability status
+     */
     private Availability isAuthenticated() {
         return accountSession.isLoggedIn()
                 ? Availability.available()
                 : Availability.unavailable("You are not logged in");
     }
 
+    /**
+     * Checks if the user is not authenticated.
+     *
+     * @return the availability status
+     */
     private Availability isNotAuthenticated() {
         return !accountSession.isLoggedIn()
                 ? Availability.available()
                 : Availability.unavailable("You are logged in");
     }
 
+    /**
+     * Checks if the user is authenticated and has an open loan.
+     *
+     * @return the availability status
+     */
     private Availability isAuthenticatedAndLoanOpenedExisting() {
         return accountSession.isLoggedIn() && accountSession.getAccountDetails().getLoans().stream().anyMatch(l -> l.getLoanStatus().equals("APPROVED"))
                 ? Availability.available()

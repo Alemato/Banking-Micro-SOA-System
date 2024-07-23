@@ -6,20 +6,46 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.Scanner;
 
+/**
+ * Utility class for reading user input from the terminal.
+ */
 public class InputReader {
 
     private static final Scanner scanner = new Scanner(System.in);
 
+    /**
+     * Reads a single input from the user with a specified prompt.
+     *
+     * @param terminal the terminal to print the prompt
+     * @param prompt   the prompt message
+     * @return the user's input as a String
+     */
     public static String singleReadInput(Terminal terminal, String prompt) {
         TerminalUtil.printOnTerminal(terminal, "Enter the " + prompt);
         return scanner.nextLine();
     }
 
+
+    /**
+     * Reads a single custom input from the user with a specified prompt.
+     *
+     * @param terminal the terminal to print the prompt
+     * @param prompt   the prompt message
+     * @return the user's input as a String
+     */
     public static String singleReadInputCustom(Terminal terminal, String prompt) {
         TerminalUtil.printOnTerminal(terminal, prompt);
         return scanner.nextLine();
     }
 
+    /**
+     * Reads multiple inputs from the user and populates an instance of the specified class with the inputs.
+     *
+     * @param terminal the terminal to print the prompts
+     * @param clazz    the class to instantiate and populate
+     * @param <T>      the type of the class
+     * @return an instance of the specified class populated with user inputs
+     */
     public static <T> T multipleReadInputs(Terminal terminal, Class<T> clazz) {
         T instance;
         try {

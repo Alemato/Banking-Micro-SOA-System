@@ -15,6 +15,10 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+
+/**
+ * Utility class for interacting with various banking services through a gateway.
+ */
 @Component
 public class GatewayUtil extends AbstractShellComponent {
 
@@ -43,22 +47,47 @@ public class GatewayUtil extends AbstractShellComponent {
         this.transactionPath = transactionPath;
     }
 
+    /**
+     * Returns the URL for the account service.
+     *
+     * @return the URL for the account service
+     */
     public String getAccountServiceUrl() {
         return String.format("http://%s:%d%s", baseUrl, port, accountPath);
     }
 
+    /**
+     * Returns the URL for the banking operations service.
+     *
+     * @return the URL for the banking operations service
+     */
     public String getBankingOperationServiceUrl() {
         return String.format("http://%s:%d%s", baseUrl, port, bankingOperationPath);
     }
 
+    /**
+     * Returns the URL for the loan service.
+     *
+     * @return the URL for the loan service
+     */
     public String getLoanServiceUrl() {
         return String.format("http://%s:%d%s", baseUrl, port, loanPath);
     }
 
+    /**
+     * Returns the URL for the financial report service.
+     *
+     * @return the URL for the financial report service
+     */
     public String getFinancialReportServiceUrl() {
         return String.format("http://%s:%d%s", baseUrl, port, financialReportPath);
     }
 
+    /**
+     * Returns the URL for the transaction service.
+     *
+     * @return the URL for the transaction service
+     */
     public String getTransactionServiceUrl() {
         return String.format("http://%s:%d%s", baseUrl, port, transactionPath);
     }
@@ -82,6 +111,12 @@ public class GatewayUtil extends AbstractShellComponent {
 //        return responseFuture.get();
 //    }
 
+    /**
+     * Extracts the error message from a JSON response.
+     *
+     * @param errorDetails the JSON response containing the error details
+     * @return the extracted error message
+     */
     public String extractErrorMessage(String errorDetails) {
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -92,6 +127,14 @@ public class GatewayUtil extends AbstractShellComponent {
         }
     }
 
+    /**
+     * Polls for an asynchronous response without blocking the main thread.
+     *
+     * @param responseFuture the future holding the response
+     * @return the response object
+     * @throws ExecutionException   if the computation threw an exception
+     * @throws InterruptedException if the current thread was interrupted while waiting
+     */
     public Response getAsyncResponseNotBlockingPolling(Future<Response> responseFuture) throws ExecutionException, InterruptedException {
         HorizontalAlign textAlign = HorizontalAlign.LEFT;
         HorizontalAlign spinnerAlign = HorizontalAlign.LEFT;
@@ -136,10 +179,22 @@ public class GatewayUtil extends AbstractShellComponent {
         return responseFuture.get();
     }
 
+    /**
+     * Formats a success message for display.
+     *
+     * @param message the message to format
+     * @return the formatted success message
+     */
     public String formatSuccessMessage(String message) {
         return "\n\n************ SUCCESS ***********\n" + message + "\n*******************************\n";
     }
 
+    /**
+     * Formats an error message for display.
+     *
+     * @param message the message to format
+     * @return the formatted error message
+     */
     public String formatErrorMessage(String message) {
         return "\n\n************* ERROR ***********\n" + message + "\n********************************\n";
     }
