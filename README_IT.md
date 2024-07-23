@@ -1,6 +1,106 @@
+a name="readme-top"></a>
+
+<!-- PROJECT SHIELDS -->
+[![Contributors][contributors-shield]][contributors-url]
+[![Commit Activity][commit-shield]][commit-url]
+[![Last Commit][last-commit-shield]][last-commit-url]
+[![License][license-shield]][license-url]
+
+
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <a href="https://github.com/Alemato/Banking-Micro-SOA-System">
+    <img src="docs/logo.png" alt="Logo" width="500" height="500">
+  </a>
+
+<h3 align="center">Banking-Micro-SOA-System</h3>
+
+  <p align="center">
+    Moderno sistema bancario che implementa un'architettura orientata ai servizi (SOA)!
+    <br />
+    <a href="https://github.com/Alemato/Banking-Micro-SOA-System"><strong>Explore all docs »</strong></a>
+  </p>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Indice</summary>
+  <ol>
+    <li>
+      <a href="#banking-micro-soa-system">Panoramica Il progetto</a>
+    </li>
+    <li><a href="#requisiti-di-esame">Requisiti di Esame</a></li> 
+    <li><a href="#obiettivi-del-sistema">Obiettivi del Sistema</a></li>
+    <li><a href="#funzionamento-del-sistema">Funzionamento del Sistema</a></li>
+    <li><a href="#motivazioni-legate-allapproccio-soa-e-microservices">Motivazioni legate all'Approccio SOA e Microservices</a></li>
+    <li><a href="#use-case-diagram">Use Case Diagram</a></li>
+    <li><a href="#component-diagram">Component Diagram</a></li>
+    <li><a href="#componenti">Componenti</a></li>
+    <li><a href="#note-aggiuntive">Note aggiuntive</a></li>
+    <li>
+      <a href="#sequence-diagrams">Sequence Diagrams</a>
+      <ul>
+        <li><a href="#open-bank-account">Open Bank Account</a></li>
+        <li><a href="#login">Login</a></li>
+        <li><a href="#financial-report">Financial Report</a></li>
+        <li><a href="#bank-account-report">Bank Account Report</a></li>
+        <li><a href="#withdraw-money">Withdraw Money</a></li>
+        <li><a href="#open-loan">Open Loan</a></li>
+        <li><a href="#close-loan">Close Loan</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#implementazione">Implementazione</a>
+      <ul>
+        <li><a href="#integrazione-spring-boot-e-apache-cxf">Integrazione Spring Boot e Apache CXF</a></li>
+        <li><a href="#configurazione-di-apache-cxf-per-lesecuzione-corretta">Configurazione di Apache CXF per l'esecuzione corretta</a></li>
+        <li><a href="#integrazione-di-apache-cxf-service-description-openapi-in-spring-boot">Integrazione di Apache CXF Service Description OpenApi in Spring Boot</a></li>
+        <li><a href="#ottimizzazioni-effettuate-nei-servizi">Ottimizzazioni effettuate nei Servizi</a></li>
+        <li><a href="#integrazione-del-logging-di-apache-cxf-in-spring-boot">Integrazione del Logging di Apache CXF in Spring Boot</a></li>
+        <li><a href="#modifiche-al-jackson-json-provider-per-apache-cxf-in-spring-boot">Modifiche al Jackson JSON Provider per Apache CXF in Spring Boot</a></li>
+        <li><a href="#integrazione-delle-metriche-di-apache-cxf-con-spring-boot-actuator">Integrazione delle Metriche di Apache CXF con Spring Boot Actuator</a></li>
+        <li><a href="#configurazione-delle-metriche-per-unapplicazione-rest">Configurazione delle Metriche per un'Applicazione REST</a></li>
+        <li><a href="#spring-cloud-discovery-eureka">Spring Cloud Discovery Eureka</a></li>
+        <li><a href="#implementazione-dei-load-balance-nei-client-apache-cxf">Implementazione dei Load-Balance nei client Apache CXF</a></li>
+        <li><a href="#implementazione-di-un-servizio-jax-ws-con-apache-cxf-e-spring-boot">Implementazione di un servizio JAX-WS con Apache CXF e Spring Boot</a></li>
+        <li><a href="#implementazione-di-un-servizio-jax-rs-con-apache-cxf-e-spring-boot">Implementazione di un servizio JAX-RS con Apache CXF e Spring Boot</a></li>
+        <li><a href="#implementazione-client-asincrono-con-apache-cxf">Implementazione client asincrono con Apache CXF</a></li>
+        <li><a href="#implementazione-di-un-semplice-client-per-il-banking-micro-soa-system">Implementazione di un Semplice Client per il Banking Micro-SOA System</a></li>
+        <li><a href="#utilizzo-del-plug-in-maven-openapi-generator-maven-plugin">Utilizzo del Plug-in Maven openapi-generator-maven-plugin</a></li>
+        <li><a href="#utilizzo-del-plug-in-maven-cxf-codegen-plugin">Utilizzo del Plug-in Maven cxf-codegen-plugin</a></li>
+        <li><a href="#utilizzo-del-plug-in-maven-build-helper-maven-plugin">Utilizzo del Plug-in Maven build-helper-maven-plugin</a></li>
+        <li><a href="#implementazione-dei-dockerfile">Implementazione dei Dockerfile</a></li>
+        <li><a href="#implementazione-del-docker-compose">Implementazione del docker-compose</a></li>
+      </ul>
+    </li>
+    <li><a href="#usage">Utilizzo</a></li>
+    <li><a href="#license">License</a></li>
+  </ol>
+</details>
+
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+
+[contributors-shield]: https://img.shields.io/github/contributors/Alemato/Banking-Micro-SOA-System?style=for-the-badge
+
+[contributors-url]: https://github.com/Alemato/Banking-Micro-SOA-System/graphs/contributors
+
+[commit-shield]: https://img.shields.io/github/commit-activity/t/Alemato/Banking-Micro-SOA-System?style=for-the-badge
+
+[commit-url]: https://github.com/Alemato/Banking-Micro-SOA-System/graphs/commit-activity
+
+[last-commit-shield]: https://img.shields.io/github/last-commit/Alemato/Banking-Micro-SOA-System?style=for-the-badge
+
+[last-commit-url]: https://github.com/Alemato/Banking-Micro-SOA-System/graphs/commit-activity
+
+[license-shield]: https://img.shields.io/github/license/Alemato/Banking-Micro-SOA-System?style=for-the-badge
+
+[license-url]: https://github.com/Alemato/Banking-Micro-SOA-System/blob/master/LICENSE.txt
+
 # Banking Micro-SOA System
 
-Il “Sistema micro-SOA bancario” è un moderno sistema bancario che implementa un'architettura orientata ai servizi (SOA)
+Il “Banking Micro-SOA System” è un moderno sistema bancario che implementa un'architettura orientata ai servizi (SOA)
 utilizzando microservizi con tecnologie REST e SOAP.
 
 Questo progetto dimostra come costruire un'applicazione scalabile e modulare in grado di gestire le comuni operazioni
