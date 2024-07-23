@@ -73,7 +73,7 @@
       </ul>
     </li>
     <li><a href="#usage">Utilizzo</a></li>
-    <li><a href="#license">License</a></li>
+    <li><a href="https://github.com/Alemato/Banking-Micro-SOA-System/blob/main/LICENSE">License</a></li>
   </ol>
 </details>
 
