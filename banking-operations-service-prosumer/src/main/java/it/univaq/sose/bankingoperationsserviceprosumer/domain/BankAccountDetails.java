@@ -8,6 +8,9 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 
+/**
+ * BankAccountDetails Data Transfer Object (DTO) represents the details of a bank account.
+ */
 @Data
 @XmlRootElement(name = "BankAccountDetails")
 @XmlAccessorType(XmlAccessType.FIELD)

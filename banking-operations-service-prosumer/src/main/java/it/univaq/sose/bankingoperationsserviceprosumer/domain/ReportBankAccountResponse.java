@@ -9,6 +9,10 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Data Transfer Object (DTO) for the response of a bank account report request.
+ * This class contains all the necessary information provided in the response, including account details, bank account details, and transactions.
+ */
 @Data
 @XmlRootElement(name = "ReportBankAccountResponse")
 @XmlAccessorType(XmlAccessType.FIELD)

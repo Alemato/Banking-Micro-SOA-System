@@ -8,6 +8,10 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 
+/**
+ * Data Transfer Object (DTO) for the response of an open account request.
+ * This class contains all the necessary information provided in the response after opening a new account.
+ */
 @Data
 @XmlRootElement(name = "OpenAccountResponse")
 @XmlAccessorType(XmlAccessType.FIELD)

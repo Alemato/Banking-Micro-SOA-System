@@ -6,6 +6,9 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.Data;
 
+/**
+ * AccountDetails Data Transfer Object (DTO) represents the details of an account.
+ */
 @Data
 @XmlRootElement(name = "AccountDetails")
 @XmlAccessorType(XmlAccessType.FIELD)

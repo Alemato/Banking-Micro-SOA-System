@@ -11,8 +11,18 @@ import jakarta.ws.rs.container.AsyncResponse;
 import jakarta.ws.rs.container.Suspended;
 import jakarta.ws.rs.core.MediaType;
 
+/**
+ * Interface for Banking Operations Service.
+ * This service provides endpoints for creating accounts, retrieving bank account reports, and managing ATM cards.
+ */
 @Path("/api/bank")
 public interface BankingOperationsService {
+    /**
+     * Endpoint for opening a new bank account and creating a personal profile.
+     *
+     * @param openAccountRequest The request containing the account details.
+     * @param asyncResponse      The asynchronous response to be resumed.
+     */
     @Operation(
             operationId = "OpenAccount",
             description = "This endpoint allows users to create their personal profile and open a new bank account in a single operation.",
@@ -60,6 +70,12 @@ public interface BankingOperationsService {
             }
     ) OpenAccountRequest openAccountRequest, @Suspended AsyncResponse asyncResponse);
 
+    /**
+     * Endpoint for retrieving a bank account report by account ID.
+     *
+     * @param idAccount     The ID of the account.
+     * @param asyncResponse The asynchronous response to be resumed.
+     */
     @Operation(
             operationId = "GetReportBankAccountByIdAccount",
             description = "This endpoint allows users to retrieve the report of a bank account using the account ID.",
@@ -103,6 +119,12 @@ public interface BankingOperationsService {
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     void getReportBankAccountFromIdAccount(@PathParam("idAccount") long idAccount, @Suspended AsyncResponse asyncResponse);
 
+    /**
+     * Endpoint for requesting an ATM card.
+     *
+     * @param asyncResponse The asynchronous response to be resumed.
+     * @param accountId     The ID of the account.
+     */
     @Operation(
             operationId = "requestAtmCard",
             description = "requestAtmCard",
@@ -146,6 +168,12 @@ public interface BankingOperationsService {
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     void requestAtmCard(@Suspended AsyncResponse asyncResponse, @PathParam("accountId") long accountId);
 
+    /**
+     * Endpoint for retrieving ATM card details.
+     *
+     * @param asyncResponse The asynchronous response to be resumed.
+     * @param accountId     The ID of the account.
+     */
     @Operation(
             operationId = "getAtmCard",
             description = "getAtmCard details",

@@ -2,6 +2,9 @@ package it.univaq.sose.bankingoperationsserviceprosumer.service;
 
 import java.io.Serial;
 
+/**
+ * Exception thrown when a malformed URL location is encountered.
+ */
 public class UrlLocationMalformedException extends Exception {
     @Serial
     private static final long serialVersionUID = 714767030489350318L;

@@ -21,6 +21,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Implementation of the BankingOperationsService interface.
+ * This class handles the actual logic for opening accounts, retrieving reports, and managing ATM cards.
+ */
 @Slf4j
 @Service
 public class BankingOperationsServiceImpl implements BankingOperationsService {
@@ -34,12 +38,18 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
         this.bancomatServiceClient = bancomatServiceClient;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void openAccount(OpenAccountRequest openAccountRequest, AsyncResponse asyncResponse) {
         new Thread(() -> {
 
             try {
+                // Simulate processing delay
                 Thread.sleep(1000);
+
+                // Create account
                 WebClient accountClient = accountServiceClient.getWebClientAccountService();
                 String locationHeader = null;
                 try (Response accountResponse = accountClient.path("/api/account/customer-account").post(
@@ -61,8 +71,10 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
                 if (locationHeader == null) throw new UrlLocationMalformedException("The URL Location is empty.");
                 long idAccount = BankingOperationsUtils.getIdFromUrlLocator(locationHeader);
 
+                // Get account response
                 OpenAccountResponse openAccountResponse = getOpenAccountResponse(openAccountRequest, idAccount);
 
+                // Respond with created status
                 Response response = Response.status(Response.Status.CREATED).entity(openAccountResponse).build();
                 asyncResponse.resume(response);
             } catch (InterruptedException | UrlLocationMalformedException | BankAccountAlradyExistException_Exception |
@@ -87,24 +99,34 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
         }).start();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void getReportBankAccountFromIdAccount(long idAccount, AsyncResponse asyncResponse) {
         new Thread(() -> {
 
             try {
+                // Simulate processing delay
                 Thread.sleep(1000);
+
+                // Get account details
                 AccountResponse account = getAccountDetailsByAccountId(idAccount);
                 log.info("Account-Service Response for Bank Account Details: {}", account);
 
+                // Get bank account details
                 BankAccountService bankAccountClient = bankAccountService.getBankAccountService();
                 BankAccountResponse bankAccountResponse = bankAccountClient.getBankAccountDetails(account.getId());
                 log.info("Bank-Account-Service Response for Bank Account Details: {}", bankAccountResponse);
 
+                // Get bank account transactions
                 List<TransactionResponse> transactionResponseList = bankAccountClient.getBankAccountTransactions(account.getId());
                 log.info("Bank-Account-Service Response for Bank Account Transactions: {}", transactionResponseList);
 
+                // Create report response
                 ReportBankAccountResponse report = getReportBankAccountResponse(account, bankAccountResponse, transactionResponseList);
 
+                // Respond with OK status
                 Response response = Response.ok().entity(report).build();
                 asyncResponse.resume(response);
             } catch (InterruptedException | AccountServiceException | NotFoundException_Exception e) {
@@ -120,27 +142,37 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
         }).start();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void requestAtmCard(AsyncResponse asyncResponse, long accountId) {
         new Thread(() -> {
 
             try {
+                // Simulate processing delay
                 Thread.sleep(1000); // sleep 1s
+
+                // Get bank account details
                 BankAccountResponse bankAccountResponse = bankAccountService.getBankAccountService().getBankAccountDetails(accountId);
                 log.info("Bank-Account-Service Response for Get Bank Account: {}", bankAccountResponse);
 
+                // Create ATM card request
                 BancomatRequest bancomatRequest = new BancomatRequest();
                 bancomatRequest.setAccountId(accountId);
                 bancomatRequest.setBankAccountId(bankAccountResponse.getId());
 
+                // Create ATM card
                 BancomatResponse bancomatResponse = bancomatServiceClient.getBancomatService().createBancomat(bancomatRequest);
                 log.info("Bancomat-Service Response for Create Bancomat: {}", bancomatResponse);
 
+                // Create response
                 CreateBancomatResponse createBancomatResponse = new CreateBancomatResponse(
                         bancomatResponse.getId(), bancomatResponse.getNumber(),
                         bancomatResponse.getCvv(), bancomatResponse.getExpiryDate()
                 );
 
+                // Respond with created status
                 Response response = Response.status(Response.Status.CREATED).entity(createBancomatResponse).build();
                 asyncResponse.resume(response);
 
@@ -165,23 +197,31 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
         }).start();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void getAtmCard(AsyncResponse asyncResponse, long accountId) {
         new Thread(() -> {
 
             try {
+                // Simulate processing delay
                 Thread.sleep(1000); // sleep 1s
+
+                // Get ATM card details
                 GetBancomatDetails request = new GetBancomatDetails();
                 request.setAccountId(accountId);
                 GetBancomatDetailsResponse getBancomatDetailsResponse = bancomatServiceClient.getBancomatService().getBancomatDetails(request);
                 BancomatResponse bancomatResponse = getBancomatDetailsResponse.getGetBancomatDetailsResponse();
                 log.info("Bancomat-Service Response for Get Bancomat Details: {}", bancomatResponse);
 
+                // Create response
                 CreateBancomatResponse createBancomatResponse = new CreateBancomatResponse(
                         bancomatResponse.getId(), bancomatResponse.getNumber(),
                         bancomatResponse.getCvv(), bancomatResponse.getExpiryDate()
                 );
 
+                // Respond with created status
                 Response response = Response.status(Response.Status.CREATED).entity(createBancomatResponse).build();
                 asyncResponse.resume(response);
 
@@ -202,6 +242,14 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
         }).start();
     }
 
+    /**
+     * Helper method to create a ReportBankAccountResponse object.
+     *
+     * @param account                 The account response from the account service.
+     * @param bankAccountResponse     The bank account response from the bank account service.
+     * @param transactionResponseList The list of transaction responses.
+     * @return The ReportBankAccountResponse object.
+     */
     private static ReportBankAccountResponse getReportBankAccountResponse(AccountResponse account, BankAccountResponse bankAccountResponse, List<TransactionResponse> transactionResponseList) {
         AccountDetails accountDetails = new AccountDetails();
         accountDetails.setId(account.getId());
@@ -224,6 +272,13 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
         return report;
     }
 
+    /**
+     * Helper method to get account details by account ID.
+     *
+     * @param idAccount The account ID.
+     * @return The account response.
+     * @throws AccountServiceException If there is an error retrieving the account details.
+     */
     private AccountResponse getAccountDetailsByAccountId(long idAccount) throws AccountServiceException {
         try {
             AccountServiceDefaultClient client = accountServiceClient.getAccountService();
@@ -234,7 +289,18 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
 
     }
 
-
+    /**
+     * Helper method to create an OpenAccountResponse object.
+     *
+     * @param openAccountRequest The open account request.
+     * @param idAccount          The account ID.
+     * @return The OpenAccountResponse object.
+     * @throws BankAccountAlradyExistException_Exception If the bank account already exists.
+     * @throws AccountServiceException                   If there is an error with the account service.
+     * @throws ServiceUnavailableException               If a service is unavailable.
+     * @throws it.univaq.sose.bancomatservice.webservice.NotFoundException_Exception If the bancomat service cannot find the resource.
+     * @throws BancomatAlreadyExistingException_Exception If the bancomat already exists.
+     */
     private OpenAccountResponse getOpenAccountResponse(OpenAccountRequest openAccountRequest, long idAccount) throws BankAccountAlradyExistException_Exception, AccountServiceException, ServiceUnavailableException, it.univaq.sose.bancomatservice.webservice.NotFoundException_Exception, BancomatAlreadyExistingException_Exception {
         BankAccountRequest bankAccountRequest = new BankAccountRequest();
         bankAccountRequest.setAccountId(idAccount);
@@ -242,9 +308,11 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
         BankAccountService bankAccountClient = bankAccountService.getBankAccountService();
         BancomatService bancomatService = bancomatServiceClient.getBancomatService();
 
+        // Create bank account
         BankAccountResponse bankAccountResponse = bankAccountClient.createBankAccount(bankAccountRequest);
         log.info("Bank-Account-Service Response for Create Bank Account: {}", bankAccountResponse);
 
+        // Create ATM card
         BancomatRequest bancomatRequest = new BancomatRequest();
         bancomatRequest.setAccountId(bankAccountResponse.getAccountId());
         bancomatRequest.setBankAccountId(bankAccountResponse.getId());
@@ -261,6 +329,15 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
     }
 
 
+    /**
+     * Helper method to create an OpenAccountResponse object.
+     *
+     * @param idAccount          The account ID.
+     * @param bankAccountResponse The bank account response.
+     * @param bancomatResponse    The bancomat response.
+     * @return The OpenAccountResponse object.
+     * @throws AccountServiceException If there is an error with the account service.
+     */
     private OpenAccountResponse getOpenAccountResponse(long idAccount, BankAccountResponse bankAccountResponse, BancomatResponse bancomatResponse) throws AccountServiceException {
         try {
             AccountServiceDefaultClient client = accountServiceClient.getAccountService();

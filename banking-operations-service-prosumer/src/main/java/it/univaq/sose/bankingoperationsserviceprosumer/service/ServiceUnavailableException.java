@@ -2,6 +2,10 @@ package it.univaq.sose.bankingoperationsserviceprosumer.service;
 
 import java.io.Serial;
 
+/**
+ * Custom exception class to handle service unavailability scenarios.
+ * This exception is thrown when a required service is unavailable.
+ */
 public class ServiceUnavailableException extends Exception {
     @Serial
     private static final long serialVersionUID = 4537060738671954014L;
