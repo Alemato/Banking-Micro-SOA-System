@@ -18,6 +18,10 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * Client service to interact with the AccountService registered with Eureka.
+ * It uses Apache CXF for creating REST clients and integrates with Eureka for service discovery.
+ */
 @Slf4j
 @Service
 public class AccountServiceClient {
@@ -31,6 +35,12 @@ public class AccountServiceClient {
         this.jacksonProvider = jacksonProvider;
     }
 
+    /**
+     * Retrieves the URL of the AccountService from Eureka.
+     *
+     * @return the URL of the AccountService
+     * @throws ServiceUnavailableException if no instances are available
+     */
     private String getUrlServiceFromEureka() throws ServiceUnavailableException {
         try {
             List<InstanceInfo> instances = Optional.ofNullable(eurekaClient.getInstancesByVipAddress("ACCOUNT-SERVICE", false))
@@ -48,13 +58,13 @@ public class AccountServiceClient {
                 throw new ServiceUnavailableException("No instances available for ACCOUNT-SERVICE");
             }
 
-            // Aggiorna la cache delle istanze in modo sincronizzato
+            /// Update the instance cache in a synchronized block
             synchronized (lastInstancesCache) {
                 lastInstancesCache.clear();
                 lastInstancesCache.addAll(instances);
             }
 
-            // Rimuove l'ultima istanza utilizzata dalla lista
+            // Remove the last used instance from the list
             String lastUrl = lastUrlService.get();
             if (lastUrl != null) {
                 instances.removeIf(instance -> {
@@ -67,7 +77,7 @@ public class AccountServiceClient {
                 });
             }
 
-            // Se non ci sono istanze alternative disponibili, utilizza l'ultima istanza utilizzata
+            // If no alternative instances are available, use the last used instance
             if (instances.isEmpty()) {
                 log.warn("No alternative instances available for ACCOUNT-SERVICE, using the last used instance");
                 if (lastUrl != null) {
@@ -77,7 +87,7 @@ public class AccountServiceClient {
                 }
             }
 
-            // Mescola la lista per selezionare un'istanza casuale
+            // Shuffle the list to select a random instance
             Collections.shuffle(instances);
             InstanceInfo instance = instances.get(0);
             String eurekaUrl = instance.getHomePageUrl() + "services";
@@ -91,15 +101,33 @@ public class AccountServiceClient {
         }
     }
 
+    /**
+     * Retrieves an AccountServiceDefaultClient instance.
+     *
+     * @return the AccountServiceDefaultClient instance
+     * @throws ServiceUnavailableException if no service instances are available
+     */
     public AccountServiceDefaultClient getAccountService() throws ServiceUnavailableException {
         return JAXRSClientFactory.create(getUrlServiceFromEureka(), AccountServiceDefaultClient.class, List.of(jacksonProvider));
     }
 
+    /**
+     * Retrieves a CXF Client for the AccountService.
+     *
+     * @return the Client instance
+     * @throws ServiceUnavailableException if no service instances are available
+     */
     public Client getClientAccountService() throws ServiceUnavailableException {
         AccountServiceDefaultClient api = JAXRSClientFactory.create(getUrlServiceFromEureka(), AccountServiceDefaultClient.class, List.of(jacksonProvider));
         return WebClient.client(api);
     }
 
+    /**
+     * Retrieves a WebClient for the AccountService.
+     *
+     * @return the WebClient instance
+     * @throws ServiceUnavailableException if no service instances are available
+     */
     public WebClient getWebClientAccountService() throws ServiceUnavailableException {
         AccountServiceDefaultClient api = JAXRSClientFactory.create(getUrlServiceFromEureka(), AccountServiceDefaultClient.class, List.of(jacksonProvider));
         Client client = WebClient.client(api);
@@ -108,12 +136,24 @@ public class AccountServiceClient {
         return webClient;
     }
 
+    /**
+     * Retrieves the ClientConfiguration for the AccountService.
+     *
+     * @return the ClientConfiguration instance
+     * @throws ServiceUnavailableException if no service instances are available
+     */
     public ClientConfiguration getClientConfigurationAccountService() throws ServiceUnavailableException {
         AccountServiceDefaultClient api = JAXRSClientFactory.create(getUrlServiceFromEureka(), AccountServiceDefaultClient.class, List.of(jacksonProvider));
         Client client = WebClient.client(api);
         return WebClient.getConfig(client);
     }
 
+    /**
+     * Retrieves the endpoint URL of the AccountService.
+     *
+     * @return the endpoint URL
+     * @throws ServiceUnavailableException if no service instances are available
+     */
     public String getEndpoint() throws ServiceUnavailableException {
         return getUrlServiceFromEureka();
     }

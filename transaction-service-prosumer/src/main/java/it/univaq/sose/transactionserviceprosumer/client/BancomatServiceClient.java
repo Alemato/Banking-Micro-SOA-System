@@ -26,8 +26,15 @@ public class BancomatServiceClient {
         this.bancomatService = null;
     }
 
+    /**
+     * Retrieves the BancomatService instance, using Eureka for service discovery.
+     *
+     * @return the BancomatService instance
+     * @throws ServiceUnavailableException if no service instances are available
+     */
     public BancomatService getBancomatService() throws ServiceUnavailableException {
         try {
+            // Retrieve instances from Eureka or use cached instances if unavailable
             List<InstanceInfo> instances = Optional.ofNullable(eurekaClient.getInstancesByVipAddress("BANCOMAT-SERVICE", false))
                     .filter(list -> !list.isEmpty())
                     .orElseGet(() -> {
@@ -43,13 +50,13 @@ public class BancomatServiceClient {
                 throw new ServiceUnavailableException("No instances available for BANCOMAT-SERVICE");
             }
 
-            // Aggiorna la cache delle istanze in modo sincronizzato
+            // Update the instance cache in a synchronized block
             synchronized (lastInstancesCache) {
                 lastInstancesCache.clear();
                 lastInstancesCache.addAll(instances);
             }
 
-            // Rimuove l'ultima istanza utilizzata dalla lista
+            // Remove the last used instance from the list
             URL lastUrlValue = lastUrl.get();
             if (lastUrlValue != null) {
                 instances.removeIf(instance -> {
@@ -62,7 +69,7 @@ public class BancomatServiceClient {
                 });
             }
 
-            // Se non ci sono istanze alternative disponibili, utilizza l'ultima istanza utilizzata
+            // If no alternative instances are available, use the last used instance
             if (instances.isEmpty()) {
                 log.warn("No alternative instances available for BANCOMAT-SERVICE, using the last used instance");
                 if (bancomatService != null) {
@@ -72,7 +79,7 @@ public class BancomatServiceClient {
                 }
             }
 
-            // Mescola la lista per selezionare un'istanza casuale
+            // Shuffle the list to select a random instance
             Collections.shuffle(instances);
             InstanceInfo instance = instances.get(0);
             String eurekaUrl = instance.getHomePageUrl() + "services/BancomatService?wsdl";

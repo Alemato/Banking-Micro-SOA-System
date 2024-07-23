@@ -8,6 +8,9 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 
+/**
+ * Data Transfer Object (DTO) for updating the bank account balance.
+ */
 @Data
 @XmlRootElement(name = "BancomatTransactionRequest")
 @XmlAccessorType(XmlAccessType.FIELD)

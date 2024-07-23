@@ -8,6 +8,9 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 
+/**
+ * Data Transfer Object (DTO) for executing a transfer request from a bank account to another one.
+ */
 @Data
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "ExecuteTransferRequest")

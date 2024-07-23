@@ -11,6 +11,9 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * Data Transfer Object (DTO) for executing transaction response.
+ */
 @Data
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "TransactionExecuteResponse")

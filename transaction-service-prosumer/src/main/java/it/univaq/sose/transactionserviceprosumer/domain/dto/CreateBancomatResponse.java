@@ -6,6 +6,9 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.Data;
 
+/**
+ * Data Transfer Object (DTO) for creating a bancomat card.
+ */
 @Data
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "CreateBancomatResponse")

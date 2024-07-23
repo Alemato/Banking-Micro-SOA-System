@@ -13,6 +13,10 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * Client service to interact with the BankAccountService registered with Eureka.
+ * It uses Apache CXF for creating SOAP clients and integrates with Eureka for service discovery.
+ */
 @Slf4j
 @Service
 public class BankAccountServiceClient {
@@ -26,8 +30,15 @@ public class BankAccountServiceClient {
         this.bankAccountService = null;
     }
 
+    /**
+     * Retrieves the BankAccountService instance, using Eureka for service discovery.
+     *
+     * @return the BankAccountService instance
+     * @throws ServiceUnavailableException if no service instances are available
+     */
     public BankAccountService getBankAccountService() throws ServiceUnavailableException {
         try {
+            // Retrieve instances from Eureka or use cached instances if unavailable
             List<InstanceInfo> instances = Optional.ofNullable(eurekaClient.getInstancesByVipAddress("BANK-ACCOUNT-SERVICE", false))
                     .filter(list -> !list.isEmpty())
                     .orElseGet(() -> {
@@ -43,13 +54,13 @@ public class BankAccountServiceClient {
                 throw new ServiceUnavailableException("No instances available for BANK-ACCOUNT-SERVICE");
             }
 
-            // Aggiorna la cache delle istanze in modo sincronizzato
+            // Update the instance cache in a synchronized block
             synchronized (lastInstancesCache) {
                 lastInstancesCache.clear();
                 lastInstancesCache.addAll(instances);
             }
 
-            // Rimuove l'ultima istanza utilizzata dalla lista
+            // Remove the last used instance from the list
             URL lastUrlValue = lastUrl.get();
             if (lastUrlValue != null) {
                 instances.removeIf(instance -> {
@@ -62,7 +73,7 @@ public class BankAccountServiceClient {
                 });
             }
 
-            // Se non ci sono istanze alternative disponibili, utilizza l'ultima istanza utilizzata
+            // If no alternative instances are available, use the last used instance
             if (instances.isEmpty()) {
                 log.warn("No alternative instances available for BANK-ACCOUNT-SERVICE, using the last used instance");
                 if (bankAccountService != null) {
@@ -72,7 +83,7 @@ public class BankAccountServiceClient {
                 }
             }
 
-            // Mescola la lista per selezionare un'istanza casuale
+            // Shuffle the list to select a random instance
             Collections.shuffle(instances);
             InstanceInfo instance = instances.get(0);
             String eurekaUrl = instance.getHomePageUrl() + "services/BankAccountService?wsdl";

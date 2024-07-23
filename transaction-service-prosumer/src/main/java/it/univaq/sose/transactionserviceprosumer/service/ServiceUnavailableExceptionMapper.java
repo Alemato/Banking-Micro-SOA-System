@@ -11,11 +11,21 @@ import jakarta.ws.rs.ext.Provider;
 
 import java.util.List;
 
+/**
+ * Exception mapper to handle ServiceUnavailableException.
+ * This class maps the exception to a proper HTTP response with a status code of 503 (Service Unavailable).
+ */
 @Provider
 public class ServiceUnavailableExceptionMapper implements ExceptionMapper<ServiceUnavailableException> {
     @Context
     private HttpHeaders headers;
 
+    /**
+     * Converts a ServiceUnavailableException into a Response object.
+     *
+     * @param exception the exception to be mapped to a response.
+     * @return a Response object with a 503 status code and an appropriate error message.
+     */
     @Override
     public Response toResponse(ServiceUnavailableException exception) {
         MediaType responseType = determineResponseType();
@@ -25,6 +35,11 @@ public class ServiceUnavailableExceptionMapper implements ExceptionMapper<Servic
                 .build();
     }
 
+    /**
+     * Determines the response type (media type) based on the acceptable media types in the HTTP headers.
+     *
+     * @return the media type for the response.
+     */
     private MediaType determineResponseType() {
         List<MediaType> acceptableMediaTypes = headers.getAcceptableMediaTypes();
         if (acceptableMediaTypes.contains(MediaType.APPLICATION_JSON_TYPE)) {
