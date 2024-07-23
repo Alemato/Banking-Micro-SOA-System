@@ -1,5 +1,3 @@
-a name="readme-top"></a>
-
 <!-- PROJECT SHIELDS -->
 [![Contributors][contributors-shield]][contributors-url]
 [![Commit Activity][commit-shield]][commit-url]
