@@ -1941,6 +1941,116 @@ Si notino i seguenti punti:
 - Viene controllato lo stato delle risposte delle chiamate sotto callback e vengono gestite eventuali eccezioni.
 - Al termine di tutte le 4 richieste, le risposte vengono elaborate per creare una risposta finale.
 
+## Implementazione di un Semplice Client per il Banking Micro-SOA System
+
+Per questo sistema, abbiamo deciso di implementare un'applicazione client di tipo Shell utilizzando **Spring Shell**.
+
+Questa applicazione si interfaccia con i vari servizi del sistema bancario attraverso il gateway per eseguire le
+operazioni richieste dagli utenti.
+
+Le operazioni implementate sono:
+
+1. login: Accesso al sistema bancario (interagisce con Account-Service)
+2. logout: Disconnessione dal sistema bancario
+3. open-bank-account: Apertura di un conto bancario (interagisce con banking-operations-service-prosumer)
+4. withdrawal: Operazione di prelievo (interagisce con transaction-service-prosumer)
+5. open-loan: Apertura di un prestito (interagisce con loan-service-prosumer)
+6. close-loan: Chiusura di un prestito (interagisce con loan-service-prosumer)
+7. bank-account-report: Visualizzazione del rapporto sul conto bancario (interagisce con
+   banking-operations-service-prosumer)
+8. financial-report: Visualizzazione del rapporto finanziario completo (interagisce con
+   financial-report-service-prosumer)
+
+Per implementare un comando Spring Shell, è sufficiente utilizzare l'annotazione `@ShellComponent` sulla classe che
+contiene i comandi shell e `@ShellMethod` sui singoli metodi.
+
+Ecco un esempio:
+
+```java
+
+@Slf4j
+@ShellComponent
+public class BankingCommands extends AbstractShellComponent {
+
+    private final JwtTokenProvider jwtTokenProvider;
+    private final AccountSession accountSession;
+    private final GatewayUtil gatewayUtil;
+
+    public BankingCommands(JwtTokenProvider jwtTokenProvider, AccountSession accountSession, GatewayUtil gatewayUtil) {
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.accountSession = accountSession;
+        this.gatewayUtil = gatewayUtil;
+    }
+
+    @ShellMethodAvailability("isNotAuthenticated")
+    @ShellMethod(key = "login", value = "Login to the banking system", group = "AUTHENTICATION OPERATIONS")
+    public String login() {
+        String username = InputReader.singleReadInput(getTerminal(), "Enter your username: ");
+        String password = InputReader.singleReadInput(getTerminal(), "Enter your password: ");
+
+        try {
+            executeLogin(username, password);
+        } catch (BankingClientException e) {
+            return gatewayUtil.formatErrorMessage(e.getMessage());
+        }
+        AccountDetails accountDetails = accountSession.getAccountDetails();
+        try {
+            executeFinancialReport(accountDetails);
+        } catch (BankingClientException e) {
+            return gatewayUtil.formatErrorMessage(e.getMessage());
+        }
+
+        accountDetails = accountSession.getAccountDetails();
+        TerminalUtil.printlnOnTerminal(getTerminal(), gatewayUtil.formatSuccessMessage("Login successful. Welcome " + accountDetails.getUsername() + "!"));
+        return TableFormatter.formatObjectDetails(getTerminal(), accountDetails, "Account");
+    }
+
+    @ShellMethodAvailability("isAuthenticated")
+    @ShellMethod(key = "logout", value = "Logout from the banking system", group = "AUTHENTICATION OPERATIONS")
+    public String logout() {
+        String key = InputReader.singleReadInputCustom(getTerminal(), "Are you sure you want to logout? (Y/n)");
+
+        while (true) {
+            if (Objects.equals(key, "n")) {
+                return "\n****************************\nGood decision, stay with us!\n****************************\n";
+            } else if (Objects.equals(key, "Y")) {
+                accountSession.resetAccountSession();
+                jwtTokenProvider.clearToken();
+                return "\n**********************\nGoodbye, see you soon!\n**********************\n";
+            } else {
+                key = InputReader.singleReadInputCustom(getTerminal(), "Command not recognised, try again: (Y/n)");
+            }
+        }
+    }
+
+    private Availability isNotAuthenticated() {
+        return !accountSession.isLoggedIn()
+                ? Availability.available()
+                : Availability.unavailable("You are logged in");
+    }
+
+    private Availability isAuthenticated() {
+        return accountSession.isLoggedIn()
+                ? Availability.available()
+                : Availability.unavailable("You are not logged in");
+    }
+
+    // ...
+}
+```
+
+L'annotazione `@ShellMethodAvailability` viene utilizzata per abilitare o disabilitare un comando in base a una
+determinata condizione.
+
+Nell'esempio precedente, sia il comando `login` che il comando `logout` sono annotati con questa
+annotazione.
+
+Il comando `login` utilizza la condizione `isNotAuthenticated`, risultando disponibile solo se l'utente non
+è già autenticato, mentre il comando `logout` utilizza la condizione `isAuthenticated`, risultando disponibile solo se
+l'utente è autenticato.
+
+Per maggiori dettagli sull'implementazione, consultare il modulo `banking-service-client`.
+
 ## Utilizzo del Plug-in Maven openapi-generator-maven-plugin
 
 Per incrementare la velocità di sviluppo e mantenere la coerenza degli oggetti tra i vari servizi, è stato deciso di
