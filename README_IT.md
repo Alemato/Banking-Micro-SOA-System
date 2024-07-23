@@ -2232,3 +2232,327 @@ Esempio di utilizzo del plug-in:
     </executions>
 </plugin>
 ```
+
+## Implementazione dei Dockerfile
+
+Per distribuire il nostro progetto, abbiamo scelto una distribuzione basata su container Docker. Per generare delle
+immagini eseguibili da Docker, è indispensabile creare un Dockerfile appropriato per ogni modulo da containerizzare.
+
+Ecco un esempio di Dockerfile per quei servizi che non utilizzano un plugin di generazione del codice:
+
+```dockerfile
+# Fase 1: Build
+FROM maven:3.9.7-amazoncorretto-17 AS build
+
+# Set the working directory
+WORKDIR /app
+
+# Copy file pom.xml and download dependencies
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+
+# Copy the code and compile the project
+COPY src ./src
+RUN mvn package -DskipTests
+
+# Fase 2: Run
+FROM amazoncorretto:17.0.12-alpine3.19
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the jar from build stage
+COPY --from=build /app/target/*.jar app.jar
+
+# Expose ports
+EXPOSE 9080
+
+LABEL name="Banking Micro-SOA System - Account Banking" \
+      description="Account Service for Banking Micro-SOA System" \
+      version="0.0.1" \
+      authors="University of L'Aquila"
+
+# Command to run the application
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app/app.jar"]
+```
+
+Ecco un esempio di Dockerfile per quei servizi che utilizzano un plugin di generazione del codice:
+
+```dockerfile
+# Stage 1: Build
+FROM maven:3.9.7-amazoncorretto-17 AS build
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the pom.xml file and download dependencies
+COPY banking-operations-service-prosumer/pom.xml .
+
+# Copy the WSDL and OpenAPI files into the build directory
+COPY wsdl /app/../wsdl
+COPY openapi /app/../openapi
+
+# Copy the source code into the working directory
+COPY banking-operations-service-prosumer/src /app/src
+
+# Run code generation and Maven build command, skipping tests
+RUN mvn clean generate-sources package -DskipTests
+
+# Stage 2: Run
+FROM amazoncorretto:17.0.12-alpine3.19
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the jar from the build stage
+COPY --from=build /app/target/*.jar app.jar
+
+# Expose port 9083
+EXPOSE 9083
+
+# Add labels to the image
+LABEL name="Banking Micro-SOA System - Banking Operations Service Prosumer" \
+      description="Banking Operations Service Prosumer for Banking Micro-SOA System" \
+      version="0.0.1" \
+      authors="University of L'Aquila"
+
+# Command to run the application
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app/app.jar"]
+```
+
+Nota bene:
+
+Per eseguire il build delle immagini dei moduli che utilizzano un generatore di codice, è necessario avviare il processo
+di build al di fuori della directory del modulo. Questo perché il processo ha bisogno delle cartelle `wsdl`
+e/o `openapi`
+che si trovano all'esterno.
+
+È quindi necessario impostare il contesto di Docker al di fuori della cartella del modulo e forzare la lettura del
+Dockerfile interno. Questo comportamento è necessario per motivi di sicurezza quando si utilizzano i comandi `COPY wsdl
+/app/../wsdl` e `COPY openapi /app/../openapi`.
+
+Il comando da eseguire nella root del progetto sarà quindi:
+
+```shell
+docker build -t banking-operations-service-prosumer -f banking-operations-service-prosumer/Dockerfile .
+```
+
+## Implementazione del docker-compose
+
+Per semplificare la distribuzione del nostro progetto, abbiamo creato un file `docker-compose`.
+
+Da notare l'utilizzo dell'host virtuale `host.docker.internal` di Docker.
+
+Se questo host non è disponibile nel file host del sistema operativo, è necessario aggiungerlo manualmente con l'IP
+`127.0.0.1` o, preferibilmente, con l'IP locale della macchina che ospita Docker.
+
+````yaml
+version: '3.8'
+services:
+  postgresql:
+    image: postgres
+    container_name: postgresql-container
+    environment:
+      POSTGRES_PASSWORD: 123456
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - banking-micro-soa-system
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin-container
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.admin
+      PGADMIN_DEFAULT_PASSWORD: 123456
+    ports:
+      - "9090:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgresql
+    networks:
+      - banking-micro-soa-system
+
+  discovery-service:
+    build: ./discovery-service
+    image: discovery-service
+    container_name: discovery-service-container
+    ports:
+      - "8761:8761"
+    environment:
+      EUREKA_SERVER_PORT: "8761"
+    depends_on:
+      - postgresql
+    networks:
+      - banking-micro-soa-system
+    tty: true
+
+  account-service:
+    build: ./account-service
+    image: account-service
+    container_name: account-service-container
+    ports:
+      - "9080:9080"
+    environment:
+      EUREKA_HOST: "host.docker.internal"
+      EUREKA_SERVER_PORT: "8761"
+    depends_on:
+      - postgresql
+      - discovery-service
+    networks:
+      - banking-micro-soa-system
+    tty: true
+
+  bank-account-service:
+    build: ./bank-account-service
+    image: bank-account-service
+    container_name: bank-account-service-container
+    ports:
+      - "9081:9081"
+    environment:
+      EUREKA_HOST: "host.docker.internal"
+      EUREKA_SERVER_PORT: "8761"
+    depends_on:
+      - postgresql
+      - discovery-service
+    networks:
+      - banking-micro-soa-system
+    tty: true
+
+  bancomat-service:
+    build: ./bancomat-service
+    image: bancomat-service
+    container_name: bancomat-service-container
+    ports:
+      - "9082:9082"
+    environment:
+      EUREKA_HOST: "host.docker.internal"
+      EUREKA_SERVER_PORT: "8761"
+    depends_on:
+      - postgresql
+      - discovery-service
+    networks:
+      - banking-micro-soa-system
+    tty: true
+
+  banking-operations-service-prosumer:
+    build:
+      context: .
+      dockerfile: banking-operations-service-prosumer/Dockerfile
+    image: banking-operations-service-prosumer
+    container_name: banking-operations-service-prosumer-container
+    ports:
+      - "9083:9083"
+    environment:
+      EUREKA_HOST: "host.docker.internal"
+      EUREKA_SERVER_PORT: "8761"
+    depends_on:
+      - postgresql
+      - discovery-service
+      - account-service
+      - bank-account-service
+      - bancomat-service
+    networks:
+      - banking-micro-soa-system
+    tty: true
+
+  transaction-service-prosumer:
+    build:
+      context: .
+      dockerfile: transaction-service-prosumer/Dockerfile
+    image: transaction-service-prosumer
+    container_name: transaction-service-prosumer-container
+    ports:
+      - "9084:9084"
+    environment:
+      EUREKA_HOST: "host.docker.internal"
+      EUREKA_SERVER_PORT: "8761"
+    depends_on:
+      - postgresql
+      - discovery-service
+      - account-service
+      - bank-account-service
+      - bancomat-service
+    networks:
+      - banking-micro-soa-system
+    tty: true
+
+  loan-service-prosumer:
+    build:
+      context: .
+      dockerfile: loan-service-prosumer/Dockerfile
+    image: loan-service-prosumer
+    container_name: loan-service-prosumer-container
+    ports:
+      - "9085:9085"
+    environment:
+      EUREKA_HOST: "host.docker.internal"
+      EUREKA_SERVER_PORT: "8761"
+    depends_on:
+      - postgresql
+      - discovery-service
+      - account-service
+      - bank-account-service
+      - bancomat-service
+    networks:
+      - banking-micro-soa-system
+    tty: true
+
+  financial-report-service-prosumer:
+    build:
+      context: .
+      dockerfile: financial-report-service-prosumer/Dockerfile
+    image: financial-report-service-prosumer
+    container_name: financial-report-service-prosumer-container
+    ports:
+      - "9086:9086"
+    environment:
+      EUREKA_HOST: "host.docker.internal"
+      EUREKA_SERVER_PORT: "8761"
+    depends_on:
+      - postgresql
+      - discovery-service
+      - account-service
+      - bank-account-service
+      - bancomat-service
+      - banking-operations-service-prosumer
+      - loan-service-prosumer
+    networks:
+      - banking-micro-soa-system
+    tty: true
+
+  gateway-service:
+    build: ./gateway-service
+    image: gateway-service
+    container_name: gateway-service-container
+    ports:
+      - "9087:9087"
+    environment:
+      EUREKA_HOST: "host.docker.internal"
+      EUREKA_SERVER_PORT: "8761"
+    depends_on:
+      - postgresql
+      - discovery-service
+      - account-service
+      - bancomat-service
+      - bank-account-service
+      - banking-operations-service-prosumer
+      - financial-report-service-prosumer
+      - loan-service-prosumer
+      - transaction-service-prosumer
+    networks:
+      - banking-micro-soa-system
+    tty: true
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+
+networks:
+  banking-micro-soa-system:
+    driver: bridge
+````
