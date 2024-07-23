@@ -1512,4 +1512,283 @@ public class GetBancomatDetailsResponse {
 }
 ```
 
+## Implementazione di un servizio JAX-RS con Apache CXF e Spring Boot
+
+Dopo aver aggiunto le dipendenze e le configurazioni necessarie descritte in precedenza, vediamo come è stato
+implementato un servizio JAX-RS.
+
+Per implementare un servizio, è sufficiente dichiarare un'interfaccia che utilizzi le annotazioni JAX-RS e le
+annotazioni OpenApi e una classe
+che implementi l'effettiva logica.
+
+Interfacce:
+
+```java
+
+@Path("/api/account")
+public interface AccountService {
+
+    @Operation(operationId = "login", description = "Authenticate user and return JWT", responses = {
+            @ApiResponse(responseCode = "200", description = "Authentication successful", content = {
+                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = TokenResponse.class)),
+                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = TokenResponse.class))}),
+            @ApiResponse(responseCode = "401", description = "Authentication failed", content = {
+                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = ErrorResponse.class)),
+                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = ErrorResponse.class))})
+    })
+    @POST
+    @Path("/login")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    Response login(@RequestBody(description = "Login",
+            required = true,
+            content = {@Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = UserCredentials.class)),
+                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = UserCredentials.class)),
+            }
+    ) UserCredentials credentials);
+}
+
+@Path("/api/bank")
+public interface BankingOperationsService {
+    @Operation(
+            operationId = "OpenAccount",
+            description = "This endpoint allows users to create their personal profile and open a new bank account in a single operation.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Open Account Successful",
+                            content = {
+                                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = OpenAccountResponse.class)),
+                                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = OpenAccountResponse.class))
+                            }),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad Request",
+                            content = {
+                                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = ErrorResponse.class)),
+                                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = ErrorResponse.class))
+                            }
+                    ),
+                    @ApiResponse(
+                            responseCode = "503",
+                            description = "Service Unavailable",
+                            content = {
+                                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = ErrorResponse.class)),
+                                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = ErrorResponse.class))
+                            }
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal Server Error",
+                            content = {
+                                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = ErrorResponse.class)),
+                                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = ErrorResponse.class))
+                            }
+                    )
+            })
+    @POST
+    @Path("/open-account")
+    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    void openAccount(@RequestBody(description = "OpenAccount",
+            required = true,
+            content = {@Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = OpenAccountRequest.class)),
+                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = OpenAccountRequest.class)),
+            }
+    ) OpenAccountRequest openAccountRequest, @Suspended AsyncResponse asyncResponse);
+}
+```
+
+Implementazione delle interfacce:
+
+```java
+
+@Service
+@Features(features = "org.apache.cxf.ext.logging.LoggingFeature")
+public class AccountServiceImpl implements AccountService {
+    private final AccountManager accountManager;
+
+    public AccountServiceImpl(AccountManager accountManager) {
+        this.accountManager = accountManager;
+    }
+
+    @Override
+    public Response login(UserCredentials credentials) {
+        try {
+            String token = accountManager.getJwtToken(credentials);
+            return Response.ok(new TokenResponse(token)).build();
+        } catch (AuthenticationException e) {
+            return Response.status(Response.Status.UNAUTHORIZED).entity(new ErrorResponse(e.getMessage())).build();
+        }
+    }
+}
+
+@Slf4j
+@Service
+public class BankingOperationsServiceImpl implements BankingOperationsService {
+    private final AccountServiceClient accountServiceClient;
+    private final BankAccountServiceClient bankAccountService;
+    private final BancomatServiceClient bancomatServiceClient;
+
+    public BankingOperationsServiceImpl(AccountServiceClient accountServiceClient, BankAccountServiceClient bankAccountService, BancomatServiceClient bancomatServiceClient) {
+        this.accountServiceClient = accountServiceClient;
+        this.bankAccountService = bankAccountService;
+        this.bancomatServiceClient = bancomatServiceClient;
+    }
+
+    @Override
+    public void openAccount(OpenAccountRequest openAccountRequest, AsyncResponse asyncResponse) {
+        new Thread(() -> {
+
+            try {
+                Thread.sleep(1000);
+                WebClient accountClient = accountServiceClient.getWebClientAccountService();
+                String locationHeader = null;
+                try (Response accountResponse = accountClient.path("/api/account/customer-account").post(
+                        new OpenBankAccountRequest()
+                                .name(openAccountRequest.getName())
+                                .surname(openAccountRequest.getSurname())
+                                .username(openAccountRequest.getUsername())
+                                .password(openAccountRequest.getPassword())
+                                .email(openAccountRequest.getEmail())
+                                .phone(openAccountRequest.getPhone())
+                )) {
+                    log.info("Account-Service Response for Create Account Customer: {}", accountResponse);
+                    log.info("Headers from Create Account Customer Response: {}", accountResponse.getHeaders());
+                    if (!accountResponse.getStatusInfo().getFamily().equals(Response.Status.Family.SUCCESSFUL))
+                        throw new AccountServiceException("Error for Account Service (Create Customer Account)");
+                    locationHeader = accountResponse.getHeaderString("Location");
+                }
+
+                if (locationHeader == null) throw new UrlLocationMalformedException("The URL Location is empty.");
+                long idAccount = BankingOperationsUtils.getIdFromUrlLocator(locationHeader);
+
+                OpenAccountResponse openAccountResponse = getOpenAccountResponse(openAccountRequest, idAccount);
+
+                Response response = Response.status(Response.Status.CREATED).entity(openAccountResponse).build();
+                asyncResponse.resume(response);
+            } catch (InterruptedException | UrlLocationMalformedException | BankAccountAlradyExistException_Exception |
+                     AccountServiceException e) {
+                Response response = Response.serverError().entity(new ErrorResponse(e.getMessage())).build();
+                asyncResponse.resume(response);
+                /* Clean up whatever needs to be handled before interrupting  */
+                Thread.currentThread().interrupt();
+            } catch (ServiceUnavailableException e) {
+                /* Trigger ExceptionMapper */
+                asyncResponse.resume(e);
+                Thread.currentThread().interrupt();
+            } catch (it.univaq.sose.bancomatservice.webservice.NotFoundException_Exception e) {
+                Response response = Response.status(Response.Status.NOT_FOUND).entity(new ErrorResponse(e.getMessage())).build();
+                asyncResponse.resume(response);
+                Thread.currentThread().interrupt();
+            } catch (BancomatAlreadyExistingException_Exception e) {
+                Response response = Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse(e.getMessage())).build();
+                asyncResponse.resume(response);
+                Thread.currentThread().interrupt();
+            }
+        }).start();
+    }
+
+    private OpenAccountResponse getOpenAccountResponse(OpenAccountRequest openAccountRequest, long idAccount) throws BankAccountAlradyExistException_Exception, AccountServiceException, ServiceUnavailableException, it.univaq.sose.bancomatservice.webservice.NotFoundException_Exception, BancomatAlreadyExistingException_Exception {
+        BankAccountRequest bankAccountRequest = new BankAccountRequest();
+        bankAccountRequest.setAccountId(idAccount);
+        bankAccountRequest.setBalance(openAccountRequest.getBalance());
+        BankAccountService bankAccountClient = bankAccountService.getBankAccountService();
+        BancomatService bancomatService = bancomatServiceClient.getBancomatService();
+
+        BankAccountResponse bankAccountResponse = bankAccountClient.createBankAccount(bankAccountRequest);
+        log.info("Bank-Account-Service Response for Create Bank Account: {}", bankAccountResponse);
+
+        BancomatRequest bancomatRequest = new BancomatRequest();
+        bancomatRequest.setAccountId(bankAccountResponse.getAccountId());
+        bancomatRequest.setBankAccountId(bankAccountResponse.getId());
+
+        BancomatResponse bancomatResponse = bancomatService.createBancomat(bancomatRequest);
+
+        AccountServiceDefaultClient client = accountServiceClient.getAccountService();
+        try {
+            client.addBankAccount1(idAccount, new AddIdBankAccountRequest().idBankAccount(bankAccountResponse.getId()));
+        } catch (Exception e) {
+            throw new AccountServiceException("Error for Account Service (Add Bank Account)");
+        }
+        return getOpenAccountResponse(idAccount, bankAccountResponse, bancomatResponse);
+    }
+}
+
+@Provider
+public class ServiceUnavailableExceptionMapper implements ExceptionMapper<ServiceUnavailableException> {
+    @Context
+    private HttpHeaders headers;
+
+    @Override
+    public Response toResponse(ServiceUnavailableException exception) {
+        MediaType responseType = determineResponseType();
+        return Response.status(Response.Status.SERVICE_UNAVAILABLE)
+                .entity(new ErrorResponse(exception.getMessage()))
+                .type(responseType)
+                .build();
+    }
+
+    private MediaType determineResponseType() {
+        List<MediaType> acceptableMediaTypes = headers.getAcceptableMediaTypes();
+        if (acceptableMediaTypes.contains(MediaType.APPLICATION_JSON_TYPE)) {
+            return MediaType.APPLICATION_JSON_TYPE;
+        } else if (acceptableMediaTypes.contains(MediaType.APPLICATION_XML_TYPE)) {
+            return MediaType.APPLICATION_XML_TYPE;
+        } else {
+            return MediaType.TEXT_PLAIN_TYPE; // Default response type
+        }
+    }
+}
+```
+
+Si notino i seguenti punti:
+
+- L'utilizzo del Client/LoadBalancer `AccountServiceClient` per eseguire in modo sincrono la query al
+  servizio `Account-Service`, che crea un nuovo account Customer.
+- La presenza di `Thread.sleep(1000);` nell'implementazione asincrona del metodo `openAccount`, che simula un ritardo di
+  1 secondo nella risposta effettiva.
+- L'uso di `asyncResponse.resume(e);` in caso di eccezione di tipo `ServiceUnavailableException`, creando una risposta
+  automatizzata tramite il `ServiceUnavailableExceptionMapper`.
+- L'annotazione `@Features(features = "org.apache.cxf.ext.logging.LoggingFeature")`, che abilita il logging di Apache su
+  questo endpoint.
+
+Un esempio di oggetto risposta `OpenAccountResponse`:
+
+```java
+
+@Data
+@XmlRootElement(name = "OpenAccountResponse")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class OpenAccountResponse {
+    @XmlElement(required = true)
+    private long id;
+    @XmlElement(required = true)
+    private String name;
+    @XmlElement(required = true)
+    private String surname;
+    @XmlElement(required = true)
+    private String username;
+    @XmlElement(required = true)
+    private String email;
+    @XmlElement(required = true)
+    private String phone;
+    @XmlElement(required = true)
+    private long bankAccountId;
+    @XmlElement(required = true)
+    private String iban;
+    @XmlElement(required = true)
+    private BigDecimal balance;
+    @XmlElement(required = true)
+    private long bancomatId;
+    @XmlElement(required = true)
+    private String bancomatNumber;
+    @XmlElement(required = true)
+    private String bancomatCvv;
+    @XmlElement(required = true)
+    private String bancomatExpiryDate;
+}
+```
+
+
 
