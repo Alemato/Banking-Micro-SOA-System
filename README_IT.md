@@ -33,9 +33,13 @@
     <li><a href="#funzionamento-del-sistema">Funzionamento del Sistema</a></li>
     <li><a href="#motivazioni-legate-allapproccio-soa-e-microservices">Motivazioni legate all'Approccio SOA e Microservices</a></li>
     <li><a href="#use-case-diagram">Use Case Diagram</a></li>
-    <li><a href="#component-diagram">Component Diagram</a></li>
-    <li><a href="#componenti">Componenti</a></li>
-    <li><a href="#note-aggiuntive">Note aggiuntive</a></li>
+    <li>
+            <a href="#component-diagram">Component Diagram</a>
+        <ul>
+            <li><a href="#componenti">Componenti</a></li>
+            <li><a href="#note-aggiuntive">Note aggiuntive</a></li>
+        </ul>
+    </li>
     <li>
       <a href="#sequence-diagrams">Sequence Diagrams</a>
       <ul>
@@ -58,6 +62,7 @@
         <li><a href="#integrazione-del-logging-di-apache-cxf-in-spring-boot">Integrazione del Logging di Apache CXF in Spring Boot</a></li>
         <li><a href="#modifiche-al-jackson-json-provider-per-apache-cxf-in-spring-boot">Modifiche al Jackson JSON Provider per Apache CXF in Spring Boot</a></li>
         <li><a href="#integrazione-delle-metriche-di-apache-cxf-con-spring-boot-actuator">Integrazione delle Metriche di Apache CXF con Spring Boot Actuator</a></li>
+        <li><a href="#configurazione-delle-metriche-per-unapplicazione-soap">Configurazione delle Metriche per un'Applicazione SOAP</a></li>
         <li><a href="#configurazione-delle-metriche-per-unapplicazione-rest">Configurazione delle Metriche per un'Applicazione REST</a></li>
         <li><a href="#spring-cloud-discovery-eureka">Spring Cloud Discovery Eureka</a></li>
         <li><a href="#implementazione-dei-load-balance-nei-client-apache-cxf">Implementazione dei Load-Balance nei client Apache CXF</a></li>
@@ -72,7 +77,8 @@
         <li><a href="#implementazione-del-docker-compose">Implementazione del docker-compose</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Utilizzo</a></li>
+    <li><a href="#guida-alla-configurazione">Guida alla configurazione</a></li>
+    <li><a href="#demo-video">Demo video</a></li>
     <li><a href="https://github.com/Alemato/Banking-Micro-SOA-System/blob/main/LICENSE">License</a></li>
   </ol>
 </details>
@@ -2334,9 +2340,9 @@ Esempio di utilizzo del plug-in:
 ## Implementazione dei Dockerfile
 
 Per distribuire il nostro progetto, abbiamo scelto una distribuzione basata su container Docker. Per generare delle
-immagini eseguibili da Docker, è indispensabile creare un Dockerfile appropriato per ogni modulo da containerizzare.
+immagini eseguibili da Docker, è indispensabile creare un Dockerfile appropriato per ogni modulo da "containerizzare".
 
-Ecco un esempio di Dockerfile per quei servizi che non utilizzano un plugin di generazione del codice:
+Ecco un esempio di Dockerfile per i servizi che non utilizzano un plugin di generazione del codice:
 
 ```dockerfile
 # Fase 1: Build
@@ -2374,7 +2380,7 @@ LABEL name="Banking Micro-SOA System - Account Banking" \
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app/app.jar"]
 ```
 
-Ecco un esempio di Dockerfile per quei servizi che utilizzano un plugin di generazione del codice:
+Ecco un esempio di Dockerfile per i servizi che utilizzano un plugin di generazione del codice:
 
 ```dockerfile
 # Stage 1: Build
@@ -2422,8 +2428,7 @@ Nota bene:
 
 Per eseguire il build delle immagini dei moduli che utilizzano un generatore di codice, è necessario avviare il processo
 di build al di fuori della directory del modulo. Questo perché il processo ha bisogno delle cartelle `wsdl`
-e/o `openapi`
-che si trovano all'esterno.
+e/o `openapi` i quali si trovano all'esterno.
 
 È quindi necessario impostare il contesto di Docker al di fuori della cartella del modulo e forzare la lettura del
 Dockerfile interno. Questo comportamento è necessario per motivi di sicurezza quando si utilizzano i comandi `COPY wsdl
@@ -2654,3 +2659,71 @@ networks:
   banking-micro-soa-system:
     driver: bridge
 ````
+
+## Guida alla configurazione
+
+Guida dettagliata che illustra tutti i passaggi necessari per configurare e avviare l'applicazione.
+
+### Prerequisiti
+
+- Assicurarsi di aver installato Docker.
+- Assicurarsi di avere Java JDK (versione 17).
+- Assicurarsi di avere Maven.
+
+### Clonazione del Repository
+
+Clonare il repository git pubblico:
+
+```sh
+git clone https://github.com/Alemato/Banking-Micro-SOA-System.git
+```
+
+_Oppure SSH:_
+
+```sh
+git clone git@github.com:Alemato/Banking-Micro-SOA-System.git
+```
+
+### Costruzione dei Moduli
+
+Dopo aver clonato il repository, navigare all'interno della directory principale del progetto.
+
+Eseguire il seguente comando:
+
+```sh
+mvn clean install
+```
+
+### Avvio dei Servizi con Docker
+
+Terminato l'esecuzione del precedente comando, sempre nella directory principale del progetto, eseguire il comando
+Docker Compose per costruire e avviare tutti i servizi:
+
+```sh
+docker-compose up --build
+```
+
+### Avvio del Client Spring Shell
+
+Il client deve essere avviato separatamente in un altro terminale. Segui questi passaggi:
+
+1. Aprire un altro terminare nella directory principale del progetto
+
+2. Navigare nella cartella `target` del client:
+    ```sh
+    cd banking-service-client/target
+    ```
+
+3. Avviare il client Spring Shell con il comando:
+    ```sh
+    java -jar banking-service-client-0.0.1-SNAPSHOT.jar
+    ```
+
+### Interazioni del Client
+
+Il client sviluppato con Spring Shell fornisce un'interfaccia interattiva e intuitiva per interagire con i servizi.
+
+## Demo video
+
+<a href="https://univaq-my.sharepoint.com/:v:/g/personal/stefano_decina_student_univaq_it/EbnubKyOVW1OmrRNbcLBcIwBqnik5LnaajsYmGH_Odvm1A?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=oCb49j">
+<strong>Demo video»</strong></a>
