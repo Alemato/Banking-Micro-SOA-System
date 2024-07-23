@@ -10,6 +10,9 @@ import lombok.ToString;
 
 import java.math.BigDecimal;
 
+/**
+ * Data Transfer Object (DTO) for transaction requests.
+ */
 @Getter
 @Setter
 @ToString

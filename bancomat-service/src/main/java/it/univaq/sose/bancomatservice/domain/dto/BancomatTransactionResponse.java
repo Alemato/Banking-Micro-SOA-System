@@ -13,6 +13,9 @@ import lombok.ToString;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * Data Transfer Object (DTO) for Bancomat responses.
+ */
 @Getter
 @Setter
 @ToString

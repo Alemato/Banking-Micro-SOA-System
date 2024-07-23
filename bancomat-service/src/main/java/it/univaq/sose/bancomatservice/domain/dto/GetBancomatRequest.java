@@ -8,6 +8,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Data Transfer Object (DTO) for the request of the getBancomatDetails operation.
+ */
 @Getter
 @Setter
 @ToString

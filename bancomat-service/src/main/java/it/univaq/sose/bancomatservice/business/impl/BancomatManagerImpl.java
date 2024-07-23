@@ -20,6 +20,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+/**
+ * Implementation of the BancomatManager interface.
+ */
 @Service
 public class BancomatManagerImpl implements BancomatManager {
 
@@ -33,18 +36,27 @@ public class BancomatManagerImpl implements BancomatManager {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public BancomatResponse getBancomatDetails(Long accountId) throws NotFoundException {
         Bancomat bancomat = bancomatRepository.findByAccountId(accountId).orElseThrow(() -> new NotFoundException("Bancomat with account ID: " + accountId + " not found."));
         return new BancomatResponse(bancomat.getId(), bancomat.getNumber(), bancomat.getCvv(), bancomat.getExpiryDate().toString(), bancomat.getAccountId());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public BancomatResponse getBancomatDetailsByNumber(String number) throws NotFoundException {
         Bancomat bancomat = bancomatRepository.findByNumber(number).orElseThrow(() -> new NotFoundException("Bancomat with number: " + number + " not found."));
         return new BancomatResponse(bancomat.getId(), bancomat.getNumber(), bancomat.getCvv(), bancomat.getExpiryDate().toString(), bancomat.getAccountId());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public BancomatResponse createBancomat(BancomatRequest bancomatRequest) throws BancomatAlreadyExistingException {
@@ -52,6 +64,7 @@ public class BancomatManagerImpl implements BancomatManager {
             throw new BancomatAlreadyExistingException("A non-expired Bancomat already exists");
         }
 
+        // Generate a unique Bancomat number
         long numberPart1 = random.nextLong() % 100000000L;
         numberPart1 = numberPart1 < 0 ? -numberPart1 : numberPart1;
         long numberPart2 = random.nextLong() % 100000000L;
@@ -60,9 +73,11 @@ public class BancomatManagerImpl implements BancomatManager {
         String numberWithoutSeparators = String.format("%08d%08d", numberPart1, numberPart2);
         String number = numberWithoutSeparators.replaceAll("(.{4})(?!$)", "$1-");
 
+        // Generate a CVV and expiry date
         String cvv = String.format("%03d", random.nextInt(1000));
         YearMonth expiryDate = YearMonth.now().plusYears(3);
 
+        // Create and save the Bancomat entity
         Bancomat bancomat = new Bancomat();
         bancomat.setNumber(number);
         bancomat.setCvv(cvv);
@@ -75,6 +90,9 @@ public class BancomatManagerImpl implements BancomatManager {
         return new BancomatResponse(bancomat.getId(), bancomat.getNumber(), bancomat.getCvv(), bancomat.getExpiryDate().toString(), bancomat.getAccountId());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public BancomatTransactionResponse executeTransaction(TransactionRequest transactionRequest) throws NotFoundException, ExpiredBancomatException {
@@ -82,10 +100,12 @@ public class BancomatManagerImpl implements BancomatManager {
 
                 .orElseThrow(() -> new NotFoundException("Bancomat with number: " + transactionRequest.getNumber() + " not found."));
 
+        // Check if the Bancomat is expired
         if (YearMonth.now().isAfter(bancomat.getExpiryDate())) {
             throw new ExpiredBancomatException("Bancomat expired");
         }
 
+        // Create and save the transaction entity
         Transaction transaction = new Transaction();
         transaction.setBancomat(bancomat);
         transaction.setAmount(transactionRequest.getAmount());
@@ -97,6 +117,9 @@ public class BancomatManagerImpl implements BancomatManager {
         return new BancomatTransactionResponse(transaction.getId(), transaction.getTransactionCode(), transaction.getAmount(), transaction.getDescription(), transaction.getCreateDate());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<BancomatTransactionResponse> getBancomatTransactions(Long accountId) {
         List<Transaction> transactions = transactionRepository.findDistinctByBancomat_AccountIdOrderByCreateDateDesc(accountId);

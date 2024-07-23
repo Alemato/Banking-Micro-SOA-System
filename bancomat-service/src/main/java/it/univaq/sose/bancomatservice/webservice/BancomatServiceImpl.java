@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.concurrent.Future;
 
+/**
+ * Implementation of the BancomatService web service interface.
+ */
 @Slf4j
 @Service
 @Features(features = "org.apache.cxf.ext.logging.LoggingFeature")
@@ -27,25 +30,36 @@ public class BancomatServiceImpl implements BancomatService {
         this.bancomatManager = bancomatManager;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @UseAsyncMethod
     public BancomatResponse getBancomatDetails(Long accountId) throws NotFoundException, BancomatException {
         return bancomatManager.getBancomatDetails(accountId);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Future<?> getBancomatDetailsAsync(Long accountId, AsyncHandler<GetBancomatDetailsResponse> asyncHandler) throws NotFoundException, BancomatException {
         final ServerAsyncResponse<GetBancomatDetailsResponse> r
                 = new ServerAsyncResponse<>();
         new Thread(() -> {
             try {
+                // Simulates a delay for the async operation
                 Thread.sleep(1000);
+                // Retrieve Bancomat details from the manager
                 BancomatResponse bancomatResponse = bancomatManager.getBancomatDetails(accountId);
+                // Create response object
                 GetBancomatDetailsResponse response = new GetBancomatDetailsResponse();
                 response.setGetBancomatDetailsResponse(bancomatResponse);
+                // Set the response and handle it asynchronously
                 r.set(response);
                 asyncHandler.handleResponse(r);
             } catch (InterruptedException e) {
+                // Handle InterruptedException by setting an exception in the response
                 r.exception(new BancomatException(e.getMessage()));
                 asyncHandler.handleResponse(r);
                 /* Clean up whatever needs to be handled before interrupting  */
@@ -53,18 +67,24 @@ public class BancomatServiceImpl implements BancomatService {
             } catch (NotFoundException e) {
                 r.exception(e);
                 asyncHandler.handleResponse(r);
-                /* Clean up whatever needs to be handled before interrupting  */
+                // Clean up whatever needs to be handled before interrupting
                 Thread.currentThread().interrupt();
             }
         }).start();
         return r;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public BancomatResponse getBancomatDetailsByNumber(String number) throws NotFoundException {
         return bancomatManager.getBancomatDetailsByNumber(number);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public BancomatResponse createBancomat(BancomatRequest bancomatRequest) throws BancomatAlreadyExistingException {
         return bancomatManager.createBancomat(bancomatRequest);
@@ -75,6 +95,9 @@ public class BancomatServiceImpl implements BancomatService {
         return bancomatManager.executeTransaction(transactionRequest);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @UseAsyncMethod
     public List<BancomatTransactionResponse> getBancomatTransactions(Long accountId) {
@@ -82,22 +105,29 @@ public class BancomatServiceImpl implements BancomatService {
         return response;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Future<?> getBancomatTransactionsAsync(Long accountId, AsyncHandler<GetBancomatTransactionsResponse> asyncHandler) throws BancomatException {
         final ServerAsyncResponse<GetBancomatTransactionsResponse> r
                 = new ServerAsyncResponse<>();
         new Thread(() -> {
             try {
+                // Simulates a delay for the async operation
                 Thread.sleep(1000);
+                // Retrieve the list of transactions from the manager
                 List<BancomatTransactionResponse> bancomatTransactionResponseList = bancomatManager.getBancomatTransactions(accountId);
                 GetBancomatTransactionsResponse response = new GetBancomatTransactionsResponse();
                 response.getGetBancomatTransactionsResponse().addAll(bancomatTransactionResponseList);
+                // Set the response and handle it asynchronously
                 r.set(response);
                 asyncHandler.handleResponse(r);
             } catch (InterruptedException e) {
+                // Handle InterruptedException by setting an exception in the response
                 r.exception(new BancomatException(e.getMessage()));
                 asyncHandler.handleResponse(r);
-                /* Clean up whatever needs to be handled before interrupting  */
+                // Clean up whatever needs to be handled before interrupting
                 Thread.currentThread().interrupt();
             }
         }).start();

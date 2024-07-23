@@ -8,6 +8,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Data Transfer Object (DTO) for Bancomat responses.
+ */
 @Getter
 @Setter
 @ToString

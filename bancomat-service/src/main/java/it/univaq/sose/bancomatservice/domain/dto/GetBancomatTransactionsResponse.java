@@ -9,21 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p>Classe Java per getBancomatTransactionsResponse complex type.
- *
- * <p>Il seguente frammento di schema specifica il contenuto previsto contenuto in questa classe.
- *
- * <pre>
- * &lt;complexType name="getBancomatTransactionsResponse"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence&gt;
- *         &lt;element name="GetBancomatTransactionsResponse" type="{http://webservice.bancomatservice.sose.univaq.it/}TransactionResponse" maxOccurs="unbounded" minOccurs="0" form="qualified"/&gt;
- *       &lt;/sequence&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
- * </pre>
+ * Data Transfer Object (DTO) for the response of the getBancomatTransactions operation.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getBancomatTransactionsResponse", propOrder = {

@@ -2,6 +2,9 @@ package it.univaq.sose.bancomatservice.webservice;
 
 import java.io.Serial;
 
+/**
+ * Exception thrown when attempting to create an ATM for a user who already has one that has not expired.
+ */
 public class BancomatAlreadyExistingException extends BancomatException {
     @Serial
     private static final long serialVersionUID = -7603657738968082959L;

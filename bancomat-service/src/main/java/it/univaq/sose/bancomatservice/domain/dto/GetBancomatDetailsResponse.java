@@ -6,21 +6,7 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 /**
- * <p>Classe Java per getBancomatDetailsResponse complex type.
- *
- * <p>Il seguente frammento di schema specifica il contenuto previsto contenuto in questa classe.
- *
- * <pre>
- * &lt;complexType name="getBancomatDetailsResponse"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence&gt;
- *         &lt;element name="GetBancomatDetailsResponse" type="{http://webservice.bancomatservice.sose.univaq.it/}BancomatResponse" minOccurs="0" form="qualified"/&gt;
- *       &lt;/sequence&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
- * </pre>
+ * Data Transfer Object (DTO) for the response of the getBancomatDetails operation.
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getBancomatDetailsResponse", propOrder = {
@@ -32,7 +18,7 @@ public class GetBancomatDetailsResponse {
     protected BancomatResponse getBancomatDetailsResponse;
 
     /**
-     * Recupera il valore della proprietà getBancomatDetailsResponse.
+     * The BancomatResponse containing the details of the requested Bancomat
      *
      * @return possible object is
      * {@link BancomatResponse }
@@ -42,7 +28,7 @@ public class GetBancomatDetailsResponse {
     }
 
     /**
-     * Imposta il valore della proprietà getBancomatDetailsResponse.
+     * Sets the BancomatResponse containing the details of the requested Bancomat.
      *
      * @param value allowed object is
      *              {@link BancomatResponse }

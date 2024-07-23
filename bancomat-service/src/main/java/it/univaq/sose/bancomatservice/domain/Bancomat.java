@@ -17,7 +17,7 @@ import java.util.Set;
 @Entity
 @Table(name = "bancomat")
 @SequenceGenerator(name = "bancomat_seq", sequenceName = "bancomat_sequence", allocationSize = 10)
-//Pre-Alloca solo 10 id
+//Pre-Alloca only 10 id
 public class Bancomat extends BaseEntity {
     @Serial
     private static final long serialVersionUID = -7653460776778203136L;
