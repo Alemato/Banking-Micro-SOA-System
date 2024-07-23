@@ -1,36 +1,139 @@
+<!-- PROJECT SHIELDS -->
+[![Contributors][contributors-shield]][contributors-url]
+[![Commit Activity][commit-shield]][commit-url]
+[![Last Commit][last-commit-shield]][last-commit-url]
+[![License][license-shield]][license-url]
+
+
+<!-- PROJECT LOGO -->
+<br />
+<div align="center">
+  <a href="https://github.com/Alemato/Banking-Micro-SOA-System">
+    <img src="docs/logo.png" alt="Logo" width="500" height="500">
+  </a>
+
+<h3 align="center">Banking-Micro-SOA-System</h3>
+
+  <p align="center">
+    Modern banking system that implements a service-oriented architecture (SOA)!
+    <br />
+    <a href="https://github.com/Alemato/Banking-Micro-SOA-System"><strong>Explore all docs »</strong></a>
+  </p>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#banking-micro-soa-system">Project Overview</a>
+    </li>
+    <li><a href="#exam-Requirements">Exam Requirements</a></li> 
+    <li><a href="#system-objectives">System Objectives</a></li>
+    <li><a href="#system-functionality">System Functionality</a></li>
+    <li><a href="#motivations-for-the-soa-and-microservices-approach">Motivations for the SOA and Microservices Approach</a></li>
+    <li><a href="#use-case-diagram">Use Case Diagram</a></li>
+    <li>
+            <a href="#component-diagram">Component Diagram</a>
+        <ul>
+            <li><a href="#components">Components</a></li>
+            <li><a href="#note-aggiuntive">Additional Notes</a></li>
+        </ul>
+    </li>
+    <li>
+      <a href="#sequence-diagrams">Sequence Diagrams</a>
+      <ul>
+        <li><a href="#open-bank-account">Open Bank Account</a></li>
+        <li><a href="#login">Login</a></li>
+        <li><a href="#financial-report">Financial Report</a></li>
+        <li><a href="#bank-account-report">Bank Account Report</a></li>
+        <li><a href="#withdraw-money">Withdraw Money</a></li>
+        <li><a href="#open-loan">Open Loan</a></li>
+        <li><a href="#close-loan">Close Loan</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#implementation">Implementation</a>
+      <ul>
+        <li><a href="#integrating-spring-boot-and-apache-cxf">Integrating Spring Boot and Apache CXF</a></li>
+        <li><a href="#configuring-apache-cxf-for-proper-execution">Configuring Apache CXF for Proper Execution</a></li>
+        <li><a href="#integration-of-apache-cxf-service-description-openapi-in-spring-boot">Integration of Apache CXF Service Description OpenApi in Spring Boot</a></li>
+        <li><a href="#optimizations-made-in-the-services">Optimizations Made in the Services</a></li>
+        <li><a href="#integration-of-apache-cxf-logging-in-spring-boot">Integration of Apache CXF Logging in Spring Boot</a></li>
+        <li><a href="#modifications-to-jackson-json-provider-for-apache-cxf-in-spring-boot">Modifications to Jackson JSON Provider for Apache CXF in Spring Boot</a></li>
+        <li><a href="#integration-of-apache-cxf-metrics-with-spring-boot-actuator">Integration of Apache CXF Metrics with Spring Boot Actuator</a></li>
+        <li><a href="#metrics-configuration-for-a-soap-application">Metrics Configuration for a SOAP Application</a></li>
+        <li><a href="#metrics-configuration-for-a-rest-application">Metrics Configuration for a REST Application</a></li>
+        <li><a href="#spring-cloud-discovery-eureka">Spring Cloud Discovery Eureka</a></li>
+        <li><a href="#implementation-of-load-balancing-in-apache-cxf-clients">Implementation of Load-Balancing in Apache CXF Clients</a></li>
+        <li><a href="#implementing-a-jax-ws-service-with-apache-cxf-and-spring-boot">Implementing a JAX-WS Service with Apache CXF and Spring Boot</a></li>
+        <li><a href="#implementation-of-a-jax-rs-service-with-apache-cxf-and-spring-boot">Implementation of a JAX-RS Service with Apache CXF and Spring Boot</a></li>
+        <li><a href="#asynchronous-client-implementation-with-apache-cxf">Asynchronous Client Implementation with Apache CXF</a></li>
+        <li><a href="#implementation-of-a-simple-client-for-the-banking-micro-soa-system">Implementation of a Simple Client for the Banking Micro-SOA System</a></li>
+        <li><a href="#using-the-maven-plugin-openapi-generator-maven-plugin">Using the Maven Plugin openapi-generator-maven-plugin</a></li>
+        <li><a href="#using-the-maven-plug-in-cxf-codegen-plugin">Using the Maven Plug-in cxf-codegen-plugin</a></li>
+        <li><a href="#using-the-maven-build-helper-maven-plugin">Using the Maven build-helper-maven-plugin</a></li>
+        <li><a href="#dockerfile-implementation">Dockerfile Implementation</a></li>
+        <li><a href="#implementation-of-docker-compose">Implementation of docker-compose</a></li>
+      </ul>
+    </li>
+    <li><a href="#configuration-guide">Configuration Guide</a></li>
+    <li><a href="#demo-video">Demo video</a></li>
+    <li><a href="https://github.com/Alemato/Banking-Micro-SOA-System/blob/main/LICENSE">License</a></li>
+  </ol>
+</details>
+
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+
+[contributors-shield]: https://img.shields.io/github/contributors/Alemato/Banking-Micro-SOA-System?style=for-the-badge
+
+[contributors-url]: https://github.com/Alemato/Banking-Micro-SOA-System/graphs/contributors
+
+[commit-shield]: https://img.shields.io/github/commit-activity/t/Alemato/Banking-Micro-SOA-System?style=for-the-badge
+
+[commit-url]: https://github.com/Alemato/Banking-Micro-SOA-System/graphs/commit-activity
+
+[last-commit-shield]: https://img.shields.io/github/last-commit/Alemato/Banking-Micro-SOA-System?style=for-the-badge
+
+[last-commit-url]: https://github.com/Alemato/Banking-Micro-SOA-System/graphs/commit-activity
+
+[license-shield]: https://img.shields.io/github/license/Alemato/Banking-Micro-SOA-System?style=for-the-badge
+
+[license-url]: https://github.com/Alemato/Banking-Micro-SOA-System/blob/master/LICENSE.txt
+
 # Banking Micro-SOA System
 
-The 'Banking Micro-SOA System' is a modern banking system that implements a service-oriented architecture (SOA) using
+The "Banking Micro-SOA System" is a modern banking system that implements a service-oriented architecture (SOA) using
 microservices with REST and SOAP technologies.
 
 This project demonstrates how to build a scalable and modular application capable of handling common banking operations,
-exploiting software engineering best practices and state-of-the-art tools.
+leveraging best software engineering practices and advanced tools.
 
-It uses Apache CXF, Spring Boot, Docker and Maven.
+It utilizes Apache CXF, Spring Boot, Docker, and Maven.
 
-## Examination Requirements
+## Exam Requirements
 
-The project in question meets all the requirements described in the following file:
-
+The project meets all the requirements described in the following file:
 [FINAL_TEST_23-24.pdf](/docs/FINAL_TEST_23-24.pdf)
 
-## System Goals
+## System Objectives
 
 The main objectives of the **Banking Micro SOA System** are:
 
-- **Efficient User Management**: Ensure a secure and simple process for managing accounts and user authentication.
-- **Account Operations Management**: Enable account and ATM opening, as well as the generation of detailed account
+- **Efficient User Management**: Ensure a secure and simple process for account management and user authentication.
+- **Account Operations Management**: Enable account and ATM opening, along with the generation of detailed account
   status reports.
-- **Comprehensive Current Account Management**: Allow for the addition and removal of funds, as well as the recording of
-  all transactions.
-- **Advanced ATM Management**: Facilitate the creation of ATMs and the recording of transactions conducted through these
+- **Comprehensive Current Account Management**: Allow the addition and removal of money, and the recording of all
+  transactions.
+- **Advanced ATM Management**: Facilitate ATM creation and the recording of transactions performed through these
   devices.
-- **Loan Management**: Allow for the opening and closing of loans with precise tracking of related transactions.
+- **Loan Management**: Support the opening and closing of loans with precise tracking of related transactions.
 - **Transaction Execution**: Support various operations such as transfers, withdrawals, deposits, and ATM payments.
 - **Report Generation**: Provide a comprehensive financial report of all operations, offering a clear and integrated
   view of financial activities.
 
-## System Operation
+## System Functionality
 
 **The system is structured modularly**, dividing the main functionalities into specific services, each responsible for a
 particular aspect of banking management:
@@ -38,7 +141,7 @@ particular aspect of banking management:
 - User Management:
 
     - Account Management: Creation, update, and deletion of user accounts.
-      Authentication: Implementation of robust authentication systems to ensure secure access.
+  - Authentication: Implementation of robust authentication systems to ensure secure access.
 
 - Current Account Management:
 
@@ -47,11 +150,11 @@ particular aspect of banking management:
 - ATM Management:
 
     - ATM Creation: Configuration and management of ATM devices.
-    - ATM Transactions: Saving and tracking operations conducted through ATMs.
+  - ATM Transactions: Recording and tracking of operations performed through ATMs.
 
 - Loan Management:
 
-    - Loan Opening/Closure: Procedures for the entire loan lifecycle, from request to closure.
+    - Loan Opening/Closing: Procedures for the entire loan lifecycle, from request to closure.
 
 - Transaction Execution:
 
@@ -64,61 +167,59 @@ particular aspect of banking management:
 
 - Report Management:
 
-    - Comprehensive Financial Report: Creation of integrated reports providing a global view of financial activities.
+    - Comprehensive Financial Report: Creation of integrated reports providing an overall view of financial activities.
 
-## Reasons for SOA and Microservices Approach
+## Motivations for the SOA and Microservices Approach
 
-The adoption of an SOA and microservices architecture for the Banking Micro SOA System is motivated by several key
-advantages:
+Adopting an SOA and microservices architecture for the Banking Micro SOA System is driven by several key advantages:
 
-- **Maintainability**: Dividing the system into independent microservices makes it easier to manage, update, and fix
-  bugs. Each service can be developed, deployed, and maintained separately, reducing the risk of negative impacts on the
-  overall system.
+- **Maintainability**: Dividing the system into independent microservices simplifies management, updates, and error
+  correction. Each service can be developed, deployed, and maintained separately, reducing the risk of negative impacts
+  on the overall system.
 
-- **Scalability**: The ability to instantiate multiple nodes of the system allows for easy scaling of resources
-  according to demand. In a banking environment with a high volume of transactions, this flexibility is crucial for
-  ensuring optimal performance and service continuity.
+- **Scalability**: The ability to instantiate multiple system nodes allows for easy scaling of resources based on
+  demand. In a banking environment with a high volume of transactions, this flexibility is crucial for ensuring optimal
+  performance and service continuity.
 
-- **Reliability**: The microservices-based architecture isolates faults, preventing a problem in a single component from
-  compromising the entire system. This approach significantly enhances the reliability and resilience of the banking
-  system.
+- **Reliability**: A microservices-based architecture isolates failures, preventing a problem in a single component from
+  compromising the entire system. This approach significantly enhances the system's reliability and resilience.
 
-- **Flexibility**: The use of SOA and microservices facilitates integration with other systems and the implementation of
-  new functionalities without needing to rewrite the entire codebase, accelerating development and deployment times.
+- **Flexibility**: Using SOA and microservices facilitates integration with other systems and the implementation of new
+  features without having to rewrite the entire codebase, speeding up development and deployment times.
 
 The **Banking Micro SOA System** thus represents a cutting-edge solution for banking management, capable of addressing
 modern challenges with efficiency and robustness.
 
 ## Use Case Diagram
 
-![Use Case Diagram_en](https://www.plantuml.com/plantuml/png/ZLRBRjim4BphAnRkEO4bIxOS10PS5UsXDHB4pWSmCYCJbaY3f1e4HV-zr8CsAP52RrxEpExESYduWl8pAZ3Czfz2uWfU1UPY1aXql-1FW7B9ECooMaXMOTvYUQsFlo9wxW_VplfmUwm8RS_O9VWR11pd4j6Yn1sVq09s9ESCzazRw0hFuF5nNx-9DjXiL5s0Mk0S2INwnOe-tsiMmfUV9tGc9hxDSrPJ2Jj4bPSAKzcJ8mTP6m6joZX6aZ1TO65bRfpucB79x0RXeoQkThzXYKZPJpjRsarohco0rzdAwSmMFLqmLRFk5QdjwzZSmlUQ7WL81WDfBrcRaXTSiTytqJjdbKSMpcrTpdXRxS0H5Mf5r5ZKPb2VEfpoPELumHV6hxh8CdZOZOSMBbpBevWPe--agBbvPM4yP3sZJpDPudRPCCqkDNqvJ3TXPGNs-YFgC9CwpBHK-zx3zOYGbKpK7Ej7CXyHh6wYSBZdZKrLf1kNS3mxrxjxHbmIL89EqDM07vXYQ-wHzG0FJFwF9dQzhnTS424x8dmGUHfk721wREvBPqbqs-gRrNmyxkyttLCh2SKF7oSYST34tNcpJHQW3deajH0Zrm8Ur8UEqBoiZtYpCP3OYoHUP3b0ZERIaKWZQoyIplrGw8UYSHUtIOnjtR1a0bjEO2j7mLI3OtjNB9fFOE4uQQJd73ckxOh53k72Sq46D1gRYJaSgZhUdF54pjYNqy2SvXEziYEPHb8l4iR3VEsVYRkx5WGhZAnePLCNTfZQoYW8ybe7IV0F)
+![Use Case Diagram](https://www.plantuml.com/plantuml/png/ZLRTRjiW6BttKw3ikbMCxSIjgaYPf-rYcnejpGDGmXmK6oB0cjPfxpxyGmesUBc9p7VE-Vv1kI1yHYK1Y_rlgKWD3f88kG18zb_WJuImuW8iYaOgNXFHORWnve-8dGVZwzaOjyUQiix6Bz7VA184AyJAYlHyoahmdMB1mVvv2_h02_3qj6zUPNVOR7HS01f9C99Qz8sNWxz34OCFNq_eJ6ty2v6ASaR05cFUC3LGeOTQ28BUR2vm2ZiKoJpxlRH3aSvJhTOSYipcVY9AeRAYetnNtfeApXJNlq8GfiX0NNjAsrw8K8r0VaNkKCkIwhW8VERiI06g_9e7M_E3rhmlS5uKBnqLAQbKOcZDYq1CTjyKo2Ra87OTNBXGDogXjuDw49ZNoBGvJdnxmTbFMZOcqR746VKEbQWcRNpCsOIQtLQ-JxhwJ-4-pHfuQzw9zajHGyld5cOWSqDsvbwSQ2CzBBZqP3iA2sDlSiywy51IUqcGe6Q247glDoEcXKESjWjQni4EYJUAggi-kLNumfKbIyD3CzUvRRwxTM2o9p0pwUjNhts0xkyt_MsjA2EFlqvKaQWzz_Ps4nr06mOaTn3RMG8UzLj96QwQ8zbiB2GD8baGMOqGAxjy8ZB8Gn29bs4e3aDmd8NJYsbTxrWsWwrciBKlOcxGQO5N32vdiDZZ5PfMGy_ahbWwdGDC0ZEoe4ddR6pjyPc6VQOpFjEGJmkRLjzTY65h9pA3v44aJiV-khyaTtST29mZT4vhbvgunznLmYZ2ZJbaUcR_0000)
 
-[Uses_cases_EN.svg](/docs/Uses_cases_EN.svg)
+[Uses_cases_it.svg](/docs/Uses_cases_it.svg)
 
-In this scenario, we can see all the system users who can perform the actions described previously:
+In this scenario, we can see all the system users who can perform the actions described earlier:
 
-1. **Login:** Authenticate and issue the JWT.
+1. **Login:** Authenticate and release the JWT.
 2. **Account Management:** Create an account of the correct user type, view account details.
-3. **Current Account Management:** Create a current account, add and remove funds from an account, manage bank
-   transactions, and generate the current account report.
-4. **ATM Management:** Configure an ATM, record transactions made with the ATM, generate the ATM report.
-5. **Loan Management:** Open and close a loan, generate the loan report.
+3. **Current Account Management:** Create current accounts, add and remove funds, manage banking transactions, and
+   generate current account reports.
+4. **ATM Management:** Configure an ATM, record transactions performed with the ATM, generate ATM reports.
+5. **Loan Management:** Open and close a loan, generate loan reports.
 6. **Account Registration with Current Account and ATM:** Includes creating a customer account, opening a current
    account, and configuring an ATM.
 7. **Banking Operations Management:**
-    1. **Generate a Partial Report** that includes:
+    1. **Partial Report Generation** that includes:
         1. Account Details
-        2. Current Account Transaction Report
-        3. ATM Transaction Report
-    2. **Generate a Total Report** that includes:
+       2. Current Account Transactions Report
+       3. ATM Transactions Report
+    2. **Total Report Generation** that includes:
         1. Account Details
-        2. Current Account Transaction Report
-        3. ATM Transaction Report
+       2. Current Account Transactions Report
+       3. ATM Transactions Report
         4. Loan Report
 
 ## Component Diagram
 
-![SympleBankingSystem-component_EN.svg](docs/SympleBankingSystem-component_EN.svg)
+![SympleBankingSystem-component_it.svg](docs/SympleBankingSystem-component_it.svg)
 
 ### Components
 
@@ -127,8 +228,8 @@ In this scenario, we can see all the system users who can perform the actions de
 
 2. **Account Service**
     - Type: REST Service Provider
-    - Responsibilities: Manages account-related operations such as authentication, creation, and adding accounts. It
-      handles data persistence using a database to store account information.
+   - Responsibilities: Manage account-related operations such as authentication, account creation, and management. It
+     handles data persistence using a database to save account information.
     - Operations:
         - `OpenAccount (Customer/Banker/Admin)`
         - `Login`
@@ -136,10 +237,10 @@ In this scenario, we can see all the system users who can perform the actions de
         - `GetAccount`
         - `CheckTokenResponse`
 
-3. **Bank Account Service Provider**
+3. **Bank Account Service**
     - Type: SOAP Service Provider
-    - Responsibilities: Manages current accounts, adds and removes money, and saves transactions. Keeps track of all
-      bank account information and related transactions using a database.
+   - Responsibilities: Manage current accounts, add and remove money, and save transactions. It keeps track of all bank
+     account information and related transactions in a database.
     - Operations:
         - `CreateBankAccount`
         - `AddMoney`
@@ -152,8 +253,8 @@ In this scenario, we can see all the system users who can perform the actions de
 
 4. **Bancomat Service**
     - Type: SOAP Service Provider
-    - Responsibilities: Manages ATM operations and related transactions. Handles data persistence using a database to
-      store ATM information and transactions.
+   - Responsibilities: Manage ATM-related operations and transactions. It handles data persistence using a database to
+     save ATM information and related transactions.
     - Operations:
         - `CreateBancomat`
         - `GetBancomatDetails`
@@ -163,17 +264,16 @@ In this scenario, we can see all the system users who can perform the actions de
 
 5. **Banking Operations Service Prosumer**
     - Type: REST Service Prosumer
-    - Responsibilities: Manages banking operations for opening accounts.
+   - Responsibilities: Manage bank account opening operations
     - Operations:
         - `OpenAccount`
         - `GetReportBankAccountFromIdAccount`
         - `RequestAtmCard`
         - `GetAtmCard`
 
-6. **Loan Service Provider**
-    - Type: REST Service Provider
-    - Responsibilities: Manages loan-related operations such as creation and closure, and keeps track of the user's loan
-      history.
+6. **Loan Service Prosumer**
+    - Type: REST Service Prosumer
+    - Responsibilities: Manage loan-related operations such as creation and closing, and track user loan history.
     - Operations:
         - `OpenLoan`
         - `CloseLoanByIdLoan`
@@ -183,47 +283,42 @@ In this scenario, we can see all the system users who can perform the actions de
 
 7. **Transaction Service Prosumer**
     - Type: REST Service Prosumer
-    - Responsibilities: Manages financial transactions such as deposits, withdrawals, transfers, and ATM payments.
-    - Operations:
-        - `DepositMoney`
-        - `WithdrawMoney`
-        - `ExecuteTransfer`
-        - `ExecuteAtmPayment`
+   - Responsibilities
 
-8. **Financial Report Service Provider**
-    - Type: REST Service Provider
-    - Responsibilities: Generates and provides comprehensive financial reports of the entire banking position of the
-      account.
+     : Manage financial transactions such as deposits, withdrawals, transfers, and ATM payments.
+     - Operations:
+     - `DepositMoney`
+     - `WithdrawMoney`
+     - `ExecuteTransfer`
+     - `ExecuteAtmPayment`
+
+8. **Financial Report Service Prosumer**
+    - Type: REST Service Prosumer
+    - Responsibilities: Generate and provide complete financial reports of the account's banking position.
     - Operations:
         - `GetFinancialReportByIdAccount`
 
 9. **Gateway Service**
     - Type: Gateway
-    - Responsibilities: Provides a unified entry point for the banking system services.
+   - Responsibilities: Provide a unified entry point for the banking system services.
     - Operations:
         - `HandleRequests`
 
 10. **Discovery Service**
     - Type: Discovery
-    - Responsibilities: Manages the discovery and integration of services within the system.
+    - Responsibilities: Manage service discovery and integration within the system.
 
 11. **Banking Service Client**
     - Type: Client Spring Shell
-    - Responsibilities: Interfaces with the various banking system services through the gateway to execute
+    - Responsibilities: Interface with the various services of the banking system through the gateway to perform
       user-requested operations.
-
-The implementations of all Prosumers are asynchronous, since they must interact with one or more Providers, which
-results in delays in their responses.
-
-As for the Providers, they have been optimised to support a high number of operations per second, allowing most of their
-operations to be implemented synchronously.
 
 ### Additional Notes
 
 - The **Banking Service Client** communicates with the **Gateway Service** for all operations.
-- The **Gateway Service** routes requests to the respective providers/prosumers.
+- The **Gateway Service** routes requests to the respective provider/prosumer services.
 - Services follow SOA/Microservices paradigms with REST or SOAP interfaces, ensuring interoperability and scalability.
-- Load balancing is defined according to a logic of *“Non-repetitive random iteration”*.
+- Load balancing is defined according to a *"Non-Repetitive Random Iteration"* logic.
 - Services are designed to be modular and can be updated or replaced independently without affecting the entire system.
 
 ## Sequence Diagrams
@@ -232,118 +327,126 @@ operations to be implemented synchronously.
 
 ![open_bank_account_seq.svg](docs/open_bank_account_seq.svg)
 
-In this operation, the customer user opens their current account by registering with the banking system. The first
-request is made to the Banking Operation Service Prosumer, which in turn first requests the creation of the account on
-the Account Service Provider, then creates the account on the BankAccount Service Provider. After that, the account is
-updated on the Account Service Provider by inserting the ID of the newly created account, and finally, the ATM card is
-created on the Bancomat Service Provider. At the end of the operations, the creation response is returned to the client.
+In this operation, the customer user opens their current account by registering in the banking system. The first request
+is made to the Banking Operation Service Prosumer, which in turn first makes the account creation request to the Account
+Service Provider, then the account creation on the BankAccount Service Provider, then the account is updated on the
+Account Service Provider by inserting the ID of the newly created account, and finally, the ATM is created on the
+respective service (Bancomat Service Provider). At the end of the operations, the creation response is returned to the
+client.
 
 ### Login
 
 ![Login_seq.svg](docs/Login_seq.svg)
 
 During this operation, the registered user authenticates with the system. The user sends their credentials to the
-system, which forwards them to the Account Service. The Account Service verifies the credentials and generates a JWT
-token. At the end of the process, a response containing the generated token is sent back.
+system, which forwards them to the account management service (Account Service). This service verifies the credentials
+and generates a JWT token. At the end of the process, a response containing the generated token is sent back.
 
 ### Financial Report
 
 ![GetFinancialReportByIdAccount_seq.svg](docs/GetFinancialReportByIdAccount_seq.svg)
 
-During this operation, the user requests the complete financial report from the system. The user sends the request to
-the system, which forwards it to the Financial Report Service Prosumer. This service will send four parallel requests:
+During this operation, the user requests a complete financial report from the system. The user sends the request to the
+system, which forwards it to the financial report management service (Financial Report Service Prosumer). This service
+will send four parallel requests:
 
-1. `GetBancomatDetails` to the Bancomat Service (SOAP)
-2. `GetBancomatTransactions` to the Bancomat Service (SOAP)
-3. `GetReportBankAccountFromIdAccount` to the Banking Operations Service Prosumer (REST)
-4. `GetAllLoanByIdAccount` to the Loan Service Prosumer (REST)
+1. GetBancomatDetails to the Bancomat Service (SOAP type)
+2. GetBancomatTransactions to the Bancomat Service (SOAP type)
+3. GetReportBankAccountFromIdAccount to the Banking Operations Service Prosumer (REST type)
+4. GetAllLoanByIdAccount to the Loan Service Prosumer (REST type)
 
-(The `GetReportBankAccountFromIdAccount` operation will be described later.)
+(The GetReportBankAccountFromIdAccount operation will be described later.)
 
-At the end of the process, the four responses are combined to generate the complete financial report.
+At the end of the process, the four responses will be combined to generate the complete financial report.
 
 ### Bank Account Report
 
 ![GetReportBankAccountFromIdAccount_seq.svg](docs/GetReportBankAccountFromIdAccount_seq.svg)
 
 During this operation, the user requests the current account report from the system. The user sends the request to the
-system, which forwards it to the Banking Operation Service Prosumer. This service makes two calls: first to the Account
-Service to get the account information, and then to the Bank Account Service to get the bank account information.
+system, which forwards it to the banking operations management service (Banking Operation Service Prosumer), which in
+turn makes two calls, first to the account management service to get the account information and then to the bank
+account management service to get the bank account information.
 
-At the end of the process, the information is combined to generate the bank account report.
+At the end of the process, the information will be combined to generate the bank account report.
 
 ### Withdraw Money
 
 ![withdraw_money_seq.svg](docs/withdraw_money_seq.svg)
 
-The operation of withdrawing money from the current account is executed by the customer user. Through the Transaction
-Service Prosumer, a request is forwarded to the Bank Account Service to verify if there is enough money in the current
-account, and the amount is subtracted from the balance. Immediately after, a withdrawal transaction is created and
+The money withdrawal operation from the current account is performed by the customer user. Through the Transaction
+Service Prosumer, a request is forwarded to the Bank Account Service to verify if there is sufficient money in the
+current account and the amount is deducted from the balance. Immediately after, a withdrawal transaction is created and
 returned to the client.
 
 ### Open Loan
 
 ![open_loan_seq.svg](docs/open_loan_seq.svg)
 
-The opening of a loan by the customer user involves the Loan Service Prosumer and the BankAccount Service Provider.
-Initially, a loan is created, and then the corresponding amount of money is added to the user's current account on the
-BankAccount Service Provider. Lastly, before returning the response, the loan opening transaction is also saved on the
-user's account.
+Opening a loan by the customer user involves the Loan Service Prosumer and the BankAccount Service Provider. First, a
+loan is created, then the corresponding money is added to the user's current account on the BankAccount Service
+Provider. Finally, before returning the response, the loan opening transaction is also saved in the user's account.
 
 ### Close Loan
 
 ![close_loan_seq.svg](docs/close_loan_seq.svg)
 
-The operation of closing a loan, executed by a customer user, involves the extinction of the loan by subtracting the
-corresponding amount of money from the user's current account on the BankAccount Service Provider. The account balance
-is checked and the amount is subtracted. Finally, the status of the loan is updated before returning the response.
+The loan closure operation, performed by a consumer user, involves paying off the loan by deducting the corresponding
+amount of money from the user's current account on the BankAccount Service Provider. The account balance is checked, and
+the amount is deducted. Finally, the loan status is updated before returning the response.
 
 ---
 
 # Implementation
 
-For each module of the project, Spring Boot 3.3.1 and Apache CXF 4.0.4 were chosen.
+For each project module, Spring Boot 3.3.1 and Apache CXF 4.0.4 were chosen.
 
-In compliance with exam requirements, no technologies other than those explained and adopted in class were used.
+In compliance with the exam requirements, no technologies other than those explained and adopted in class were used.
 
 The project is divided into the following Maven modules:
 
 1. **account-service**: Provider. Responsible for authentication and user management operations. This service was
-   implemented in REST using Apache CXF (JAX-RS) and Spring Boot, registering via Netflix Eureka.
+   implemented in REST using Apache CXF (JAX-RS) and Spring Boot, registered with Netflix Eureka.
 
-2. **bank-account-services**: Provider. Responsible for operations related to current accounts. This service was
-   implemented in SOAP using Apache CXF (JAX-WS) and Spring Boot, registering via Netflix Eureka.
+2. **bank-account-services**: Provider. Responsible for current account operations. This service was implemented in SOAP
+   using Apache CXF (JAX-WS) and Spring Boot, registered with Netflix Eureka.
 
-3. **bancomat-service**: Provider. Responsible for operations related to ATMs. This service was implemented in SOAP
-   using Apache CXF (JAX-WS) and Spring Boot, registering via Netflix Eureka.
+3. **bancomat-service**: Provider. Responsible for ATM operations. This service was implemented in SOAP using Apache
+   CXF (JAX-WS) and Spring Boot, registered with Netflix Eureka.
 
-4. **banking-operations-service-prosumer**: Prosumer. Responsible for banking operations such as opening accounts. This
-   service was implemented in REST using Apache CXF (JAX-RS) and Spring Boot, registering via Netflix Eureka. All
-   operations are provided asynchronously. REST and SOAP clients that implement load balancing to the producer service
-   were developed.
+4. **banking-operations-service-prosumer**: Prosumer. Responsible for bank account opening operations. This service was
+   implemented in REST using Apache CXF (JAX-RS) and Spring Boot, registered with Netflix Eureka. All operations are
+   provided asynchronously. REST and SOAP clients were developed, implementing load balancing towards the provider
+   service.
 
-5. **loan-service-prosumer**: Prosumer. Responsible for loan operations. This service was implemented in REST using
-   Apache CXF (JAX-RS) and Spring Boot, registering via Netflix Eureka. All operations are provided asynchronously. A
-   REST client that implements load balancing to the producer service was developed.
+5. **loan-service-prosumer**: Prosumer. Responsible for loan-related operations. This service was implemented in REST
+   using Apache CXF (JAX-RS) and Spring Boot, registered with Netflix Eureka. All operations are provided
+   asynchronously. A REST client was developed, implementing load balancing towards the provider service.
 
 6. **transaction-service-prosumer**: Prosumer. Responsible for managing financial transactions such as deposits,
    withdrawals, transfers, and ATM payments. This service was implemented in REST using Apache CXF (JAX-RS) and Spring
-   Boot, registering via Netflix Eureka. All operations are provided asynchronously. REST and SOAP clients that
-   implement load balancing to the producer service were developed.
+   Boot, registered with Netflix Eureka. All operations are provided asynchronously. REST and SOAP clients were
+   developed, implementing load balancing towards the provider service.
 
-7. **financial-report-service-prosumer**: Prosumer. Responsible for generating and providing comprehensive financial
-   reports of the account's banking position. This service was implemented in REST using Apache CXF (JAX-RS) and Spring
-   Boot, registering via Netflix Eureka. All operations are provided asynchronously. REST and SOAP clients that
-   implement load balancing to the producer service were developed.
+7. **financial-report-service-prosumer**: Prosumer. Responsible for generating and providing complete financial reports
+   of the account's banking position. This service was implemented in REST using Apache CXF (JAX-RS) and Spring Boot,
+   registered with Netflix Eureka. All operations are provided asynchronously. REST and SOAP clients were developed,
+   implementing load balancing towards the provider service.
 
-8. **gateway-service**: Gateway. Responsible for providing a single unified entry point for our system's services. This
-   service was implemented with Spring Cloud Reactive Gateway and uses Netflix Eureka.
+8. **gateway-service**: Gateway. Responsible for providing a unified entry point for our system's services. This service
+   was implemented with Spring Cloud Reactive Gateway and uses Netflix Eureka.
 
 9. **discovery-service**: Discovery. Responsible for managing service discovery and integration within the system. This
    service was implemented with Spring Cloud Discovery Eureka.
 
-10. **banking-service-client**: Client. This is the example client that interfaces with the Gateway to perform banking
+10. **banking-service-client**: Client. It is the sample client that interfaces with the Gateway to perform banking
     operations. This client was developed with Spring Shell and Apache CXF (REST client).
+
+The implementations of all Prosumer services are asynchronous, as they need to interact with one or more Provider
+services, resulting in delays in their responses.
+
+Regarding Providers, they have been optimized to support a high number of operations per second, allowing the
+implementation of most of their operations synchronously.
 
 ## Integrating Spring Boot and Apache CXF
 
@@ -495,6 +598,177 @@ public class ApacheCXFConfig {
 ```
 
 Now you can use OpenApi annotations within your REST service interfaces.
+
+## Optimizations Made in the Services
+
+Given that this is a banking system, optimizations have been made to increase the volume of requests that can be handled
+within the request Time-to-Live interval (60 seconds).
+
+Within the services, we use Spring Data JPA with PostgreSQL. Therefore, we have optimized the behavior of Hibernate and
+Hikari to maximize operations executed on the database.
+
+```yaml
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://host.docker.internal:5432/account?reWriteBatchedInserts=true
+    username: postgres
+    password: 123456
+    name: Account_DS
+    hikari:
+      auto-commit: false
+      minimum-idle: 0
+      maximum-pool-size: 10
+      max-lifetime: 600000
+      transaction-isolation: TRANSACTION_READ_COMMITTED
+      data-source-properties:
+        prepStmtCacheSqlLimit: 1024
+        useServerPrepStmts: false
+        prepStmtCacheSize: 500
+        cachePrepStmts: true
+  batch:
+    jdbc:
+      initialize-schema: always
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+          batch_size: 10
+        order_inserts: true
+        order_updates: true
+        query:
+          fail_on_pagination_over_collection_fetch: true
+          plan_cache_max_size: 4096
+          in_clause_parameter_padding: true
+        format_sql: false
+        connection:
+          provider_disables_autocommit: true
+    show-sql: false
+```
+
+##### Hibernate and Hikari Configuration Details
+
+1. `spring.datasource`: Configures the datasource for database connection.
+    - `driver-class-name`: Specifies the JDBC driver to use, in this case, the PostgreSQL driver.
+    - `url`: The connection URL for the PostgreSQL database. The option `reWriteBatchedInserts=true` optimizes batch
+      operations by rewriting them into a single operation.
+    - `username`: The username for the database connection.
+    - `password`: The password for the database connection.
+    - `name`: An identifying name for the datasource.
+    - `hikari`: Specific configuration for HikariCP, the connection pool used.
+        - `auto-commit`: Set to false to disable automatic transaction commits.
+        - `minimum-idle`: Minimum number of idle connections maintained in the pool.
+        - `maximum-pool-size`: Maximum number of connections in the pool.
+        - `max-lifetime`: Maximum lifetime of a connection in milliseconds.
+        - `transaction-isolation`: Transaction isolation level, in this case, TRANSACTION_READ_COMMITTED.
+        - `data-source-properties`: Additional properties for the datasource.
+            - `prepStmtCacheSqlLimit`: Size limit for the prepared statement cache.
+            - `useServerPrepStmts`: Specifies whether to use server-side prepared statements.
+            - `prepStmtCacheSize`: Size of the prepared statement cache.
+            - `cachePrepStmts`: Enables the prepared statement cache.
+2. `spring.batch.jdbc`: Specifications for Batch operations.
+    - `initialize-schema`: Set to `always`, initializes the database schema for Spring Batch at each startup.
+3. `spring.jpa`: Specifications for JPA (Java Persistence API).
+    - `open-in-view`: Set to false, automatically closes the Hibernate session after the view.
+    - `hibernate.ddl-auto`: Set to update, Hibernate updates the database schema at application startup.
+    - `properties`: Additional configurations.
+        - `hibernate`: Specifications for Hibernate.
+            - `jdbc`: Specifications for jdbc.
+                - `time_zone`: Sets the time zone to UTC.
+                - `batch_size`: Batch size for insert/update operations.
+        - `order_inserts`: Enables insert ordering to optimize batch operations.
+        - `order_updates`: Enables update ordering to optimize batch operations.
+        - `query`: Specifications for queries executed on the database.
+            - `fail_on_pagination_over_collection_fetch`: Sets whether to fail on pagination over collection fetch.
+            - `plan_cache_max_size`: Maximum size of the query plan cache.
+            - `in_clause_parameter_padding`: Enables parameter padding in IN clauses.
+        - `format_sql`: Set to false, does not format the SQL generated by Hibernate.
+        - `connection.provider_disables_autocommit`: Set to true, disables autocommit for the connection provider.
+    - `show-sql`: Set to false, does not display the SQL generated by Hibernate in the console.
+
+Thanks to these modifications, we can achieve over 5,000 write operations per second and more than 80,000 read
+operations per second on the database.
+
+An additional optimization involves using **SEQUENCE** as table indexes. This way, Hibernate requests IDs at startup for
+saving new entities, reducing the number of queries to the database.
+
+```java
+
+@Getter
+@Setter
+@MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
+public class BaseEntity implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -6204225224072578741L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
+    @CreatedDate
+    private LocalDateTime createDate;
+
+    @LastModifiedDate
+    private LocalDateTime updateDate;
+}
+
+@Getter
+@Setter
+@Entity
+@Table(name = "account")
+@SequenceGenerator(name = "account_seq", sequenceName = "account_sequence", allocationSize = 10) //Pre-Alloca solo 10 id
+public class Account extends BaseEntity {
+    @Serial
+    private static final long serialVersionUID = 2741904033865180248L;
+
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Column(name = "surname", nullable = false)
+    private String surname;
+
+    @Column(name = "username", nullable = false)
+    private String username;
+
+    @Column(name = "password", nullable = false, length = 500)
+    private String password;
+
+    @Column(name = "email", nullable = false)
+    private String email;
+
+    @Column(name = "phone", nullable = false)
+    private String phone;
+
+    @Enumerated
+    @Column(name = "role", nullable = false)
+    private Role role;
+
+    @Column(name = "id_bank_account")
+    private Long idBankAccount;
+
+    @Override
+    public final boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null) return false;
+        Class<?> oEffectiveClass = object instanceof HibernateProxy hibernateProxy ? hibernateProxy.getHibernateLazyInitializer().getPersistentClass() : object.getClass();
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy hibernateProxy ? hibernateProxy.getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+        if (thisEffectiveClass != oEffectiveClass) return false;
+        Account account = (Account) object;
+        return getId() != null && Objects.equals(getId(), account.getId());
+    }
+
+    @Override
+    public final int hashCode() {
+        return this instanceof HibernateProxy hibernateProxy ? hibernateProxy.getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+    }
+}
+```
 
 ## Integration of Apache CXF Logging in Spring Boot
 
@@ -2343,3 +2617,72 @@ networks:
   banking-micro-soa-system:
     driver: bridge
 ````
+
+## Configuration Guide
+
+A detailed guide outlining all the steps necessary to configure and start the application.
+
+### Prerequisites
+
+- Ensure Docker is installed.
+- Ensure you have Java JDK (version 17).
+- Ensure you have Maven.
+
+### Cloning the Repository
+
+Clone the public git repository:
+
+```sh
+git clone https://github.com/Alemato/Banking-Micro-SOA-System.git
+```
+
+_Or via SSH:_
+
+```sh
+git clone git@github.com:Alemato/Banking-Micro-SOA-System.git
+```
+
+### Building the Modules
+
+After cloning the repository, navigate to the project's main directory.
+
+Run the following command:
+
+```sh
+mvn clean install
+```
+
+### Starting Services with Docker
+
+After executing the previous command, still in the project's main directory, run the Docker Compose command to build and
+start all services:
+
+```sh
+docker-compose up --build
+```
+
+### Starting the Spring Shell Client
+
+The client must be started separately in another terminal. Follow these steps:
+
+1. Open another terminal in the project's main directory
+
+2. Navigate to the client's `target` folder:
+    ```sh
+    cd banking-service-client/target
+    ```
+
+3. Start the Spring Shell client with the command:
+    ```sh
+    java -jar banking-service-client-0.0.1-SNAPSHOT.jar
+    ```
+
+### Client Interactions
+
+The client developed with Spring Shell provides an interactive and intuitive interface for interacting with the
+services.
+
+## Demo video
+
+<a href="https://univaq-my.sharepoint.com/:v:/g/personal/stefano_decina_student_univaq_it/EbnubKyOVW1OmrRNbcLBcIwBqnik5LnaajsYmGH_Odvm1A?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=oCb49j">
+<strong>Demo video»</strong></a>
