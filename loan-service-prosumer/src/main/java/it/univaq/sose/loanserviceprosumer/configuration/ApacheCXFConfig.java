@@ -11,11 +11,22 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+
+/**
+ * Configures Apache CXF for the Loan Service (Prosumer) application.
+ * This includes JSON provider, logging, and OpenAPI features.
+ */
 @Configuration
 public class ApacheCXFConfig {
     @Value("${cxf.path}")
     private String cxfPath;
 
+    /**
+     * Configures a logging feature for CXF to provide detailed logging of requests and responses.
+     * The logs are formatted for better readability.
+     *
+     * @return the configured LoggingFeature
+     */
     @Bean
     public LoggingFeature loggingFeature() {
         LoggingFeature loggingFeature = new LoggingFeature();
@@ -23,6 +34,12 @@ public class ApacheCXFConfig {
         return loggingFeature;
     }
 
+    /**
+     * Configures a Jackson JSON provider for use with CXF.
+     * This provider handles JSON serialization and deserialization.
+     *
+     * @return the configured JacksonJsonProvider
+     */
     @Bean
     public JacksonJsonProvider jsonProvider() {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -31,6 +48,12 @@ public class ApacheCXFConfig {
         return new JacksonJsonProvider(objectMapper);
     }
 
+    /**
+     * Configures the OpenAPI feature for CXF, which generates and serves the OpenAPI documentation
+     * for the REST endpoints in this service.
+     *
+     * @return the configured OpenApiFeature
+     */
     @Bean
     public OpenApiFeature createOpenApiFeature() {
         final OpenApiFeature openApiFeature = new OpenApiFeature();

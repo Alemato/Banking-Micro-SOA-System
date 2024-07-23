@@ -23,6 +23,9 @@ public class LoanServiceImpl implements LoanService {
         this.bankAccountServiceClient = bankAccountServiceClient;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void openLoan(OpenLoanRequest openLoanRequest, AsyncResponse asyncResponse) {
         new Thread(() -> {
@@ -55,6 +58,9 @@ public class LoanServiceImpl implements LoanService {
         }).start();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void getLoanByIdLoan(long idLoan, AsyncResponse asyncResponse) {
         new Thread(() -> {
@@ -79,6 +85,9 @@ public class LoanServiceImpl implements LoanService {
         }).start();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void getAllLoanByIdBankAccount(long idBankAccount, AsyncResponse asyncResponse) {
         new Thread(() -> {
@@ -98,6 +107,9 @@ public class LoanServiceImpl implements LoanService {
         }).start();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void getAllLoanByIdAccount(long idAccount, AsyncResponse asyncResponse) {
         new Thread(() -> {
@@ -117,6 +129,9 @@ public class LoanServiceImpl implements LoanService {
         }).start();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void closeLoanByIdLoan(long idLoan, AsyncResponse asyncResponse) {
         new Thread(() -> {

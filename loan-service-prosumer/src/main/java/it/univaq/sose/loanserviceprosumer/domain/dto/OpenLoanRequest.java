@@ -8,6 +8,9 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 
+/**
+ * Data Transfer Object (DTO) for opening loan request.
+ */
 @Data
 @XmlRootElement(name = "OpenLoanRequest")
 @XmlAccessorType(XmlAccessType.FIELD)

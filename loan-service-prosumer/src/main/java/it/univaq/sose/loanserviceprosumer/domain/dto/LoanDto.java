@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * DTO for {@link it.univaq.sose.loanserviceprosumer.domain.Loan}
+ * DTO for {@link it.univaq.sose.loanserviceprosumer.domain.Loan} Response
  */
 @Data
 @XmlRootElement(name = "Loan")

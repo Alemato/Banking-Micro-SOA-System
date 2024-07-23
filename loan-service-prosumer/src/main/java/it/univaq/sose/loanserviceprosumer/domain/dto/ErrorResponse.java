@@ -7,6 +7,9 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.Data;
 
+/**
+ * Data Transfer Object (DTO) for error responses.
+ */
 @Data
 @XmlRootElement(name = "ErrorResponse")
 @XmlAccessorType(XmlAccessType.FIELD)

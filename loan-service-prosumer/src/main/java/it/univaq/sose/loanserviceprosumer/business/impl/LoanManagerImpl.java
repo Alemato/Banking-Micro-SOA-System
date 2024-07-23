@@ -12,6 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Implementation of the LoanManager interface.
+ * This class provides the concrete implementation of the operations for managing loans.
+ */
 @Service
 public class LoanManagerImpl implements LoanManager {
 
@@ -21,6 +25,9 @@ public class LoanManagerImpl implements LoanManager {
         this.repository = repository;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public LoanDto openLoan(OpenLoanRequest request) {
@@ -36,18 +43,27 @@ public class LoanManagerImpl implements LoanManager {
         return new LoanDto(loan.getId(), loan.getAmount(), loan.getInterestRate(), loan.getTermInYears(), loan.getBorrowerName(), loan.getLoanStatus(), loan.getIdBankAccount(), loan.getIdAccount(), loan.getCreateDate(), loan.getUpdateDate());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional(readOnly = true)
     public List<LoanDto> getAllLoanByIdBankAccount(long idBankAccount) {
         return repository.findByIdBankAccountOrderByCreateDateDesc(idBankAccount);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional(readOnly = true)
     public List<LoanDto> getAllLoanByIdAccount(long idAccount) {
         return repository.findByIdAccountOrderByCreateDateDesc(idAccount);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public LoanDto closeLoanByIdLoan(long idLoan) throws LoanNotFoundException {
@@ -57,6 +73,9 @@ public class LoanManagerImpl implements LoanManager {
         return new LoanDto(loan.getId(), loan.getAmount(), loan.getInterestRate(), loan.getTermInYears(), loan.getBorrowerName(), loan.getLoanStatus(), loan.getIdBankAccount(), loan.getIdAccount(), loan.getCreateDate(), loan.getUpdateDate());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional(readOnly = true)
     public LoanDto getLoanById(long idLoan) throws LoanNotFoundException {
