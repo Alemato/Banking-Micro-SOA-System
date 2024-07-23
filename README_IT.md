@@ -1790,5 +1790,157 @@ public class OpenAccountResponse {
 }
 ```
 
+## Implementazione client asincrono con Apache CXF
+
+Per implementare una richiesta asincrona verso un client che espone servizi in modo asincrono, possiamo utilizzare le
+seguenti strategie:
+
+- Async Blocking Polling
+- Async Non-Blocking Polling
+- Async Callback
+
+Per questo progetto, è stata scelta la strategia Async Callback per le chiamate REST e Async Non-Blocking Polling per le
+chiamate SOAP.
+
+Implementazione di una Callback per un servizio REST:
+
+```java
+
+@Getter
+@Slf4j
+public class ReportBankAccountCallBack implements InvocationCallback<Response> {
+    private ReportBankAccountResponse reportBankAccountResponse;
+    private boolean hasError = false;
+    private Throwable throwable;
+
+    @Override
+    public void completed(Response response) {
+        if (response.getStatusInfo().getFamily().equals(Response.Status.Family.SUCCESSFUL)) {
+            try {
+                String messageFromTheServer = response.readEntity(String.class);
+                ObjectMapper objectMapper = new ObjectMapper();
+                reportBankAccountResponse = objectMapper.readValue(messageFromTheServer, ReportBankAccountResponse.class);
+            } catch (ProcessingException | IllegalStateException e) {
+                log.error("ReportBankAccount: Response content of the message cannot be Report Bank Account Type");
+                handleException(new FinancialServiceException("Response content of the message cannot be Report Bank Account Type"));
+            } catch (JsonMappingException e) {
+                log.error("ReportBankAccount: JsonMappingException");
+                handleException(new FinancialServiceException("JsonMappingException"));
+            } catch (JsonProcessingException e) {
+                log.error("ReportBankAccount: JsonProcessingException");
+                handleException(new FinancialServiceException("JsonProcessingException"));
+            }
+        } else {
+            log.error("ReportBankAccountResponse returned with status: {}", response.getStatus());
+            handleException(new FinancialServiceException("ReportBankAccountResponse returned with status: " + response.getStatus()));
+        }
+    }
+
+    @Override
+    public void failed(Throwable throwable) {
+        log.error("ReportBankAccount Error on Callback", throwable);
+        handleException(new FinancialServiceException("ReportBankAccount Error on Callback", throwable));
+    }
+
+    private void handleException(FinancialServiceException e) {
+        this.hasError = true;
+        this.throwable = e;
+        throw e; // Rilancia l'eccezione
+    }
+
+}
+```
+
+Implementazione del Servizio:
+
+```java
+
+@Slf4j
+@Service
+public class FinancialReportServiceImpl implements FinancialReportService {
+    private final BancomatServiceClient bancomatServiceClient;
+    private final BankingOperationsServiceClient bankingServiceClient;
+    private final LoanServiceClient loanServiceClient;
+
+    public FinancialReportServiceImpl(BancomatServiceClient bancomatServiceClient, BankingOperationsServiceClient bankingServiceClient, LoanServiceClient loanServiceClient) {
+        this.bancomatServiceClient = bancomatServiceClient;
+        this.bankingServiceClient = bankingServiceClient;
+        this.loanServiceClient = loanServiceClient;
+    }
+
+    @Override
+    public void getFinancialReportByIdAccount(long idAccount, AsyncResponse asyncResponse) {
+        new Thread(() -> {
+            try {
+                ReportBankAccountCallBack bankingServiceCallBack = new ReportBankAccountCallBack();
+                AllLoanCallBack loanServiceCallBack = new AllLoanCallBack();
+
+                BancomatService bancomatService = bancomatServiceClient.getBancomatService();
+
+                GetBancomatDetails requestBancomat = new GetBancomatDetails();
+                requestBancomat.setAccountId(idAccount);
+
+                GetBancomatTransactions requestBancomatTransactions = new GetBancomatTransactions();
+                requestBancomatTransactions.setAccountId(idAccount);
+
+                Response<GetBancomatDetailsResponse> bancomatResponse = bancomatService.getBancomatDetailsAsync(requestBancomat);
+                Response<GetBancomatTransactionsResponse> bancomatTransactionsResponse = bancomatService.getBancomatTransactionsAsync(requestBancomatTransactions);
+
+                try (Client client = ClientBuilder.newClient(); Client client1 = ClientBuilder.newClient()) {
+                    Future<jakarta.ws.rs.core.Response> bankingResponse = client.target(bankingServiceClient.getEndpoint() + "/api/bank/report-bank-account-by-account/" + idAccount).request().async().get(bankingServiceCallBack);
+                    Future<jakarta.ws.rs.core.Response> loanResponse = client1.target(loanServiceClient.getEndpoint() + "/api/loan/account/" + idAccount).request().async().get(loanServiceCallBack);
+
+                    log.info("Response form: BANCOMAT: {}, BANCOMAT1: {}, BANKING-OPERATION: {}, LOAN: {}", bancomatResponse.isDone(), bancomatTransactionsResponse.isDone(), bankingResponse.isDone(), loanResponse.isDone());
+                    Thread.sleep(600);
+
+                    while (!bancomatResponse.isDone() || !bancomatTransactionsResponse.isDone() || !bankingResponse.isDone() || !loanResponse.isDone()) {
+                        Thread.sleep(100);
+                        log.info("Response form: BANCOMAT: {}, BANCOMAT1: {}, BANKING-OPERATION: {}, LOAN: {}", bancomatResponse.isDone(), bancomatTransactionsResponse.isDone(), bankingResponse.isDone(), loanResponse.isDone());
+
+                        if (bankingServiceCallBack.isHasError()) {
+                            throw (FinancialServiceException) bankingServiceCallBack.getThrowable();
+                        }
+                        if (loanServiceCallBack.isHasError()) {
+                            throw (FinancialServiceException) loanServiceCallBack.getThrowable();
+                        }
+                    }
+
+                    BancomatResponse bancomatReply = bancomatResponse.get().getGetBancomatDetailsResponse();
+                    List<BancomatTransactionResponse> bancomatTransactionsReply = bancomatTransactionsResponse.get().getGetBancomatTransactionsResponse();
+                    ReportBankAccountResponse reportBankAccountReplay = bankingServiceCallBack.getReportBankAccountResponse();
+                    List<LoanDto> allLoanReplay = loanServiceCallBack.getLoanListResponses();
+
+                    log.info("RESULT BancomatResponse IS {}", bancomatReply);
+                    log.info("RESULT BancomatTransactionsResponse IS {}", bancomatTransactionsReply);
+                    log.info("RESULT ReportBankAccountResponse IS {}", reportBankAccountReplay);
+                    log.info("RESULT AllLoan IS {}", allLoanReplay);
+
+                    FinancialReportResponse financialReportResponse = new FinancialReportResponse(reportBankAccountReplay.getAccount(), reportBankAccountReplay.getBankAccount(), reportBankAccountReplay.getTransactions(), bancomatReply, bancomatTransactionsReply, allLoanReplay);
+                    jakarta.ws.rs.core.Response response = jakarta.ws.rs.core.Response.ok(financialReportResponse).build();
+                    asyncResponse.resume(response);
+                } catch (Exception e) {
+                    jakarta.ws.rs.core.Response response = jakarta.ws.rs.core.Response.serverError().entity(new ErrorResponse(e.getMessage())).build();
+                    asyncResponse.resume(response);
+                    /* Clean up whatever needs to be handled before interrupting  */
+                    Thread.currentThread().interrupt();
+                }
+            } catch (ServiceUnavailableException e) {
+                /* Trigger ExceptionMapper */
+                asyncResponse.resume(e);
+            }
+        }).start();
+    }
+}
+```
+
+Si notino i seguenti punti:
+
+- Tutte le 4 richieste vengono lanciate in modo **asincrono**, seguito da una pausa di 600 ms
+  tramite `Thread.sleep(600);`.
+- Ogni 100 ms viene stampato lo stato delle 4 chiamate, indicando se sono state concluse o se sono ancora in corso.
+- Viene controllato lo stato delle risposte delle chiamate sotto callback e vengono gestite eventuali eccezioni.
+- Al termine di tutte le 4 richieste, le risposte vengono elaborate per creare una risposta finale.
+
+
 
 
