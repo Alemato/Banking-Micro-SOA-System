@@ -2,6 +2,9 @@ package it.univaq.sose.bankaccountservice.webservice;
 
 import java.io.Serial;
 
+/**
+ * Exception thrown when a requested bank account is not found.
+ */
 public class NotFoundException extends Exception {
     @Serial
     private static final long serialVersionUID = 1292673996797365627L;

@@ -10,6 +10,9 @@ import lombok.ToString;
 
 import java.util.Objects;
 
+/**
+ * Data Transfer Object (DTO) for checking bank account transfer responses.
+ */
 @Getter
 @Setter
 @ToString

@@ -11,6 +11,9 @@ import lombok.ToString;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+/**
+ * Data Transfer Object (DTO) for transfer requests.
+ */
 @Getter
 @Setter
 @ToString

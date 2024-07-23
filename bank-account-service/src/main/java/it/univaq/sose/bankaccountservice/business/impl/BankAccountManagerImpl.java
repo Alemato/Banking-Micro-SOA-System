@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Implementation of the BankAccountManager interface.
+ */
 @Service
 public class BankAccountManagerImpl implements BankAccountManager {
 
@@ -36,6 +39,9 @@ public class BankAccountManagerImpl implements BankAccountManager {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public BankAccountResponse createBankAccount(BankAccountRequest bankAccountRequest) throws BankAccountAlradyExistException {
@@ -48,18 +54,25 @@ public class BankAccountManagerImpl implements BankAccountManager {
         bankAccount.setBalance(bankAccountRequest.getBalance());
         bankAccount = bankAccountRepository.save(bankAccount);
 
+        // Save an initial deposit transaction if the initial balance is greater than zero
         if (bankAccountRequest.getBalance().compareTo(BigDecimal.ZERO) > 0) {
             saveTransaction(null, bankAccount, bankAccountRequest.getBalance(), TransactionType.DEPOSIT, "Bank account opening.");
         }
         return new BankAccountResponse(bankAccount.getId(), bankAccount.getAccountId(), bankAccount.getIban(), bankAccount.getBalance());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public BankAccountResponse getBankAccountDetails(Long idAccount) throws NotFoundException {
         BankAccount bankAccount = bankAccountRepository.findByAccountId(idAccount).orElseThrow(() -> new NotFoundException("Bank Account with ID: " + idAccount + " not found."));
         return new BankAccountResponse(bankAccount.getId(), bankAccount.getAccountId(), bankAccount.getIban(), bankAccount.getBalance());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public TransactionResponse addMoney(BalanceUpdateRequest balanceUpdateRequest) throws NotFoundException {
@@ -71,6 +84,9 @@ public class BankAccountManagerImpl implements BankAccountManager {
         return new TransactionResponse(transaction.getId(), transaction.getTransactionCode(), transaction.getAmount(), transaction.getDescription(), transaction.getTransactionType(), transaction.getCreateDate(), null, receiverBankAccountResponse);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public TransactionResponse removeMoney(BalanceUpdateRequest balanceUpdateRequest) throws InsufficientFundsException, NotFoundException {
@@ -86,6 +102,9 @@ public class BankAccountManagerImpl implements BankAccountManager {
         return new TransactionResponse(transaction.getId(), transaction.getTransactionCode(), transaction.getAmount().negate(), transaction.getDescription(), transaction.getTransactionType(), transaction.getCreateDate(), senderBankAccountResponse, null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public TransactionResponse bancomatPay(BalanceUpdateRequest balanceUpdateRequest) throws InsufficientFundsException, NotFoundException {
@@ -101,6 +120,9 @@ public class BankAccountManagerImpl implements BankAccountManager {
         return new TransactionResponse(transaction.getId(), transaction.getTransactionCode(), transaction.getAmount().negate(), transaction.getDescription(), transaction.getTransactionType(), transaction.getCreateDate(), senderBankAccountResponse, null);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public TransactionResponse executeTransfer(TransferRequest transferRequest) throws NotFoundException, InsufficientFundsException {
@@ -115,18 +137,24 @@ public class BankAccountManagerImpl implements BankAccountManager {
         BankAccount receiverBankAccount = bankAccountRepository.findByAccountId(transferRequest.getReceiverAccountId())
                 .orElseThrow(() -> new NotFoundException("Bank Account with Account ID: " + transferRequest.getReceiverAccountId() + " not found."));
 
+        // Subtract the amount from the sender's balance
         senderBankAccount.setBalance(senderBankAccount.getBalance().subtract(amount));
+        // Add the amount to the receiver's balance
         receiverBankAccount.setBalance(receiverBankAccount.getBalance().add(amount));
 
         bankAccountRepository.save(senderBankAccount);
         bankAccountRepository.save(receiverBankAccount);
 
+        // Save the transfer transaction
         Transaction transaction = saveTransaction(senderBankAccount, receiverBankAccount, transferRequest.getAmount(), TransactionType.TRANSFER, transferRequest.getDescription());
         BankAccountResponse senderBankAccountResponse = new BankAccountResponse(senderBankAccount.getId(), senderBankAccount.getAccountId(), senderBankAccount.getIban(), senderBankAccount.getBalance());
         BankAccountResponse receiverBankAccountResponse = new BankAccountResponse(receiverBankAccount.getId(), receiverBankAccount.getAccountId(), receiverBankAccount.getIban(), receiverBankAccount.getBalance());
         return new TransactionResponse(transaction.getId(), transaction.getTransactionCode(), transaction.getAmount().negate(), transaction.getDescription(), transaction.getTransactionType(), transaction.getCreateDate(), senderBankAccountResponse, receiverBankAccountResponse);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<TransactionResponse> getBankAccountTransactions(Long accountId) {
         List<Transaction> transactions = transactionRepository.findDistinctBySenderBankAccount_AccountIdOrReceiverBankAccount_AccountIdOrderByCreateDateAsc(accountId, accountId);
@@ -137,6 +165,9 @@ public class BankAccountManagerImpl implements BankAccountManager {
         return transactionsResponse;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CheckBankAccountTransferResponse checkBankAccountTransfer(CheckBankAccountTransferRequest checkBankAccountTransferRequest) throws NotFoundException, InsufficientFundsException {
         BankAccount bankAccountSender = bankAccountRepository.findByIban(checkBankAccountTransferRequest.getSenderIban())
@@ -149,6 +180,16 @@ public class BankAccountManagerImpl implements BankAccountManager {
         return new CheckBankAccountTransferResponse(bankAccountSender.getAccountId(), bankAccountReceiver.getAccountId());
     }
 
+    /**
+     * Saves a transaction to the database.
+     *
+     * @param senderAccount   the sender bank account
+     * @param receiverAccount the receiver bank account
+     * @param amount          the amount of the transaction
+     * @param type            the type of the transaction
+     * @param description     the description of the transaction
+     * @return the saved transaction
+     */
     public Transaction saveTransaction(BankAccount senderAccount, BankAccount receiverAccount, BigDecimal amount, TransactionType type, String description) {
         Transaction transaction = new Transaction();
         transaction.setSenderBankAccount(senderAccount);
@@ -160,6 +201,12 @@ public class BankAccountManagerImpl implements BankAccountManager {
         return transactionRepository.save(transaction);
     }
 
+
+    /**
+     * Generates a new IBAN for a bank account.
+     *
+     * @return the generated IBAN
+     */
     private String generateNewIban() {
         Long sequenceValue = jdbcTemplate.queryForObject("SELECT nextval('iban_sequence')", Long.class);
 
@@ -170,6 +217,13 @@ public class BankAccountManagerImpl implements BankAccountManager {
 
         return countryCode + checkDigits + bankCode + accountNumber;
     }
+
+    /**
+     * Calculates the check digits for an IBAN.
+     *
+     * @param iban the IBAN to calculate the check digits for
+     * @return the calculated check digits
+     */
 
     private String calculateCheckDigits(String iban) {
         String reformattedIban = iban.substring(4) + iban.substring(0, 4);
@@ -184,6 +238,13 @@ public class BankAccountManagerImpl implements BankAccountManager {
         return String.format("%02d", checkDigits);
     }
 
+    /**
+     * Maps a Transaction entity to a TransactionResponse DTO.
+     *
+     * @param transaction the transaction entity
+     * @param accountId   the account ID of the requester
+     * @return the mapped transaction response
+     */
     private TransactionResponse mapToTransactionResponse(Transaction transaction, Long accountId) {
         BankAccountResponse senderResponse = transaction.getSenderBankAccount() != null ?
                 new BankAccountResponse(

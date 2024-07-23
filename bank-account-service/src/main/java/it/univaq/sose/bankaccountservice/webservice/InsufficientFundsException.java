@@ -2,6 +2,9 @@ package it.univaq.sose.bankaccountservice.webservice;
 
 import java.io.Serial;
 
+/**
+ * Exception thrown when there are insufficient funds in the bank account to complete a transaction.
+ */
 public class InsufficientFundsException extends Exception {
     @Serial
     private static final long serialVersionUID = 7692673956797365627L;

@@ -11,7 +11,9 @@ import lombok.ToString;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-
+/**
+ * Data Transfer Object (DTO) for balance update requests.
+ */
 @Setter
 @Getter
 @ToString

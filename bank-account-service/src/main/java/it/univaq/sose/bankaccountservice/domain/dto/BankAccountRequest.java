@@ -11,6 +11,9 @@ import lombok.ToString;
 
 import java.math.BigDecimal;
 
+/**
+ * Data Transfer Object (DTO) for bank account creation requests.
+ */
 @Setter
 @Getter
 @ToString

@@ -2,6 +2,9 @@ package it.univaq.sose.bankaccountservice.webservice;
 
 import java.io.Serial;
 
+/**
+ * Exception thrown when an attempt is made to create a bank account that already exists for th account.
+ */
 public class BankAccountAlradyExistException extends Exception {
     @Serial
     private static final long serialVersionUID = 2696173958797365627L;

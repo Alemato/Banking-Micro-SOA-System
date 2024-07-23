@@ -9,6 +9,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Implementation of the BankAccountService interface.
+ * This class provides the web service operations for managing bank accounts.
+ */
 @Slf4j
 @Service
 @Features(features = "org.apache.cxf.ext.logging.LoggingFeature")
@@ -23,26 +27,41 @@ public class BankAccountServiceImpl implements BankAccountService {
         this.bankAccountManager = bankAccountManager;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public BankAccountResponse getBankAccountDetails(Long accountId) throws NotFoundException {
         return bankAccountManager.getBankAccountDetails(accountId);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public BankAccountResponse createBankAccount(BankAccountRequest bankAccountRequest) throws BankAccountAlradyExistException {
         return bankAccountManager.createBankAccount(bankAccountRequest);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CheckBankAccountTransferResponse checkBankAccountTransfer(CheckBankAccountTransferRequest checkBankAccountTransferRequest) throws InsufficientFundsException, NotFoundException {
         return bankAccountManager.checkBankAccountTransfer(checkBankAccountTransferRequest);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TransactionResponse executeTransfer(TransferRequest transferRequest) throws InsufficientFundsException, NotFoundException {
         return bankAccountManager.executeTransfer(transferRequest);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TransactionResponse addMoney(BalanceUpdateRequest balanceUpdateRequest) throws NotFoundException {
         return bankAccountManager.addMoney(balanceUpdateRequest);
@@ -53,11 +72,17 @@ public class BankAccountServiceImpl implements BankAccountService {
         return bankAccountManager.removeMoney(balanceUpdateRequest);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TransactionResponse bancomatPay(BalanceUpdateRequest balanceUpdateRequest) throws InsufficientFundsException, NotFoundException {
         return bankAccountManager.bancomatPay(balanceUpdateRequest);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<TransactionResponse> getBankAccountTransactions(Long accountId) {
         return bankAccountManager.getBankAccountTransactions(accountId);

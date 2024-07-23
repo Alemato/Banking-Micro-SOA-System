@@ -15,6 +15,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * Data Transfer Object (DTO) for transaction responses.
+ */
 @Getter
 @Setter
 @ToString
