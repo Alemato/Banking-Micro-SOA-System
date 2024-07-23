@@ -2051,6 +2051,74 @@ Esempio di utilizzo del plug-in per generare solo i modelli del servizio REST:
 Per ulteriori informazioni su come configurare questo plugin, è possibile inserire nella
 configurazione `<configHelp>true</configHelp>`. Questo fornirà una lista delle possibili opzioni di configurazione.
 
+## Utilizzo del Plug-in Maven cxf-codegen-plugin
 
+Per incrementare la velocità di sviluppo e mantenere la coerenza degli oggetti tra i vari servizi, è stato deciso di
+utilizzare il plug-in Maven per la generazione del codice `cxf-codegen-plugin`. Questo plug-in consente di
+generare automaticamente tutti gli oggetti necessari alla creazione di un client SOAP.
 
+È stata creata una cartella chiamata `wsdl`, situata nella root del progetto, che contiene le specifiche WSDL
+generate automaticamente da Apache CXF per ogni servizio JAX-WS. Questa cartella verrà utilizzata dal plug-in per
+generare il codice necessario.
 
+Esempio di utilizzo del plug-in:
+
+```xml
+
+<plugin>
+    <groupId>org.apache.cxf</groupId>
+    <artifactId>cxf-codegen-plugin</artifactId>
+    <version>${cxf.version}</version>
+    <executions>
+        <execution>
+            <id>generate-sources</id>
+            <phase>generate-sources</phase>
+            <configuration>
+                <sourceRoot>${project.build.directory}/generated-sources/cxf</sourceRoot>
+                <wsdlOptions>
+                    <wsdlOption>
+                        <wsdl>${basedir}/../wsdl/BankAccountService.wsdl</wsdl>
+                    </wsdlOption>
+                    <wsdlOption>
+                        <wsdl>${basedir}/../wsdl/BancomatService.wsdl</wsdl>
+                    </wsdlOption>
+                </wsdlOptions>
+            </configuration>
+            <goals>
+                <goal>wsdl2java</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
+
+## Utilizzo del Plug-in Maven build-helper-maven-plugin
+
+Per facilitare la fase di build e includere automaticamente tutte le classi e i package autogenerati tramite i plugin
+descritti sopra, abbiamo scelto di utilizzare il plug-in Maven `build-helper-maven-plugin`.
+
+Esempio di utilizzo del plug-in:
+
+```xml
+
+<plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>build-helper-maven-plugin</artifactId>
+    <version>3.2.0</version>
+    <executions>
+        <execution>
+            <id>add-source</id>
+            <phase>generate-sources</phase>
+            <goals>
+                <goal>add-source</goal>
+            </goals>
+            <configuration>
+                <sources>
+                    <source>${project.build.directory}/generated-sources/cxf</source>
+                    <source>${project.build.directory}/generated-sources/openapi/src/gen/java</source>
+                </sources>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+```
