@@ -212,6 +212,12 @@ In this scenario, we can see all the system users who can perform the actions de
     - Responsibilities: Interfaces with the various banking system services through the gateway to execute
       user-requested operations.
 
+The implementations of all Prosumers are asynchronous, since they must interact with one or more Providers, which
+results in delays in their responses.
+
+As for the Providers, they have been optimised to support a high number of operations per second, allowing most of their
+operations to be implemented synchronously.
+
 ### Additional Notes
 
 - The **Banking Service Client** communicates with the **Gateway Service** for all operations.
@@ -895,3 +901,254 @@ eureka:
     - Indicates the URL path for the instance's health check.
 8. **metadataMap.servletPath: ${cxf.path}**
     - Defines a metadata map that includes the servletPath, whose value is the root of Apache CXF.
+
+## Implementation of Load-Balancing in Apache CXF Clients
+
+In compliance with exam requirements, no technologies other than those explained and adopted in class were used. During
+the course, the Spring Cloud OpenFeign project was introduced, enabling communication between services without passing
+through the gateway. We started studying if its use was feasible in our project. In the initial study phase, we noted
+that Spring Cloud OpenFeign does not inherently implement a load-balancing logic but requires another Spring project:
+Spring Cloud LoadBalancer.
+
+[Declarative REST Client: Feign](https://docs.spring.io/spring-cloud-openfeign/docs/current/reference/html/#spring-cloud-feign)
+
+> Feign is a declarative web service client. It makes writing web service clients easier. To use Feign, create an
+> interface and annotate it. It has pluggable annotation support, including Feign annotations and JAX-RS annotations.
+> Feign also supports pluggable encoders and decoders. Spring Cloud adds support for Spring MVC annotations and for
+> using
+> the same HttpMessageConverters used by default in Spring Web. Spring Cloud integrates Eureka, Spring Cloud
+> CircuitBreaker, as well as **Spring Cloud LoadBalancer to provide a load-balanced HTTP client when using Feign**.
+
+[Overriding Feign Defaults](https://docs.spring.io/spring-cloud-openfeign/docs/current/reference/html/#spring-cloud-feign-overriding-defaults)
+
+> Note:  
+> `spring-cloud-starter-openfeign` supports `spring-cloud-starter-loadbalancer`. However, as it is an optional
+> dependency, you need to ensure it is added to your project if you want to use it.
+
+Complying with the exam requirements and not having covered Spring Cloud LoadBalancer during lessons, we could not
+introduce it into our project.
+
+After noting that it was necessary to introduce Spring Cloud LoadBalancer, we focused on the actual use of OpenFeign
+compared to the Apache CXF client and concluded the study by deciding to implement a small load-balancer based on the
+concept of *"Non-repetitive Random Iteration"* in the Apache CXF client.
+
+Below is the load-balancer implementation for the Apache CXF client for SOAP operations:
+
+```java
+
+@Slf4j
+@Service
+public class BancomatServiceClient {
+    private final EurekaClient eurekaClient;
+    private volatile BancomatService_Service bancomatService;
+    private final AtomicReference<URL> lastUrl = new AtomicReference<>();
+    private final List<InstanceInfo> lastInstancesCache = Collections.synchronizedList(new ArrayList<>());
+
+    public BancomatServiceClient(EurekaClient eurekaClient) {
+        this.eurekaClient = eurekaClient;
+        this.bancomatService = null;
+    }
+
+    public BancomatService getBancomatService() throws ServiceUnavailableException {
+        try {
+            List<InstanceInfo> instances = Optional.ofNullable(eurekaClient.getInstancesByVipAddress("BANCOMAT-SERVICE", false))
+                    .filter(list -> !list.isEmpty())
+                    .orElseGet(() -> {
+                        log.warn("Using cached instances for BANCOMAT-SERVICE");
+                        log.warn("lastInstancesCache {}", lastInstancesCache);
+                        synchronized (lastInstancesCache) {
+                            return new ArrayList<>(lastInstancesCache);  // Return a copy of the cached instances
+                        }
+                    });
+
+            if (instances == null || instances.isEmpty()) {
+                log.error("No instances available for BANCOMAT-SERVICE");
+                throw new ServiceUnavailableException("No instances available for BANCOMAT-SERVICE");
+            }
+
+            // Update the instance cache synchronously
+            synchronized (lastInstancesCache) {
+                lastInstancesCache.clear();
+                lastInstancesCache.addAll(deepCopyInstanceInfoList(instances));
+            }
+
+            // Remove the last used instance from the list
+            URL lastUrlValue = lastUrl.get();
+            if (lastUrlValue != null) {
+                instances.removeIf(instance -> {
+                    try {
+                        return Objects.equals(new URL(instance.getHomePageUrl() + "services/BancomatService?wsdl"), lastUrlValue);
+                    } catch (MalformedURLException e) {
+                        log.error("Malformed URL while filtering instances: {}", e.getMessage(), e);
+                        return false;
+                    }
+                });
+            }
+
+            // If no alternative instances are available, use the last used instance
+            if (instances.isEmpty()) {
+                log.warn("No alternative instances available for BANCOMAT-SERVICE, using the last used instance");
+                if (bancomatService != null) {
+                    return bancomatService.getBancomatPort();
+                } else {
+                    throw new ServiceUnavailableException("BANCOMAT-SERVICE: No alternative instances available and no previously used instance available");
+                }
+            }
+
+            // Shuffle the list to select a random instance
+            Collections.shuffle(instances);
+            InstanceInfo instance = instances.get(0);
+            String eurekaUrl = instance.getHomePageUrl() + "services/BancomatService?wsdl";
+            URL url = new URL(eurekaUrl);
+            bancomatService = new BancomatService_Service(url);
+            log.info("New Retrieved BancomatService URL: {}", url);
+            lastUrl.set(url);
+
+            return bancomatService.getBancomatPort();
+        } catch (MalformedURLException e) {
+            log.error("Malformed URL: {}", e.getMessage(), e);
+            throw new ServiceUnavailableException("Malformed URL: " + e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to retrieve BancomatService URL: {}", e.getMessage(), e);
+            throw new ServiceUnavailableException("Failed to retrieve BancomatService URL: " + e.getMessage());
+        }
+    }
+
+    private List<InstanceInfo> deepCopyInstanceInfoList(List<InstanceInfo> instances) {
+        return instances.stream()
+                .map(InstanceInfo::new) // Use the copy constructor
+                .collect(Collectors.toList());
+    }
+}
+```
+
+Below is the load-balancer implementation for the Apache CXF client for REST operations:
+
+```java
+
+@Slf4j
+@Service
+public class AccountServiceClient {
+    private final EurekaClient eurekaClient;
+    private final JacksonJsonProvider jacksonProvider;
+    private final AtomicReference<String> lastUrlService = new AtomicReference<>();
+    private final List<InstanceInfo> lastInstancesCache = Collections.synchronizedList(new ArrayList<>());
+
+    public AccountServiceClient(EurekaClient eurekaClient, JacksonJsonProvider jacksonProvider) {
+        this.eurekaClient = eurekaClient;
+        this.jacksonProvider = jacksonProvider;
+    }
+
+    private String getUrlServiceFromEureka() throws ServiceUnavailableException {
+        try {
+            List<InstanceInfo> instances = Optional.ofNullable(eurekaClient.getInstancesByVipAddress("ACCOUNT-SERVICE", false))
+                    .filter(list -> !list.isEmpty())
+                    .orElseGet(() -> {
+                        log.warn("Using cached instances for ACCOUNT-SERVICE");
+                        log.warn("lastInstancesCache {}", lastInstancesCache);
+                        synchronized (lastInstancesCache) {
+                            return new ArrayList<>(lastInstancesCache);  // Return a copy of the cached instances
+                        }
+                    });
+
+            if (instances == null || instances.isEmpty()) {
+                log.error("No instances available for ACCOUNT-SERVICE");
+                throw new ServiceUnavailableException("No instances available for ACCOUNT-SERVICE");
+            }
+
+            // Update the instance cache synchronously
+            synchronized (lastInstancesCache) {
+                lastInstancesCache.clear();
+                lastInstancesCache.addAll(deepCopyInstanceInfoList(instances));
+            }
+
+            // Remove the last used instance from the list
+            String lastUrl = lastUrlService.get();
+            if (lastUrl != null) {
+                instances.removeIf(instance -> {
+                    try {
+                        return Objects.equals(new URL(instance.getHomePageUrl() + "services"), new URL(lastUrl));
+                    } catch (MalformedURLException e) {
+                        log.error("Malformed URL while filtering instances: {}", e.getMessage(), e);
+                        return false;
+                    }
+                });
+            }
+
+            // If no alternative instances are available, use the last used instance
+            if (instances.isEmpty()) {
+                log.warn("No alternative instances available for ACCOUNT-SERVICE, using the last used instance");
+                if (lastUrl != null) {
+                    return lastUrl;
+                } else {
+                    throw new ServiceUnavailableException("ACCOUNT-SERVICE: No alternative instances available and no previously used instance available");
+                }
+            }
+
+            // Shuffle the list to select a random instance
+            Collections.shuffle(instances);
+            InstanceInfo instance = instances.get(0);
+            String eurekaUrl = instance.getHomePageUrl() + "services";
+            log.info("New Retrieved Banking Operations Service URL: {}", eurekaUrl);
+            lastUrlService.set(eurekaUrl);
+
+            return eurekaUrl;
+        } catch (Exception e) {
+            log.error("Failed to retrieve Banking Operations Service URL: {}", e.getMessage(), e);
+            throw new ServiceUnavailableException("Failed to retrieve Banking Operations Service URL: " + e.getMessage());
+        }
+    }
+
+    private List<InstanceInfo> deepCopyInstanceInfoList(List<InstanceInfo> instances) {
+        return instances.stream()
+                .map(InstanceInfo::new) // Use the copy constructor
+                .collect(Collectors.toList());
+    }
+
+    public AccountServiceDefaultClient getAccountService() throws ServiceUnavailableException {
+        return JAXRSClientFactory.create(getUrlServiceFromEureka(), AccountServiceDefaultClient.class, List.of(jacksonProvider));
+    }
+
+    public Client getClientAccountService() throws ServiceUnavailableException {
+        AccountServiceDefaultClient api = JAXRSClientFactory.create(getUrlServiceFromEureka(), AccountServiceDefaultClient.class, List.of(jacksonProvider));
+        return WebClient.client(api);
+    }
+
+    public WebClient getWebClientAccountService() throws ServiceUnavailableException {
+        AccountServiceDefaultClient api = JAXRSClientFactory.create(getUrlServiceFromEureka(), AccountServiceDefaultClient.class, List.of(jacksonProvider));
+        Client client = WebClient.client(api);
+        WebClient webClient = WebClient.fromClient(client);
+        webClient.type(MediaType.APPLICATION_JSON);
+        return webClient;
+    }
+
+    public ClientConfiguration getClientConfigurationAccountService() throws ServiceUnavailableException {
+        AccountServiceDefaultClient api = JAXRSClientFactory.create(getUrlServiceFromEureka(), AccountServiceDefaultClient.class, List.of(jacksonProvider));
+        Client client = WebClient.client(api);
+        return WebClient.getConfig(client);
+    }
+
+    public String getEndpoint() throws ServiceUnavailableException {
+        return getUrlServiceFromEureka();
+    }
+}
+```
+
+As seen in the above code, a caching strategy for instances returned by Eureka was adopted. This is necessary because
+making numerous requests to the Eureka client can cause Eureka to enter protection mode and return an empty list as a
+response.
+
+In fact, all libraries using the Eureka client implement caching operations to avoid continuous calls to the Eureka
+server.
+
+These caching strategies can be quite complex.
+
+To simplify the code as much as possible and make it more readable, we implemented a more basic strategy:
+
+- Make a request to the Eureka server to obtain all instances of a given service.
+- If Eureka returns a non-empty response, update our cache with the provided list of instances.
+- If Eureka does not provide a list of instances, use the previously saved one.
+- If the list resulting from the previous operations is empty or null, raise an exception.
+- If the list is present, check if it contains the URL previously used to make a request to that service. If present,
+  remove it from the list.
+- If the list resulting after the removal is empty, reuse the URL previously used to make a request to that service.

@@ -352,6 +352,13 @@ Il progetto si suddivide nei seguenti moduli Maven:
 10. **banking-service-client**: Client. È il client di esempio che si interfaccia con il Gateway per effettuare le
     operazioni bancarie. Questo client è stato sviluppato con Spring Shell e Apache CXF (client REST).
 
+Le implementazioni di tutti i Prosumer sono di tipo asincrono, poiché devono interagire con uno o più Provider, il che
+comporta ritardi nelle loro risposte.
+
+Per quanto riguarda i Provider, essi sono stati ottimizzati per supportare un
+elevato numero di operazioni al secondo, permettendo l'implementazione della maggior parte delle loro operazioni in modo
+sincrono.
+
 ## Integrazione Spring Boot e Apache CXF
 
 Per integrare Apache CXF in un'applicazione Spring Boot, è necessario aggiungere una delle seguenti dipendenze
@@ -505,6 +512,180 @@ public class ApacheCXFConfig {
 ```
 
 Ora puoi utilizzare le annotazioni OpenApi all'interno delle interfacce del tuo servizio REST.
+
+## Ottimizzazioni effettuate nei Servizi
+
+Essendo un sistema bancario, sono state effettuate ottimizzazioni per aumentare il volume di richieste gestibili entro
+l'intervallo del Time-to-Live di una richiesta (60 secondi).
+
+All'interno dei servizi, utilizziamo Spring Data JPA con PostgreSQL. Abbiamo quindi ottimizzato il comportamento di
+Hibernate e Hikari per massimizzare le operazioni eseguite sul database.
+
+```yaml
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://host.docker.internal:5432/account?reWriteBatchedInserts=true
+    username: postgres
+    password: 123456
+    name: Account_DS
+    hikari:
+      auto-commit: false
+      minimum-idle: 0
+      maximum-pool-size: 10
+      max-lifetime: 600000
+      transaction-isolation: TRANSACTION_READ_COMMITTED
+      data-source-properties:
+        prepStmtCacheSqlLimit: 1024
+        useServerPrepStmts: false
+        prepStmtCacheSize: 500
+        cachePrepStmts: true
+  batch:
+    jdbc:
+      initialize-schema: always
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+          batch_size: 10
+        order_inserts: true
+        order_updates: true
+        query:
+          fail_on_pagination_over_collection_fetch: true
+          plan_cache_max_size: 4096
+          in_clause_parameter_padding: true
+        format_sql: false
+        connection:
+          provider_disables_autocommit: true
+    show-sql: false
+```
+
+##### Dettagli della Configurazione di Hibernate e Hikari
+
+1. `spring.datasource`: Configura il datasource per la connessione al database.
+    - `driver-class-name`: Specifica il driver JDBC da utilizzare, in questo caso il driver PostgreSQL.
+    - `url`: L'URL di connessione al database PostgreSQL. L'opzione `reWriteBatchedInserts=true` permette di ottimizzare
+      le operazioni batch riscrivendole in un'unica operazione.
+    - `username`: Il nome utente per la connessione al database.
+    - `password`: La password per la connessione al database.
+    - `name`: Un nome identificativo per il datasource.
+    - `hikari`: Configurazione specifica per HikariCP, il connection pool utilizzato.
+        - `auto-commit`: Impostato a false per non eseguire il commit automatico delle transazioni.
+        - `minimum-idle`: Numero minimo di connessioni inattive mantenute nel pool.
+        - `maximum-pool-size`: Numero massimo di connessioni nel pool.
+        - `max-lifetime`: Tempo massimo di vita di una connessione in millisecondi.
+        - `transaction-isolation`: Livello di isolamento delle transazioni, in questo caso TRANSACTION_READ_COMMITTED.
+        - `data-source-properties`: Proprietà aggiuntive per il datasource.
+            - `prepStmtCacheSqlLimit`: Limite di dimensione per la cache delle istruzioni preparate.
+            - `useServerPrepStmts`: Specifica se utilizzare le istruzioni preparate sul server.
+            - `prepStmtCacheSize`: Dimensione della cache per le istruzioni preparate.
+            - `cachePrepStmts`: Abilita la cache delle istruzioni preparate.
+2. `spring.batch.jdbc`: Specifiche per operazioni Batch.
+    - `initialize-schema`: Impostato a `always`, inizializza lo schema del database per Spring Batch ad ogni avvio.
+3. `spring.jpa`: Specifiche per JPA (Java Persistence API).
+    - `open-in-view`: Impostato a false, chiude automaticamente la sessione Hibernate dopo la vista.
+    - `hibernate.ddl-auto`: Impostato a update, Hibernate aggiorna lo schema del database all'avvio dell'applicazione.
+    - `properties`: Configurazioni aggiuntive.
+        - `hibernate`: Specifiche per Hibernate.
+            - `jdbc`: Specifiche per jdbc.
+                - `time_zone`: Imposta il fuso orario a UTC.
+                - `batch_size`: Dimensione del batch per le operazioni di inserimento/aggiornamento.
+        - `order_inserts`: Abilita l'ordinamento degli inserimenti per ottimizzare le operazioni batch.
+        - `order_updates`: Abilita l'ordinamento degli aggiornamenti per ottimizzare le operazioni batch.
+        - `query`: Specifiche per le Query da eseguire sul DB.
+            - `fail_on_pagination_over_collection_fetch`: Imposta se fallire in caso di paginazione su fetch di
+              collezioni.
+            - `plan_cache_max_size`: Dimensione massima della cache dei piani di query.
+            - `in_clause_parameter_padding`: Abilita il padding dei parametri nelle clausole IN.
+        - `format_sql`: Impostato a false, non formatta l'SQL generato da Hibernate.
+        - `connection.provider_disables_autocommit`: Impostato a true, disabilita l'autocommit per il provider di
+          connessione.
+    - `show-sql`: Impostato a false, non mostra l'SQL generato da Hibernate nella console.
+
+Grazie a queste modifiche, siamo in grado di raggiungere oltre 5.000 operazioni di scrittura al secondo e più di 80.000
+operazioni di lettura al secondo sul database.
+
+Un'ulteriore ottimizzazione riguarda l'uso delle **SEQUENCE** come indici delle tabelle. In questo modo, Hibernate
+richiede
+al suo avvio degli ID che utilizzerà per il salvataggio di nuove entità, riducendo così il numero di query al database.
+
+```java
+
+@Getter
+@Setter
+@MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
+public class BaseEntity implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -6204225224072578741L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
+    @CreatedDate
+    private LocalDateTime createDate;
+
+    @LastModifiedDate
+    private LocalDateTime updateDate;
+}
+
+@Getter
+@Setter
+@Entity
+@Table(name = "account")
+@SequenceGenerator(name = "account_seq", sequenceName = "account_sequence", allocationSize = 10) //Pre-Alloca solo 10 id
+public class Account extends BaseEntity {
+    @Serial
+    private static final long serialVersionUID = 2741904033865180248L;
+
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Column(name = "surname", nullable = false)
+    private String surname;
+
+    @Column(name = "username", nullable = false)
+    private String username;
+
+    @Column(name = "password", nullable = false, length = 500)
+    private String password;
+
+    @Column(name = "email", nullable = false)
+    private String email;
+
+    @Column(name = "phone", nullable = false)
+    private String phone;
+
+    @Enumerated
+    @Column(name = "role", nullable = false)
+    private Role role;
+
+    @Column(name = "id_bank_account")
+    private Long idBankAccount;
+
+    @Override
+    public final boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null) return false;
+        Class<?> oEffectiveClass = object instanceof HibernateProxy hibernateProxy ? hibernateProxy.getHibernateLazyInitializer().getPersistentClass() : object.getClass();
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy hibernateProxy ? hibernateProxy.getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+        if (thisEffectiveClass != oEffectiveClass) return false;
+        Account account = (Account) object;
+        return getId() != null && Objects.equals(getId(), account.getId());
+    }
+
+    @Override
+    public final int hashCode() {
+        return this instanceof HibernateProxy hibernateProxy ? hibernateProxy.getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+    }
+}
+```
 
 ## Integrazione del Logging di Apache CXF in Spring Boot
 
@@ -918,5 +1099,262 @@ eureka:
     - Indica il percorso URL per il controllo della salute dell'istanza.
 8. **metadataMap.servletPath: ${cxf.path}**
     - Definisce una mappa di metadati che include il percorso servletPath, il cui valore è la root di Apache CXF.
+
+## Implementazione dei Load-Balance nei client Apache CXF
+
+Rispettando i requisiti d'esame, non sono state utilizzate tecnologie diverse da quelle spiegate e adottate in classe.
+Durante il corso è stato introdotto il progetto Spring Cloud OpenFeign che consente la comunicazione tra servizi senza
+passare il gateway, abbiamo quindi iniziato a studiare se tale utilizzo era possibile nel nostro progetto.
+Durante la fase iniziale di studio abbiamo notato che Spring Cloud OpenFeign non implementa da solo una logica di
+Load-Balance ma
+per poter applicare questa tecnologia necessita di un altro progetto Spring: Spring Cloud LoadBalancer.
+
+[Declarative REST Client: Feign](https://docs.spring.io/spring-cloud-openfeign/docs/current/reference/html/#spring-cloud-feign)
+
+> Feign is a declarative web service client. It makes writing web service clients easier. To use Feign create an
+> interface and annotate it. It has pluggable annotation support including Feign annotations and JAX-RS annotations.
+> Feign
+> also supports pluggable encoders and decoders. Spring Cloud adds support for Spring MVC annotations and for using the
+> same HttpMessageConverters used by default in Spring Web. Spring Cloud integrates Eureka, Spring Cloud CircuitBreaker,
+> as well as **Spring Cloud LoadBalancer to provide a load-balanced http client when using Feign**.
+
+[Overriding Feign Defaults](https://docs.spring.io/spring-cloud-openfeign/docs/current/reference/html/#spring-cloud-feign-overriding-defaults)
+> Note:   
+> `spring-cloud-starter-openfeign` supports `spring-cloud-starter-loadbalancer`. However, as is an optional dependency,
+> you need to make sure it has been added to your project if you want to use it.
+
+Rispettando i requisiti d'esame e non avendo visto durante le lezioni `Spring Cloud LoadBalancer` non potevamo
+introdurlo
+nel nostro progetto.
+
+Dopo aver notato che era obbligatorio introdurre Spring Cloud LoadBalancer ci siamo soffermati sull'effettivo utilizzo
+di OpenFeign rispetto al client di Apache CXF e abbiamo concluso lo studio decidendo implementare un piccolo
+Load-Balance basato sul concetto di *“Iterazione casuale non ripetitiva”* nel Client di Apache CXF.
+
+Di seguito l'implementazione del Load-Balance per il Client Apache CXF per operazioni SOAP:
+
+```java
+
+@Slf4j
+@Service
+public class BancomatServiceClient {
+    private final EurekaClient eurekaClient;
+    private volatile BancomatService_Service bancomatService;
+    private final AtomicReference<URL> lastUrl = new AtomicReference<>();
+    private final List<InstanceInfo> lastInstancesCache = Collections.synchronizedList(new ArrayList<>());
+
+    public BancomatServiceClient(EurekaClient eurekaClient) {
+        this.eurekaClient = eurekaClient;
+        this.bancomatService = null;
+    }
+
+    public BancomatService getBancomatService() throws ServiceUnavailableException {
+        try {
+            List<InstanceInfo> instances = Optional.ofNullable(eurekaClient.getInstancesByVipAddress("BANCOMAT-SERVICE", false))
+                    .filter(list -> !list.isEmpty())
+                    .orElseGet(() -> {
+                        log.warn("Using cached instances for BANCOMAT-SERVICE");
+                        log.warn("lastInstancesCache {}", lastInstancesCache);
+                        synchronized (lastInstancesCache) {
+                            return new ArrayList<>(lastInstancesCache);  // Ritorna una copia delle istanze della cache
+                        }
+                    });
+
+            if (instances == null || instances.isEmpty()) {
+                log.error("No instances available for BANCOMAT-SERVICE");
+                throw new ServiceUnavailableException("No instances available for BANCOMAT-SERVICE");
+            }
+
+            // Aggiorna la cache delle istanze in modo sincronizzato
+            synchronized (lastInstancesCache) {
+                lastInstancesCache.clear();
+                lastInstancesCache.addAll(deepCopyInstanceInfoList(instances));
+            }
+
+            // Rimuove l'ultima istanza utilizzata dalla lista
+            URL lastUrlValue = lastUrl.get();
+            if (lastUrlValue != null) {
+                instances.removeIf(instance -> {
+                    try {
+                        return Objects.equals(new URL(instance.getHomePageUrl() + "services/BancomatService?wsdl"), lastUrlValue);
+                    } catch (MalformedURLException e) {
+                        log.error("Malformed URL while filtering instances: {}", e.getMessage(), e);
+                        return false;
+                    }
+                });
+            }
+
+            // Se non ci sono istanze alternative disponibili, utilizza l'ultima istanza utilizzata
+            if (instances.isEmpty()) {
+                log.warn("No alternative instances available for BANCOMAT-SERVICE, using the last used instance");
+                if (bancomatService != null) {
+                    return bancomatService.getBancomatPort();
+                } else {
+                    throw new ServiceUnavailableException("BANCOMAT-SERVICE: No alternative instances available and no previously used instance available");
+                }
+            }
+
+            // Mescola la lista per selezionare un'istanza casuale
+            Collections.shuffle(instances);
+            InstanceInfo instance = instances.get(0);
+            String eurekaUrl = instance.getHomePageUrl() + "services/BancomatService?wsdl";
+            URL url = new URL(eurekaUrl);
+            bancomatService = new BancomatService_Service(url);
+            log.info("New Retrieved BancomatService URL: {}", url);
+            lastUrl.set(url);
+
+            return bancomatService.getBancomatPort();
+        } catch (MalformedURLException e) {
+            log.error("Malformed URL: {}", e.getMessage(), e);
+            throw new ServiceUnavailableException("Malformed URL: " + e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to retrieve BancomatService URL: {}", e.getMessage(), e);
+            throw new ServiceUnavailableException("Failed to retrieve BancomatService URL: " + e.getMessage());
+        }
+    }
+
+    private List<InstanceInfo> deepCopyInstanceInfoList(List<InstanceInfo> instances) {
+        return instances.stream()
+                .map(InstanceInfo::new) // Usa il costruttore di copia
+                .collect(Collectors.toList());
+    }
+}
+```
+
+Di seguito l'implementazione del Load-Balance per il Client Apache CXF per operazioni REST:
+
+```java
+
+@Slf4j
+@Service
+public class AccountServiceClient {
+    private final EurekaClient eurekaClient;
+    private final JacksonJsonProvider jacksonProvider;
+    private final AtomicReference<String> lastUrlService = new AtomicReference<>();
+    private final List<InstanceInfo> lastInstancesCache = Collections.synchronizedList(new ArrayList<>());
+
+    public AccountServiceClient(EurekaClient eurekaClient, JacksonJsonProvider jacksonProvider) {
+        this.eurekaClient = eurekaClient;
+        this.jacksonProvider = jacksonProvider;
+    }
+
+    private String getUrlServiceFromEureka() throws ServiceUnavailableException {
+        try {
+            List<InstanceInfo> instances = Optional.ofNullable(eurekaClient.getInstancesByVipAddress("ACCOUNT-SERVICE", false))
+                    .filter(list -> !list.isEmpty())
+                    .orElseGet(() -> {
+                        log.warn("Using cached instances for ACCOUNT-SERVICE");
+                        log.warn("lastInstancesCache {}", lastInstancesCache);
+                        synchronized (lastInstancesCache) {
+                            return new ArrayList<>(lastInstancesCache);  // Return a copy of the cached instances
+                        }
+                    });
+
+            if (instances == null || instances.isEmpty()) {
+                log.error("No instances available for ACCOUNT-SERVICE");
+                throw new ServiceUnavailableException("No instances available for ACCOUNT-SERVICE");
+            }
+
+            // Aggiorna la cache delle istanze in modo sincronizzato
+            synchronized (lastInstancesCache) {
+                lastInstancesCache.clear();
+                lastInstancesCache.addAll(deepCopyInstanceInfoList(instances));
+            }
+
+            // Rimuove l'ultima istanza utilizzata dalla lista
+            String lastUrl = lastUrlService.get();
+            if (lastUrl != null) {
+                instances.removeIf(instance -> {
+                    try {
+                        return Objects.equals(new URL(instance.getHomePageUrl() + "services"), new URL(lastUrl));
+                    } catch (MalformedURLException e) {
+                        log.error("Malformed URL while filtering instances: {}", e.getMessage(), e);
+                        return false;
+                    }
+                });
+            }
+
+            // Se non ci sono istanze alternative disponibili, utilizza l'ultima istanza utilizzata
+            if (instances.isEmpty()) {
+                log.warn("No alternative instances available for ACCOUNT-SERVICE, using the last used instance");
+                if (lastUrl != null) {
+                    return lastUrl;
+                } else {
+                    throw new ServiceUnavailableException("ACCOUNT-SERVICE: No alternative instances available and no previously used instance available");
+                }
+            }
+
+            // Mescola la lista per selezionare un'istanza casuale
+            Collections.shuffle(instances);
+            InstanceInfo instance = instances.get(0);
+            String eurekaUrl = instance.getHomePageUrl() + "services";
+            log.info("New Retrieved Banking Operations Service URL: {}", eurekaUrl);
+            lastUrlService.set(eurekaUrl);
+
+            return eurekaUrl;
+        } catch (Exception e) {
+            log.error("Failed to retrieve Banking Operations Service URL: {}", e.getMessage(), e);
+            throw new ServiceUnavailableException("Failed to retrieve Banking Operations Service URL: " + e.getMessage());
+        }
+    }
+
+    private List<InstanceInfo> deepCopyInstanceInfoList(List<InstanceInfo> instances) {
+        return instances.stream()
+                .map(InstanceInfo::new) // Usa il costruttore di copia
+                .collect(Collectors.toList());
+    }
+
+    public AccountServiceDefaultClient getAccountService() throws ServiceUnavailableException {
+        return JAXRSClientFactory.create(getUrlServiceFromEureka(), AccountServiceDefaultClient.class, List.of(jacksonProvider));
+    }
+
+    public Client getClientAccountService() throws ServiceUnavailableException {
+        AccountServiceDefaultClient api = JAXRSClientFactory.create(getUrlServiceFromEureka(), AccountServiceDefaultClient.class, List.of(jacksonProvider));
+        return WebClient.client(api);
+    }
+
+    public WebClient getWebClientAccountService() throws ServiceUnavailableException {
+        AccountServiceDefaultClient api = JAXRSClientFactory.create(getUrlServiceFromEureka(), AccountServiceDefaultClient.class, List.of(jacksonProvider));
+        Client client = WebClient.client(api);
+        WebClient webClient = WebClient.fromClient(client);
+        webClient.type(MediaType.APPLICATION_JSON);
+        return webClient;
+    }
+
+    public ClientConfiguration getClientConfigurationAccountService() throws ServiceUnavailableException {
+        AccountServiceDefaultClient api = JAXRSClientFactory.create(getUrlServiceFromEureka(), AccountServiceDefaultClient.class, List.of(jacksonProvider));
+        Client client = WebClient.client(api);
+        return WebClient.getConfig(client);
+    }
+
+    public String getEndpoint() throws ServiceUnavailableException {
+        return getUrlServiceFromEureka();
+    }
+
+}
+```
+
+Come si può vedere dai codici sopra, è stata adottata una strategia di cache per le istanze restituite da Eureka. Questo
+è necessario perché effettuare numerose richieste al client di Eureka può far sì che Eureka entri in modalità di
+protezione e restituisca una lista vuota come risposta.
+
+Infatti, tutte le librerie che utilizzano Eureka Client implementano operazioni di cache proprio per evitare continue
+chiamate al server Eureka.
+
+Queste strategie di cache possono essere piuttosto complesse.
+
+Per semplificare al massimo il
+codice e renderlo più leggibile, abbiamo implementato una strategia più elementare:
+
+- Effettuiamo una richiesta al server Eureka per ottenere tutte le istanze di un determinato servizio.
+- Se Eureka restituisce una risposta non vuota, aggiorniamo la nostra cache con la lista delle istanze fornite.
+- Se Eureka non fornisce una lista di istanze, utilizziamo quella salvata in precedenza.
+- Se la lista risultante dalle operazioni precedenti è vuota o nulla, solleviamo un'eccezione.
+- Se la lista è presente, verifichiamo se contiene l'URL utilizzato in precedenza per effettuare una richiesta a quel
+  servizio. Se presente, lo eliminiamo dalla lista.
+- Se la lista risultante dopo la rimozione è vuota, riutilizziamo l'URL precedentemente utilizzato per effettuare una
+  richiesta a quel servizio.
+
+
 
 
