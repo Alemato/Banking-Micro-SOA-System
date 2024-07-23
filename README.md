@@ -1152,3 +1152,157 @@ To simplify the code as much as possible and make it more readable, we implement
 - If the list is present, check if it contains the URL previously used to make a request to that service. If present,
   remove it from the list.
 - If the list resulting after the removal is empty, reuse the URL previously used to make a request to that service.
+
+## Implementing a JAX-WS Service with Apache CXF and Spring Boot
+
+After adding the necessary dependencies and configurations described earlier, let's see how a JAX-WS service is
+implemented.
+
+To implement a service, it is sufficient to declare an interface using JAX-WS annotations and a class that implements
+the actual logic.
+
+Interface:
+
+```java
+
+@WebService(name = "BancomatService")
+public interface BancomatService {
+
+    @WebResult(name = "GetBancomatDetailsResponse",
+            targetNamespace = "http://webservice.bancomatservice.sose.univaq.it/")
+    @WebMethod(action = "urn:GetBancomatDetails")
+    @ResponseWrapper(localName = "getBancomatDetailsResponse",
+            className = "it.univaq.sose.bancomatservice.domain.dto.GetBancomatDetailsResponse")
+    public BancomatResponse getBancomatDetails(@XmlElement(required = true) @WebParam(name = "accountId",
+            targetNamespace = "http://webservice.bancomatservice.sose.univaq.it/") Long accountId) throws NotFoundException, BancomatException;
+
+    @WebResult(name = "GetBancomatDetailsAsync",
+            targetNamespace = "http://webservice.bancomatservice.sose.univaq.it/")
+    @WebMethod(action = "urn:GetBancomatDetailsAsync")
+    @ResponseWrapper(localName = "getBancomatDetailsResponse",
+            className = "it.univaq.sose.bancomatservice.domain.dto.GetBancomatDetailsResponse")
+    public Future<?> getBancomatDetailsAsync(@XmlElement(required = true) @WebParam(name = "accountId",
+            targetNamespace = "http://webservice.bancomatservice.sose.univaq.it/") Long accountId, AsyncHandler<GetBancomatDetailsResponse> asyncHandler) throws NotFoundException, BancomatException;
+    // ...
+}
+```
+
+Interface implementation:
+
+```java
+
+@Service
+@Features(features = "org.apache.cxf.ext.logging.LoggingFeature")
+@WebService(serviceName = "BancomatService", portName = "BancomatPort",
+        targetNamespace = "http://webservice.bancomatservice.sose.univaq.it/",
+        endpointInterface = "it.univaq.sose.bancomatservice.webservice.BancomatService")
+public class BancomatServiceImpl implements BancomatService {
+
+    private final BancomatManager bancomatManager;
+
+    public BancomatServiceImpl(BancomatManager bancomatManager) {
+        this.bancomatManager = bancomatManager;
+    }
+
+    @Override
+    @UseAsyncMethod
+    public BancomatResponse getBancomatDetails(Long accountId) throws NotFoundException, BancomatException {
+        return bancomatManager.getBancomatDetails(accountId);
+    }
+
+    @Override
+    public Future<?> getBancomatDetailsAsync(Long accountId, AsyncHandler<GetBancomatDetailsResponse> asyncHandler) throws NotFoundException, BancomatException {
+        final ServerAsyncResponse<GetBancomatDetailsResponse> r = new ServerAsyncResponse<>();
+        new Thread(() -> {
+            try {
+                Thread.sleep(1000);
+                BancomatResponse bancomatResponse = bancomatManager.getBancomatDetails(accountId);
+                GetBancomatDetailsResponse response = new GetBancomatDetailsResponse();
+                response.setGetBancomatDetailsResponse(bancomatResponse);
+                r.set(response);
+                asyncHandler.handleResponse(r);
+            } catch (InterruptedException e) {
+                r.exception(new BancomatException(e.getMessage()));
+                asyncHandler.handleResponse(r);
+                /* Clean up whatever needs to be handled before interrupting */
+                Thread.currentThread().interrupt();
+            } catch (NotFoundException e) {
+                r.exception(e);
+                asyncHandler.handleResponse(r);
+                /* Clean up whatever needs to be handled before interrupting */
+                Thread.currentThread().interrupt();
+            }
+        }).start();
+        return r;
+    }
+    // ...
+}
+```
+
+Note the following points:
+
+- The use of an asynchronous method.
+- The presence of `Thread.sleep(1000);` in the asynchronous implementation of the `getBancomatDetailsAsync` web method,
+  which simulates a 1-second delay in the actual response.
+- `r.exception(e);` and `r.exception(new BancomatException(e.getMessage()));` are used when an exception occurs,
+  creating a FAULT-type response.
+- The presence of the `@Features(features = "org.apache.cxf.ext.logging.LoggingFeature")` annotation, which enables
+  Apache logging on this endpoint.
+
+An example of a response object `BancomatResponse` and ResponseWrapper `GetBancomatDetailsResponse`:
+
+```java
+
+@Getter
+@Setter
+@ToString
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "BancomatResponse", propOrder = {"id", "number", "cvv", "expiryDate", "accountId"})
+public class BancomatResponse {
+
+    @XmlElement(required = true)
+    private Long id;
+
+    @XmlElement(required = true)
+    private String number;
+
+    @XmlElement(required = true)
+    private String cvv;
+
+    @XmlElement(required = true)
+    private String expiryDate;
+
+    @XmlElement(required = true)
+    private Long accountId;
+
+    public BancomatResponse() {
+    }
+
+    public BancomatResponse(Long id, String number, String cvv, String expiryDate, Long accountId) {
+        this.id = id;
+        this.number = number;
+        this.cvv = cvv;
+        this.expiryDate = expiryDate;
+        this.accountId = accountId;
+    }
+}
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "getBancomatDetailsResponse", propOrder = {
+        "getBancomatDetailsResponse"
+})
+public class GetBancomatDetailsResponse {
+
+    @XmlElement(name = "GetBancomatDetailsResponse", namespace = "http://webservice.bancomatservice.sose.univaq.it/")
+    protected BancomatResponse getBancomatDetailsResponse;
+
+    public BancomatResponse getGetBancomatDetailsResponse() {
+        return getBancomatDetailsResponse;
+    }
+
+    public void setGetBancomatDetailsResponse(BancomatResponse value) {
+        this.getBancomatDetailsResponse = value;
+    }
+
+}
+```
