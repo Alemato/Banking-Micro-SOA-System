@@ -169,7 +169,7 @@ responsabile di un particolare aspetto della gestione bancaria:
     - Report Finanziario Complessivo: Creazione di report integrati che forniscono una visione globale delle attività
       finanziarie.
 
-## Motivazioni legate alll'Approccio SOA e Microservices
+## Motivazioni legate all'Approccio SOA e Microservices
 
 L'adozione di un'architettura SOA e microservizi per il Banking Micro SOA System è motivata da diversi vantaggi chiave:
 
