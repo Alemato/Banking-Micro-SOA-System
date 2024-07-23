@@ -21,6 +21,9 @@ import reactor.core.publisher.Mono;
 import java.io.StringWriter;
 import java.util.List;
 
+/**
+ * GatewayFilter for handling authorization based on JWT tokens.
+ */
 @Slf4j
 @Service
 public class AuthorizationFilter extends AbstractGatewayFilterFactory<AuthorizationFilter.Config> {
@@ -34,6 +37,12 @@ public class AuthorizationFilter extends AbstractGatewayFilterFactory<Authorizat
         this.jwtVerification = jwtVerification;
     }
 
+    /**
+     * Applies the filter to the Gateway.
+     *
+     * @param config the configuration object for the filter.
+     * @return the GatewayFilter.
+     */
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
@@ -64,6 +73,9 @@ public class AuthorizationFilter extends AbstractGatewayFilterFactory<Authorizat
         };
     }
 
+    /**
+     * Configuration class for the AuthorizationFilter.
+     */
     @Getter
     @Setter
     @Builder
@@ -72,6 +84,14 @@ public class AuthorizationFilter extends AbstractGatewayFilterFactory<Authorizat
         private boolean checkPathWithIdentifier;
     }
 
+    /**
+     * Handles errors by sending an appropriate response.
+     *
+     * @param exchange   the ServerWebExchange.
+     * @param error      the error message.
+     * @param httpStatus the HTTP status to set.
+     * @return a Mono that completes the response handling.
+     */
     private Mono<Void> onError(ServerWebExchange exchange, String error, HttpStatus httpStatus) {
         exchange.getResponse().setStatusCode(httpStatus);
         ErrorResponse errorResponse = new ErrorResponse(error);

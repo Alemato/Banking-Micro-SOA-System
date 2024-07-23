@@ -2,6 +2,9 @@ package it.univaq.sose.gatewayservice.domain;
 
 import lombok.Data;
 
+/**
+ * A request containing a JWT token.
+ */
 @Data
 public class TokenRequest {
     private String token;
