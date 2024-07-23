@@ -22,10 +22,10 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
 # Expose ports
-EXPOSE 9082
+EXPOSE 9087
 
-LABEL name="Banking Micro-SOA System - Bancomat Service" \
-      description="Bancomat Service for Banking Micro-SOA System" \
+LABEL name="Banking Micro-SOA System - Gateway Service" \
+      description="Gateway Service for Banking Micro-SOA System" \
       version="0.0.1" \
       authors="University of L'Aquila"
 

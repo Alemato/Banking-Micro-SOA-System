@@ -13,7 +13,7 @@ COPY src ./src
 RUN mvn package -DskipTests
 
 # Fase 2: Run
-FROM amazoncorretto:17.0.11-alpine3.19
+FROM amazoncorretto:17.0.12-alpine3.19
 
 # Set the working directory
 WORKDIR /app
@@ -24,7 +24,7 @@ COPY --from=build /app/target/*.jar app.jar
 # Expose ports
 EXPOSE 8761
 
-LABEL name="Banking Micro-SOA System Discovery Service" \
+LABEL name="Banking Micro-SOA System - Discovery Service" \
       description="Discovery Service for Banking Micro-SOA System" \
       version="0.0.1" \
       authors="University of L'Aquila"
