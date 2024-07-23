@@ -2649,7 +2649,7 @@ After cloning the repository, navigate to the project's main directory.
 Run the following command:
 
 ```sh
-mvn clean install
+mvn clean install -DskipTests
 ```
 
 ### Starting Services with Docker
