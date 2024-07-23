@@ -14,7 +14,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * DTO for {@link it.univaq.sose.accountservice.domain.Account}
+ * Data Transfer Object (DTO) for {@link it.univaq.sose.accountservice.domain.Account}.
  */
 @Data
 @XmlRootElement(name = "AccountResponse")

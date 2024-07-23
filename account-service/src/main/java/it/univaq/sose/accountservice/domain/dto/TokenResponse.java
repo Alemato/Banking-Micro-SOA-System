@@ -6,6 +6,9 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.Data;
 
+/**
+ * Data Transfer Object (DTO) for responses containing a token.
+ */
 @Data
 @XmlRootElement(name = "TokenResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -20,25 +23,3 @@ public class TokenResponse {
         this.token = token;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

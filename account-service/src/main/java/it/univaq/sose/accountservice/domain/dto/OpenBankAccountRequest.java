@@ -6,6 +6,9 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.Data;
 
+/**
+ * Data Transfer Object (DTO) for requests to open a new bank account.
+ */
 @Data
 @XmlRootElement(name = "OpenBankAccountRequest")
 @XmlAccessorType(XmlAccessType.FIELD)

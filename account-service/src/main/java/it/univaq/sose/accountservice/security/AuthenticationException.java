@@ -2,6 +2,9 @@ package it.univaq.sose.accountservice.security;
 
 import java.io.Serial;
 
+/**
+ * Exception thrown when an authentication error occurs.
+ */
 public class AuthenticationException extends Exception {
     @Serial
     private static final long serialVersionUID = -7574209823462477590L;

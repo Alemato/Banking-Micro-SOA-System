@@ -2,6 +2,9 @@ package it.univaq.sose.accountservice.service;
 
 import java.io.Serial;
 
+/**
+ * Exception thrown when a requested account is not found.
+ */
 public class NotFoundException extends Exception {
     @Serial
     private static final long serialVersionUID = 4000668156583620859L;

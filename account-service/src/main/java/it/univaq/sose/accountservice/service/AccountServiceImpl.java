@@ -11,6 +11,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
+/**
+ * Implementation of the AccountService interface.
+ */
 @Service
 @Features(features = "org.apache.cxf.ext.logging.LoggingFeature")
 public class AccountServiceImpl implements AccountService {
@@ -23,21 +26,33 @@ public class AccountServiceImpl implements AccountService {
         this.accountManager = accountManager;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Response login(UserCredentials credentials) {
         try {
+            // Generate JWT token
             String token = accountManager.getJwtToken(credentials);
             return Response.ok(new TokenResponse(token)).build();
         } catch (AuthenticationException e) {
+            // Return unauthorized response if authentication fails
             return Response.status(Response.Status.UNAUTHORIZED).entity(new ErrorResponse(e.getMessage())).build();
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Boolean checkTokenResponse(TokenResponse token) {
+        // Check the validity of the provided token
         return accountManager.checkJwtToken(token.getToken());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Response openAccountBanker(OpenBankAccountRequest request) {
         try {
@@ -47,6 +62,9 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Response openAccountAdmin(OpenBankAccountRequest request) {
         try {
@@ -56,6 +74,9 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Response openAccountCustomer(OpenBankAccountRequest request) {
         try {
@@ -65,6 +86,9 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Response addBankAccount(long id, AddIdBankAccountRequest request) {
         try {
@@ -74,6 +98,9 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Response getAccount(long id) {
         try {
@@ -83,7 +110,14 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
+    /**
+     * Generates a response with the location header from the account response.
+     *
+     * @param account the account response
+     * @return the response with the location header
+     */
     private Response generateResponseLocationFromAccountResponse(AccountResponse account) {
+        // Build the URI for the created account
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(cxfPath + "/api/account/{id}")
                 .buildAndExpand(account.getId())

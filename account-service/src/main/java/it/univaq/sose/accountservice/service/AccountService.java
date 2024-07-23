@@ -11,9 +11,18 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+/**
+ * REST interface for account management.
+ */
 @Path("/api/account")
 public interface AccountService {
 
+    /**
+     * Authenticates a user and returns a JWT token.
+     *
+     * @param credentials the user credentials
+     * @return the response containing the JWT token or an error message
+     */
     @Operation(operationId = "login", description = "Authenticate user and return JWT", responses = {
             @ApiResponse(responseCode = "200", description = "Authentication successful", content = {
                     @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = TokenResponse.class)),
@@ -33,6 +42,12 @@ public interface AccountService {
             }
     ) UserCredentials credentials);
 
+    /**
+     * Checks the validity of a JWT token.
+     *
+     * @param token the token to check
+     * @return true if the token is valid, false otherwise
+     */
     @Operation(operationId = "checkTokenResponse", description = "Check JWT", responses = {
             @ApiResponse(responseCode = "200", description = "Check successful", content = {
                     @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = Boolean.class)),
@@ -49,7 +64,12 @@ public interface AccountService {
             }
     ) TokenResponse token);
 
-
+    /**
+     * Opens a new banker account.
+     *
+     * @param request the account creation request
+     * @return the response indicating the result of the operation
+     */
     @Operation(operationId = "openAccountBanker", description = "openAccountBanker", responses = {
             @ApiResponse(
                     responseCode = "201",
@@ -72,6 +92,12 @@ public interface AccountService {
             }
     ) OpenBankAccountRequest request);
 
+    /**
+     * Opens a new admin account.
+     *
+     * @param request the account creation request
+     * @return the response indicating the result of the operation
+     */
     @Operation(operationId = "openAccountAdmin", description = "openAccountAdmin", responses = {
             @ApiResponse(
                     responseCode = "201",
@@ -94,6 +120,12 @@ public interface AccountService {
             }
     ) OpenBankAccountRequest request);
 
+    /**
+     * Opens a new customer account.
+     *
+     * @param request the account creation request
+     * @return the response indicating the result of the operation
+     */
     @Operation(operationId = "openAccountCustomer", description = "openAccountCustomer", responses = {
             @ApiResponse(
                     responseCode = "201",
@@ -116,7 +148,13 @@ public interface AccountService {
             }
     ) OpenBankAccountRequest request);
 
-
+    /**
+     * Adds a bank account ID to an existing account.
+     *
+     * @param id      the ID of the account to update
+     * @param request the request containing the bank account ID to add
+     * @return the response indicating the result of the operation
+     */
     @Operation(operationId = "addBankAccount", description = "addBankAccount", responses = {
             @ApiResponse(description = "Save Bank Account on Account", content = {
                     @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = AccountResponse.class)),
@@ -138,7 +176,12 @@ public interface AccountService {
             }
     ) AddIdBankAccountRequest request);
 
-
+    /**
+     * Retrieves an account by its ID.
+     *
+     * @param id the ID of the account to retrieve
+     * @return the response containing the account details or an error message
+     */
     @Operation(operationId = "getAccount", description = "getAccount", responses = {
             @ApiResponse(description = "Get Account by ID", content = {
                     @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = AccountResponse.class)),
