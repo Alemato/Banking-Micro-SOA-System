@@ -1941,6 +1941,116 @@ Si notino i seguenti punti:
 - Viene controllato lo stato delle risposte delle chiamate sotto callback e vengono gestite eventuali eccezioni.
 - Al termine di tutte le 4 richieste, le risposte vengono elaborate per creare una risposta finale.
 
+## Utilizzo del Plug-in Maven openapi-generator-maven-plugin
+
+Per incrementare la velocità di sviluppo e mantenere la coerenza degli oggetti tra i vari servizi, è stato deciso di
+utilizzare il plug-in Maven per la generazione del codice `openapi-generator-maven-plugin`. Questo plug-in consente di
+generare automaticamente tutti i modelli e le interfacce per i vari client REST.
+
+È stata creata una cartella chiamata `openapi`, situata nella root del progetto, che contiene le specifiche OpenAPI
+generate automaticamente da Apache CXF per ogni servizio JAX-RS. Questa cartella verrà utilizzata dal plug-in per
+generare il codice necessario.
+
+Esempio di utilizzo del plug-in per generare sia i modelli che l'interfaccia del servizio REST:
+
+```xml
+
+<plugin>
+    <groupId>org.openapitools</groupId>
+    <artifactId>openapi-generator-maven-plugin</artifactId>
+    <version>7.7.0</version>
+    <executions>
+        <execution>
+            <id>banking-operations-service-generate-sources</id>
+            <phase>generate-sources</phase>
+            <configuration>
+                <inputSpec>${basedir}/../openapi/BankingOperationsService_openapi.yaml</inputSpec>
+                <generatorName>jaxrs-cxf</generatorName>
+                <output>${project.build.directory}/generated-sources/openapi/banking-operations-service
+                </output>
+                <packageName>it.univaq.sose.bankingoperationsserviceprosumer</packageName>
+                <apiPackage>it.univaq.sose.bankingoperationsserviceprosumer.api</apiPackage>
+                <modelPackage>it.univaq.sose.bankingoperationsserviceprosumer.model</modelPackage>
+                <invokerPackage>it.univaq.sose.bankingoperationsserviceprosumer.invoker</invokerPackage>
+                <generateApiTests>false</generateApiTests>
+                <generateModelTests>false</generateModelTests>
+                <configOptions>
+                    <useJakartaEe>true</useJakartaEe>
+                </configOptions>
+                <additionalProperties>
+                    <additionalProperty>apiNameSuffix=Client</additionalProperty>
+                    <additionalProperty>apiNamePrefix=BankingOperationsService</additionalProperty>
+                </additionalProperties>
+            </configuration>
+            <goals>
+                <goal>generate</goal>
+            </goals>
+        </execution>
+        <execution>
+            <id>generate-sources</id>
+            <phase>generate-sources</phase>
+            <configuration>
+                <inputSpec>${basedir}/../openapi/LoanService_openapi.yaml</inputSpec>
+                <generatorName>jaxrs-cxf</generatorName>
+                <output>${project.build.directory}/generated-sources/openapi/loan-service</output>
+                <packageName>it.univaq.sose.loanserviceprosumer</packageName>
+                <apiPackage>it.univaq.sose.loanserviceprosumer.api</apiPackage>
+                <modelPackage>it.univaq.sose.loanserviceprosumer.model</modelPackage>
+                <invokerPackage>it.univaq.sose.loanserviceprosumer.invoker</invokerPackage>
+                <generateApiTests>false</generateApiTests>
+                <generateModelTests>false</generateModelTests>
+                <configOptions>
+                    <useJakartaEe>true</useJakartaEe>
+                </configOptions>
+                <additionalProperties>
+                    <additionalProperty>apiNameSuffix=Client</additionalProperty>
+                    <additionalProperty>apiNamePrefix=LoanService</additionalProperty>
+                </additionalProperties>
+            </configuration>
+            <goals>
+                <goal>generate</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
+
+Esempio di utilizzo del plug-in per generare solo i modelli del servizio REST:
+
+```xml
+
+<plugin>
+    <groupId>org.openapitools</groupId>
+    <artifactId>openapi-generator-maven-plugin</artifactId>
+    <version>7.7.0</version>
+    <executions>
+        <execution>
+            <id>account-service-generate-sources</id>
+            <phase>generate-sources</phase>
+            <configuration>
+                <inputSpec>${basedir}/../openapi/AccountService_openapi.yaml</inputSpec>
+                <generatorName>jaxrs-cxf</generatorName>
+                <output>${project.build.directory}/generated-sources/openapi</output>
+                <packageName>it.univaq.sose.accountservice</packageName>
+                <modelPackage>it.univaq.sose.accountservice.model</modelPackage>
+                <generateApis>false</generateApis>
+                <generateApiTests>false</generateApiTests>
+                <generateModelTests>false</generateModelTests>
+                <configOptions>
+                    <useJakartaEe>true</useJakartaEe>
+                </configOptions>
+            </configuration>
+            <goals>
+                <goal>generate</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
+
+Per ulteriori informazioni su come configurare questo plugin, è possibile inserire nella
+configurazione `<configHelp>true</configHelp>`. Questo fornirà una lista delle possibili opzioni di configurazione.
+
 
 
 
