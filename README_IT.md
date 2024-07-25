@@ -5,6 +5,7 @@
 [![License][license-shield]][license-url]
 
 
+
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
@@ -22,6 +23,7 @@
 </div>
 
 <!-- TABLE OF CONTENTS -->
+<a name="readme-top"></a>
 <details>
   <summary>Indice</summary>
   <ol>
@@ -66,6 +68,7 @@
         <li><a href="#configurazione-delle-metriche-per-unapplicazione-rest">Configurazione delle Metriche per un'Applicazione REST</a></li>
         <li><a href="#spring-cloud-discovery-eureka">Spring Cloud Discovery Eureka</a></li>
         <li><a href="#implementazione-dei-load-balance-nei-client-apache-cxf">Implementazione dei Load-Balance nei client Apache CXF</a></li>
+        <li><a href="#spring-cloud-reactive-gateway">Spring Cloud Reactive Gateway</a></li>
         <li><a href="#implementazione-di-un-servizio-jax-ws-con-apache-cxf-e-spring-boot">Implementazione di un servizio JAX-WS con Apache CXF e Spring Boot</a></li>
         <li><a href="#implementazione-di-un-servizio-jax-rs-con-apache-cxf-e-spring-boot">Implementazione di un servizio JAX-RS con Apache CXF e Spring Boot</a></li>
         <li><a href="#implementazione-client-asincrono-con-apache-cxf">Implementazione client asincrono con Apache CXF</a></li>
@@ -75,6 +78,7 @@
         <li><a href="#utilizzo-del-plug-in-maven-build-helper-maven-plugin">Utilizzo del Plug-in Maven build-helper-maven-plugin</a></li>
         <li><a href="#implementazione-dei-dockerfile">Implementazione dei Dockerfile</a></li>
         <li><a href="#implementazione-del-docker-compose">Implementazione del docker-compose</a></li>
+        <li><a href="#scalabilità-e-replica-dei-servizi-per-la-gestione-del-carico">Scalabilità e Replica dei Servizi per la Gestione del Carico</a></li>
       </ul>
     </li>
     <li><a href="#guida-alla-configurazione">Guida alla configurazione</a></li>
@@ -113,10 +117,14 @@ sfruttando le migliori pratiche di ingegneria del software e gli strumenti più 
 
 Utilizza Apache CXF, Spring Boot, Docker e Maven.
 
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
+
 ## Requisiti di Esame
 
 Il progetto in questione rispecchia tutti i requisiti richiesti e descritti dal seguente file:
 [FINAL_TEST_23-24.pdf](/docs/FINAL_TEST_23-24.pdf)
+
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
 
 ## Obiettivi del Sistema
 
@@ -135,6 +143,8 @@ Gli obiettivi principali del sistema **Banking Micro SOA System** sono:
 - **Esecuzione delle Transazioni**: Supportare varie operazioni come bonifici, prelievi, depositi e pagamenti bancomat.
 - **Generazione di Report**: Fornire un report finanziario complessivo di tutte le operazioni, offrendo una visione
   chiara e integrata delle attività finanziarie.
+
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
 
 ## Funzionamento del Sistema
 
@@ -173,6 +183,8 @@ responsabile di un particolare aspetto della gestione bancaria:
     - Report Finanziario Complessivo: Creazione di report integrati che forniscono una visione globale delle attività
       finanziarie.
 
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
+
 ## Motivazioni legate all'Approccio SOA e Microservices
 
 L'adozione di un'architettura SOA e microservizi per il Banking Micro SOA System è motivata da diversi vantaggi chiave:
@@ -194,6 +206,8 @@ L'adozione di un'architettura SOA e microservizi per il Banking Micro SOA System
 
 Il sistema **Banking Micro SOA System** rappresenta quindi una soluzione all'avanguardia per la gestione bancaria,
 capace di rispondere alle sfide moderne con efficienza e robustezza.
+
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
 
 ## Use Case Diagram
 
@@ -223,9 +237,13 @@ In questo scenario possiamo vedere tutti gli utenti del sistema che possono eseg
         3. Report Transazioni con Bancomat
         4. Report Prestiti
 
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
+
 ## Component Diagram
 
 ![SympleBankingSystem-component_it.svg](docs/SympleBankingSystem-component_it.svg)
+
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
 
 ### Componenti
 
@@ -320,6 +338,8 @@ In questo scenario possiamo vedere tutti gli utenti del sistema che possono eseg
     - Responsabilità: Interfacciarsi con i vari servizi del sistema bancario attraverso il gateway per eseguire
       operazioni richieste dagli utenti.
 
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
+
 ### Note aggiuntive
 
 - Il **Banking Service Client** comunica con il **Gateway Service** per tutte le operazioni.
@@ -328,6 +348,8 @@ In questo scenario possiamo vedere tutti gli utenti del sistema che possono eseg
 - Il load balancing è definito secondo una logica di *“Iterazione casuale non ripetitiva”*.
 - I servizi sono progettati per essere modulari e possono essere aggiornati o sostituiti indipendentemente senza
   influenzare l'intero sistema.
+
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
 
 ## Sequence Diagrams
 
@@ -407,6 +429,8 @@ tramite la sottrazione del corrispettivo valore in denaro dal conto corrente del
 Provider. Viene controllato il bilancio del conto e sottratta la somma. Infine viene aggiornato lo stato del prestito
 prima di ritornare la risposta
 
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
+
 ---
 
 # Implementazione
@@ -463,6 +487,8 @@ Per quanto riguarda i Provider, essi sono stati ottimizzati per supportare un
 elevato numero di operazioni al secondo, permettendo l'implementazione della maggior parte delle loro operazioni in modo
 sincrono.
 
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
+
 ## Integrazione Spring Boot e Apache CXF
 
 Per integrare Apache CXF in un'applicazione Spring Boot, è necessario aggiungere una delle seguenti dipendenze
@@ -497,6 +523,8 @@ nel `pom.xml`:
 REST, è sufficiente includere una delle due dipendenze, insieme alla dipendenza del client Apache CXF per l'altra
 modalità. Ad esempio, se si include solo la dipendenza `cxf-spring-boot-starter-jaxws` (per SOAP), basterà aggiungere
 al `pom.xml` la dipendenza della libreria mancante `cxf-rt-rs-client` per il client REST.
+
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
 
 ### Configurazione di Apache CXF per l'esecuzione corretta
 
@@ -558,6 +586,8 @@ Nel YAML sono presenti anche le chiavi `cxf.path` e `cxf.servlet.init.service-li
 - **cxf.servlet.init.service-list-path**: Identifica il percorso dove Apache CXF pubblicherà la lista dei servizi
   gestiti.
 
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
+
 ## Integrazione di Apache CXF Service Description OpenApi in Spring Boot
 
 Per integrare il Service Description OpenApi di Apache CXF in Spring Boot, bisognerà aggiungere le seguenti dipendenze
@@ -616,6 +646,8 @@ public class ApacheCXFConfig {
 ```
 
 Ora puoi utilizzare le annotazioni OpenApi all'interno delle interfacce del tuo servizio REST.
+
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
 
 ## Ottimizzazioni effettuate nei Servizi
 
@@ -791,6 +823,8 @@ public class Account extends BaseEntity {
 }
 ```
 
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
+
 ## Integrazione del Logging di Apache CXF in Spring Boot
 
 Per integrare la funzionalità di Logging di Apache CXF in Spring Boot, aggiungi la seguente dipendenza nel
@@ -822,6 +856,8 @@ public class ApacheCXFConfig {
     }
 }
 ```
+
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
 
 ## Modifiche al Jackson JSON Provider per Apache CXF in Spring Boot
 
@@ -914,6 +950,8 @@ public class AccountResponse implements Serializable {
 
 Questo codice garantisce che le date siano gestite correttamente durante la serializzazione e deserializzazione,
 rispettando lo standard ISO-8601.
+
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
 
 ## Integrazione delle Metriche di Apache CXF con Spring Boot Actuator
 
@@ -1014,6 +1052,8 @@ info.application:
 
 Queste configurazioni consentono di integrare le metriche di Apache CXF con Spring Boot Actuator, offrendo una
 visibilità completa sulle prestazioni della applicazione.
+
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
 
 ## Spring Cloud Discovery Eureka
 
@@ -1203,6 +1243,8 @@ eureka:
     - Indica il percorso URL per il controllo della salute dell'istanza.
 8. **metadataMap.servletPath: ${cxf.path}**
     - Definisce una mappa di metadati che include il percorso servletPath, il cui valore è la root di Apache CXF.
+
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
 
 ## Implementazione dei Load-Balance nei client Apache CXF
 
@@ -1459,6 +1501,477 @@ codice e renderlo più leggibile, abbiamo implementato una strategia più elemen
 - Se la lista risultante dopo la rimozione è vuota, riutilizziamo l'URL precedentemente utilizzato per effettuare una
   richiesta a quel servizio.
 
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
+
+## Spring Cloud Reactive Gateway
+
+Per migliorare la fruizione dei servizi, abbiamo centralizzato il punto di erogazione utilizzando un API Gateway
+dedicato.
+
+Questo Gateway non solo consente il bilanciamento del carico tra i vari servizi, ma funge anche da punto di
+accesso unico per tutti i client che desiderano comunicare con il sistema.
+
+Per implementare questa soluzione, abbiamo integrato il progetto Spring Cloud Reactive Gateway. L'integrazione richiede
+la creazione di un nuovo modulo Maven e l'inserimento del relativo file `pom.xml`.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.3.1</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>it.univaq.sose</groupId>
+    <artifactId>gateway-service</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>gateway-service</name>
+    <description>gateway-service</description>
+
+    <properties>
+        <java.version>17</java.version>
+        <cxf.version>4.0.4</cxf.version>
+        <spring-cloud.version>2023.0.2</spring-cloud.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-rs-security-jose</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+```
+
+Una delle funzionalità del nostro API Gateway è il pre-processamento delle richieste tramite la validazione del JWT
+presente nell'header.
+
+Se il JWT non è valido o assente, la richiesta verrà automaticamente rifiutata con un errore di autenticazione.
+
+Per realizzare questa funzionalità, abbiamo implementato un filtro che verifica la presenza del token, la sua validità e
+la conformità del ruolo utente rispetto ai requisiti stabiliti.
+
+Di seguito viene presentata l'implementazione del filtro di autenticazione.
+
+```java
+
+/**
+ * GatewayFilter for handling authorization based on JWT tokens.
+ */
+@Slf4j
+@Service
+public class AuthorizationFilter extends AbstractGatewayFilterFactory<AuthorizationFilter.Config> {
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    private final JWTVerification jwtVerification;
+
+    public AuthorizationFilter(JWTVerification jwtVerification) {
+        super(Config.class);
+        this.jwtVerification = jwtVerification;
+    }
+
+    /**
+     * Applies the filter to the Gateway.
+     *
+     * @param config the configuration object for the filter.
+     * @return the GatewayFilter.
+     */
+    @Override
+    public GatewayFilter apply(Config config) {
+        return (exchange, chain) -> {
+            String authHeader = exchange.getRequest().getHeaders().getFirst("Authorization");
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return onError(exchange, "Authorization header is missing or invalid", HttpStatus.BAD_REQUEST);
+            }
+            String token = authHeader.substring(7);
+            long identifier;
+            String role;
+
+            try {
+                jwtVerification.checkRoles(token, config.getRoles());
+                identifier = jwtVerification.getIdentifier(token);
+                role = jwtVerification.getRole(token);
+                jwtVerification.verifyToken(token);
+            } catch (AuthenticationException e) {
+                return onError(exchange, e.getMessage(), HttpStatus.UNAUTHORIZED);
+            }
+
+            if (config.isCheckPathWithIdentifier() && "CUSTOMER".equals(role) && !exchange.getRequest().getPath().toString().contains(Long.toString(identifier))) {
+                log.error("Errore conf:{}; Customer:{} Ident:{}", config.isCheckPathWithIdentifier(), "CUSTOMER".equals(role), !exchange.getRequest().getPath().toString().contains(Long.toString(identifier)));
+                return onError(exchange, "Forbidden: operation not allowed", HttpStatus.FORBIDDEN);
+            }
+
+            return chain.filter(exchange);
+
+        };
+    }
+
+    /**
+     * Configuration class for the AuthorizationFilter.
+     */
+    @Getter
+    @Setter
+    @Builder
+    public static class Config {
+        private List<String> roles;
+        private boolean checkPathWithIdentifier;
+    }
+
+    /**
+     * Handles errors by sending an appropriate response.
+     *
+     * @param exchange   the ServerWebExchange.
+     * @param error      the error message.
+     * @param httpStatus the HTTP status to set.
+     * @return a Mono that completes the response handling.
+     */
+    private Mono<Void> onError(ServerWebExchange exchange, String error, HttpStatus httpStatus) {
+        exchange.getResponse().setStatusCode(httpStatus);
+        ErrorResponse errorResponse = new ErrorResponse(error);
+        MediaType mediaType = exchange.getRequest().getHeaders().getAccept().stream()
+                .filter(mt -> mt.equals(MediaType.APPLICATION_JSON) || mt.equals(MediaType.APPLICATION_XML))
+                .findFirst()
+                .orElse(MediaType.APPLICATION_JSON);
+        exchange.getResponse().getHeaders().setContentType(mediaType);
+        try {
+            byte[] bytes;
+            if (mediaType.equals(MediaType.APPLICATION_JSON)) {
+                bytes = objectMapper.writeValueAsBytes(errorResponse);
+            } else {
+                JAXBContext jaxbContext = JAXBContext.newInstance(ErrorResponse.class);
+                Marshaller marshaller = jaxbContext.createMarshaller();
+                StringWriter sw = new StringWriter();
+                marshaller.marshal(errorResponse, sw);
+                bytes = sw.toString().getBytes();
+            }
+            return exchange.getResponse().writeWith(Mono.just(exchange.getResponse().bufferFactory().wrap(bytes)));
+        } catch (Exception e) {
+            return Mono.error(e);
+        }
+    }
+}
+```
+
+Di seguito vediamo come si impostano le rotte e come si inserisce il filtro di autenticazione creato:
+
+```yaml
+spring.application:
+  name: gateway-service
+
+management:
+  endpoints.web.exposure.include: health,info
+  info.env.enabled: true
+
+info.application:
+  name: gateway-service
+  description: Gateway Service for Banking Micro-SOA System
+  version: 0.0.1-SNAPSHOT
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+---
+server:
+  port: 9087
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        # Rotte non sicure Per ACCOUNT-SERVICE
+        - id: login_route
+          uri: lb://ACCOUNT-SERVICE
+          predicates:
+            - Path=/api/account/login
+          filters:
+            - RewritePath=/api/account/login, /services/api/account/login
+
+        - id: check_token_route
+          uri: lb://ACCOUNT-SERVICE
+          predicates:
+            - Path=/api/account/check-token
+          filters:
+            - RewritePath=/api/account/check-token, /services/api/account/check-token
+
+        - id: banker_account_route
+          uri: lb://ACCOUNT-SERVICE
+          predicates:
+            - Path=/api/account/banker-account
+          filters:
+            - RewritePath=/api/account/banker-account, /services/api/account/banker-account
+
+        - id: admin_account_route
+          uri: lb://ACCOUNT-SERVICE
+          predicates:
+            - Path=/api/account/admin-account
+          filters:
+            - RewritePath=/api/account/admin-account, /services/api/account/admin-account
+
+        - id: customer_account_route
+          uri: lb://ACCOUNT-SERVICE
+          predicates:
+            - Path=/api/account/customer-account
+          filters:
+            - RewritePath=/api/account/customer-account, /services/api/account/customer-account
+
+        # Rotte sicure Per ACCOUNT-SERVICE
+        - id: secure_customer_account_route
+          uri: lb://ACCOUNT-SERVICE
+          predicates:
+            - Path=/api/account/{id}
+          filters:
+            - RewritePath=/api/account/(?<segment>.*), /services/api/account/${segment}
+            - name: AuthorizationFilter
+              args:
+                roles:
+                  - "CUSTOMER"
+                  - "BANKER"
+                  - "ADMIN"
+                checkPathWithIdentifier: true
+
+        # Rotte Non sicure per BANKING-OPERATIONS-SERVICE-PROSUMER
+        - id: open_banking_account
+          uri: lb://BANKING-OPERATIONS-SERVICE-PROSUMER
+          predicates:
+            - Path=/api/bank/open-account
+          filters:
+            - RewritePath=/api/bank/open-account, /services/api/bank/open-account
+
+        # Rotte sicure per BANKING-OPERATIONS-SERVICE-PROSUMER
+        - id: banking_atm
+          uri: lb://BANKING-OPERATIONS-SERVICE-PROSUMER
+          predicates:
+            - Path=/api/bank/atm-card/{accounId}
+          filters:
+            - RewritePath=/api/bank/atm-card/(?<segment>.*), /services/api/bank/atm-card/${segment}
+            - name: AuthorizationFilter
+              args:
+                roles:
+                  - "CUSTOMER"
+                  - "BANKER"
+                  - "ADMIN"
+                checkPathWithIdentifier: true
+
+        - id: banking_report
+          uri: lb://BANKING-OPERATIONS-SERVICE-PROSUMER
+          predicates:
+            - Path=/api/bank/report-bank-account-by-account/{idAccount}
+          filters:
+            - RewritePath=/api/bank/report-bank-account-by-account/(?<segment>.*), /services/api/bank/report-bank-account-by-account/${segment}
+            - name: AuthorizationFilter
+              args:
+                roles:
+                  - "CUSTOMER"
+                  - "BANKER"
+                  - "ADMIN"
+                checkPathWithIdentifier: true
+
+        # Rotte sicure per TRANSACTION-SERVICE-PROSUMER
+        - id: transaction_service
+          uri: lb://TRANSACTION-SERVICE-PROSUMER
+          predicates:
+            - Path=/api/transaction/**
+          filters:
+            - RewritePath=/api/transaction/(?<segment>.*), /services/api/transaction/${segment}
+            - name: AuthorizationFilter
+              args:
+                roles:
+                  - "CUSTOMER"
+                  - "BANKER"
+                  - "ADMIN"
+                checkPathWithIdentifier: false
+
+        # Rotte sicure per LOAN-SERVICE-PROSUMER
+        - id: loan_close_loan
+          uri: lb://LOAN-SERVICE-PROSUMER
+          predicates:
+            - Path=/api/loan/close-loan/{idLoan}
+          filters:
+            - RewritePath=/api/loan/close-loan/(?<segment>.*), /services/api/loan/close-loan/${segment}
+            - name: AuthorizationFilter
+              args:
+                roles:
+                  - "CUSTOMER"
+                  - "BANKER"
+                  - "ADMIN"
+                checkPathWithIdentifier: false
+
+        - id: loan_get_account
+          uri: lb://LOAN-SERVICE-PROSUMER
+          predicates:
+            - Path=/api/loan/account/{idAccount}
+          filters:
+            - RewritePath=/api/loan/account/(?<segment>.*), /services/api/loan/account/${segment}
+            - name: AuthorizationFilter
+              args:
+                roles:
+                  - "CUSTOMER"
+                  - "BANKER"
+                  - "ADMIN"
+                checkPathWithIdentifier: true
+
+        - id: loan_get_bank_account
+          uri: lb://LOAN-SERVICE-PROSUMER
+          predicates:
+            - Path=/api/loan/bank-account/{idBankAccount}
+          filters:
+            - RewritePath=/api/loan/bank-account/(?<segment>.*), /services/api/loan/bank-account/${segment}
+            - name: AuthorizationFilter
+              args:
+                roles:
+                  - "CUSTOMER"
+                  - "BANKER"
+                  - "ADMIN"
+                checkPathWithIdentifier: false
+
+        - id: loan_get
+          uri: lb://LOAN-SERVICE-PROSUMER
+          predicates:
+            - Path=/api/loan/{idLoan}
+          filters:
+            - RewritePath=/api/loan/(?<segment>.*), /services/api/loan/${segment}
+            - name: AuthorizationFilter
+              args:
+                roles:
+                  - "CUSTOMER"
+                  - "BANKER"
+                  - "ADMIN"
+                checkPathWithIdentifier: false
+
+        - id: loan_open_loan
+          uri: lb://LOAN-SERVICE-PROSUMER
+          predicates:
+            - Path=/api/loan
+          filters:
+            - RewritePath=/api/loan, /services/api/loan
+            - name: AuthorizationFilter
+              args:
+                roles:
+                  - "CUSTOMER"
+                  - "BANKER"
+                  - "ADMIN"
+                checkPathWithIdentifier: false
+
+        # Rotte sicure per FINANCIAL-REPORT-SERVICE-PROSUMER
+        - id: financial_report
+          uri: lb://FINANCIAL-REPORT-SERVICE-PROSUMER
+          predicates:
+            - Path=/api/bank/financial-report/{idAccount}
+          filters:
+            - RewritePath=/api/bank/financial-report/(?<segment>.*), /services/api/bank/financial-report/${segment}
+            - name: AuthorizationFilter
+              args:
+                roles:
+                  - "CUSTOMER"
+                  - "BANKER"
+                  - "ADMIN"
+                checkPathWithIdentifier: true
+---
+eureka:
+  client:
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://${EUREKA_HOST:host.docker.internal}:${EUREKA_PORT:8761}/eureka/
+  instance:
+    # Request a lease with a validity of 11 seconds. If until then the
+    # lease has not been renewed, it expires and the Eureka server can evict it.
+    # Default: 90s
+    lease-expiration-duration-in-seconds: 70
+    # The cadence of lease renewal, i.e. how often a heartbeat is sent to Eureka server.
+    # In this case every 5 seconds. Use this only for development / debugging. In production use the ...
+    # Default: 30s
+    lease-renewal-interval-in-seconds: 10
+    prefer-ip-address: true
+```
+
+Si notino i seguenti punti nella dichiarazione delle rotte:
+
+- `id: <Nome Univoco>`: Questo è un identificatore univoco per la rotta. Serve a distinguere questa rotta da altre
+  configurate nel gateway.
+- `uri: lb://<Nome del Servizio>`: Questo indica l'URI (Uniform Resource Identifier) della destinazione del servizio. "
+  **lb**" sta per "**load balancer**", indicando che il gateway utilizzerà un bilanciatore di carico per distribuire le
+  richieste tra le istanze del servizio.
+- `predicates: Path=<Uri Path>`: Questo predicato specifica il percorso della richiesta. Il gateway instraderà le
+  richieste che corrispondono a questo percorso verso il servizio specificato nell'URI.
+- `filters`:
+    - `RewritePath=/api/bank/atm-card/(?<segment>.*), /services/api/bank/atm-card/${segment}`: Questo filtro riscrive il
+      percorso della richiesta. Per esempio, il percorso originale `/api/bank/atm-card/{accounId}` viene trasformato in
+      `/services/api/bank/atm-card/{accounId}`, dove `{accounId}` è mantenuto dal percorso originale.
+    - `name: AuthorizationFilter`: Questo filtro è usato per la gestione dell'autorizzazione. I filtri di autorizzazione
+      sono comuni in gateway per assicurarsi che solo utenti con i giusti permessi possano accedere a certe rotte.
+        - `args`:
+            - `roles`: Specifica i ruoli che sono autorizzati ad accedere a questa rotta. Per esempio,
+              sono `CUSTOMER`, `BANKER`, e `ADMIN`.
+            - `checkPathWithIdentifier: <Boolean>`: Attiva un controllo aggiuntivo che verifica se gli utenti con il
+              ruolo`CUSTOMER` stanno accedendo solo alle risorse del proprio account. Se l'utente non è autorizzato o il
+              percorso non contiene l'identificatore corretto, l'accesso viene negato con un errore di tipo `FORBIDDEN`.
+
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
+
 ## Implementazione di un servizio JAX-WS con Apache CXF e Spring Boot
 
 Dopo aver aggiunto le dipendenze e le configurazioni necessarie descritte in precedenza, vediamo come è stato
@@ -1615,6 +2128,8 @@ public class GetBancomatDetailsResponse {
 
 }
 ```
+
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
 
 ## Implementazione di un servizio JAX-RS con Apache CXF e Spring Boot
 
@@ -1894,6 +2409,8 @@ public class OpenAccountResponse {
 }
 ```
 
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
+
 ## Implementazione client asincrono con Apache CXF
 
 Per implementare una richiesta asincrona verso un client che espone servizi in modo asincrono, possiamo utilizzare le
@@ -2045,6 +2562,8 @@ Si notino i seguenti punti:
 - Viene controllato lo stato delle risposte delle chiamate sotto callback e vengono gestite eventuali eccezioni.
 - Al termine di tutte le 4 richieste, le risposte vengono elaborate per creare una risposta finale.
 
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
+
 ## Implementazione di un Semplice Client per il Banking Micro-SOA System
 
 Per questo sistema, abbiamo deciso di implementare un'applicazione client di tipo Shell utilizzando **Spring Shell**.
@@ -2154,6 +2673,8 @@ Il comando `login` utilizza la condizione `isNotAuthenticated`, risultando dispo
 l'utente è autenticato.
 
 Per maggiori dettagli sull'implementazione, consultare il modulo `banking-service-client`.
+
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
 
 ## Utilizzo del Plug-in Maven openapi-generator-maven-plugin
 
@@ -2265,6 +2786,8 @@ Esempio di utilizzo del plug-in per generare solo i modelli del servizio REST:
 Per ulteriori informazioni su come configurare questo plugin, è possibile inserire nella
 configurazione `<configHelp>true</configHelp>`. Questo fornirà una lista delle possibili opzioni di configurazione.
 
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
+
 ## Utilizzo del Plug-in Maven cxf-codegen-plugin
 
 Per incrementare la velocità di sviluppo e mantenere la coerenza degli oggetti tra i vari servizi, è stato deciso di
@@ -2306,6 +2829,8 @@ Esempio di utilizzo del plug-in:
 </plugin>
 ```
 
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
+
 ## Utilizzo del Plug-in Maven build-helper-maven-plugin
 
 Per facilitare la fase di build e includere automaticamente tutte le classi e i package autogenerati tramite i plugin
@@ -2336,6 +2861,8 @@ Esempio di utilizzo del plug-in:
     </executions>
 </plugin>
 ```
+
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
 
 ## Implementazione dei Dockerfile
 
@@ -2439,6 +2966,8 @@ Il comando da eseguire nella root del progetto sarà quindi:
 ```shell
 docker build -t banking-operations-service-prosumer -f banking-operations-service-prosumer/Dockerfile .
 ```
+
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
 
 ## Implementazione del docker-compose
 
@@ -2660,6 +3189,73 @@ networks:
     driver: bridge
 ````
 
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
+
+## Scalabilità e Replica dei Servizi per la Gestione del Carico
+
+In un sistema bancario moderno come il **Banking Micro-SOA System**, è cruciale garantire l'affidabilità e la
+disponibilità dei servizi, specialmente durante i periodi di carico elevato.
+
+Benché, come già riportato, il sistema sia in grado di sopportare carichi di lavoro molto alti (**5000 in scrittura** e
+**80000 in lettura** al secondo) anche con singole istanze, i servizi che beneficiano maggiormente della replica,
+qualora ce ne fosse la necessità, sono i provider in quanto gestiscono e processano le richieste provenienti da tutti i
+prosumer. (`Account-Service`, `Bank-Account-Service`, `Bancomat-Service`).
+
+Per questa ragione nel file `docker-compose` abbiamo inserito le configurazioni necessarie per la replica dei servizi
+provider, come mostrato nell'esempio seguente:
+
+````yaml
+bank-account-service:
+  build: ./bank-account-service
+  image: bank-account-service
+  deploy:
+    replicas: 3
+  ports:
+    - "9088-9090:9081"
+  environment:
+    EUREKA_HOST: "host.docker.internal"
+    EUREKA_SERVER_PORT: "8761"
+  depends_on:
+    - postgresql
+    - discovery-service
+  networks:
+    - banking-micro-soa-system
+  tty: true
+
+````
+
+In particolare:
+
+````yaml
+deploy:
+  replicas: 3
+````
+
+specifica quante repliche devono essere sollevate e
+
+````yaml
+ports:
+  - "9088-9090:9081"
+````
+
+specifica il range di porte da assegnare.
+
+Questo consente di definire un numero di repliche per ciascun servizio in base alle esigenze e alle richieste di carico.
+
+Grazie a questa configurazione, il sistema è in grado di sopportare carichi di lavoro ancora più elevati qualora fosse
+necessario.
+
+Come già illustrato, i client dei servizi provider utilizzati dai prosumer ottengono le istanze disponibili dei provider
+tramite Eureka e seguendo la politica di bilanciamento del carico *“Iterazione casuale non ripetitiva”* da noi
+sviluppata, viene assicurata una distribuzione uniforme delle richieste tra le diverse repliche, evitando sovraccarichi
+su singole istanze e migliorando così le prestazioni complessive del sistema.
+
+Gli ultimi due servizi che potrebbero beneficiare di una replica sono i prosumer `Banking-Operation-Service` e
+`Transaction-Service` in quanto sono responsabili delle principali operazioni di un sistema bancario, ovvero la gestione
+dei conti correnti e l’esecuzione delle transazioni.
+
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
+
 ## Guida alla configurazione
 
 Guida dettagliata che illustra tutti i passaggi necessari per configurare e avviare l'applicazione.
@@ -2727,3 +3323,5 @@ Il client sviluppato con Spring Shell fornisce un'interfaccia interattiva e intu
 
 <a href="https://univaq-my.sharepoint.com/:v:/g/personal/stefano_decina_student_univaq_it/EbnubKyOVW1OmrRNbcLBcIwBqnik5LnaajsYmGH_Odvm1A?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=oCb49j">
 <strong>Demo video»</strong></a>
+
+<p align="right">(<a href="#readme-top">Torna all'indice</a>)</p>
