@@ -3,6 +3,8 @@
 [![Commit Activity][commit-shield]][commit-url]
 [![Last Commit][last-commit-shield]][last-commit-url]
 [![License][license-shield]][license-url]
+![Counter][counter]
+
 
 <!-- PROJECT LOGO -->
 <br />
@@ -103,6 +105,7 @@
 [license-shield]: https://img.shields.io/github/license/Alemato/Banking-Micro-SOA-System?style=for-the-badge
 
 [license-url]: https://github.com/Alemato/Banking-Micro-SOA-System/blob/master/LICENSE.txt
+[counter]: https://visitcount.itsvg.in/api?id=Banking-Micro-SOA-System&label=Repository%20Views&color=1&icon=5&pretty=true
 
 # Banking Micro-SOA System
 
